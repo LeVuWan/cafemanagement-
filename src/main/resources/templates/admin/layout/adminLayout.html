@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head th:replace="admin/fragments/head :: admin_head"></head>
+
+<body id="page-top">
+
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div th:replace="admin/fragments/side-nav :: admin_sidebar"></div>
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <!-- Topbar -->
+                <div th:replace="admin/fragments/top-nav :: admin_topbar"></div>
+
+                <!-- Page Content -->
+                <main class="container-fluid" layout:fragment="content"></main>
+            </div>
+
+            <!-- Footer -->
+            <div th:replace="admin/fragments/footer :: admin_footer"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/assets/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/assets/js/sb-admin-2.min.js}"></script>
+
+</body>
+
+</html>

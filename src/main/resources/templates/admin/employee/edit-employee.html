@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Thêm mới nhân viên</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Quản lý nhân viên</h1>
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Chỉnh sửa nhân viên</h6>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/employee/edit}" th:object="${employee}" method="post"
+                        enctype="multipart/form-data" class="needs-validation" novalidate>
+                        <input type="text" class="form-control w-75" name="employeeId" th:field="*{employeeId}" readonly
+                            style="display: none;">
+                        <!-- Họ và tên -->
+                        <div class="form-group">
+                            <label for="fullname">* Họ và tên:</label>
+                            <input type="text" class="form-control" id="fullname" th:field="*{fullname}" required>
+                            <span th:if="${#fields.hasErrors('fullname')}" th:errors="*{fullname}"
+                                class="text-danger small"></span>
+                        </div>
+
+                        <!-- Địa chỉ -->
+                        <div class="form-group">
+                            <label for="address">Địa chỉ:</label>
+                            <input type="text" class="form-control" id="address" th:field="*{address}">
+                            <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
+                                class="text-danger small"></span>
+                        </div>
+
+                        <!-- Chức vụ + Lương -->
+                        <div class="d-flex gap-3 form-group">
+                            <div class="flex-fill mr-2">
+                                <label for="permissionId">* Chức vụ:</label>
+                                <select class="form-control" id="permissionId" th:field="*{permissionId}" required>
+                                    <option value="">Chọn chức vụ</option>
+                                    <option th:each="permission : ${permissions}" th:value="${permission.permissionId}"
+                                        th:text="${permission.name}">
+                                    </option>
+                                </select>
+                                <span th:if="${#fields.hasErrors('permissionId')}" th:errors="*{permissionId}"
+                                    class="text-danger small"></span>
+                            </div>
+
+                            <div class="flex-fill">
+                                <label for="salary">* Lương:</label>
+                                <input type="number" step="0.01" class="form-control" id="salary" th:field="*{salary}"
+                                    placeholder="Lương" required>
+                                <span th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}"
+                                    class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Số điện thoại -->
+                        <div class="form-group">
+                            <label for="phoneNumber">* Số điện thoại:</label>
+                            <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" required>
+                            <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
+                                class="text-danger small"></span>
+                        </div>
+
+                        <!-- Tên đăng nhập -->
+                        <div class="form-group">
+                            <label for="username">Tên đăng nhập:</label>
+                            <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                            <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                                class="text-danger small"></span>
+                        </div>
+
+                        <!-- Mật khẩu -->
+                        <div class="form-group">
+                            <label for="password">Mật khẩu:</label>
+                            <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                                class="text-danger small"></span>
+                        </div>
+
+                        <!-- Ảnh đại diện -->
+                        <div class="form-group">
+                            <label>Avatar:</label>
+                            <input type="file" class="form-control-file" id="imageFile" name="file" accept="image/*">
+                        </div>
+
+                        <!-- Xem trước ảnh -->
+                        <div class="mb-3">
+                            <img th:if="*{avatar != null}" th:src="@{${employee.avatar}}"
+                                style="max-width: 250px; display: block;" alt="Ảnh hiện tại" id="imagePriview">
+                        </div>
+
+                        <!-- Nút thao tác -->
+                        <button type="submit" class="btn btn-secondary mr-2">Lưu</button>
+                        <a th:href="@{/admin/employee}" class="btn btn-secondary">Trở về</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

@@ -45,7 +45,7 @@ public class UploadService {
             }
 
             // Trả về đường dẫn URL tương đối để lưu DB
-            return "/assets/images/" + target + "/" + fileName;
+            return "/assets/img/" + target + "/" + fileName;
 
         } catch (IOException e) {
             e.printStackTrace();

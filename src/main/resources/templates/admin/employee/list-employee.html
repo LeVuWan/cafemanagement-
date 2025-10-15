@@ -19,24 +19,27 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center flex-wrap p-0 mb-2">
-                        <div class="col-md-2 col-sm-12 mb-2 mb-md-0 text-center text-md-left p-0">
+                        <div class=" mb-2 mb-md-0 text-center text-md-left p-0">
                             <a th:href="@{/admin/employee/create}" class="btn btn-primary btn-sm">
                                 <i class="fas fa-plus mr-1"></i>
                                 Thêm mới
                             </a>
                         </div>
 
-                        <div class="col-md-7 col-sm-8 mb-2 mb-md-0 p-0">
-                            <div class="input-group">
-                                <input type="text" name="searchKeyword" th:value="${searchKeyword}"
-                                    class="form-control form-control-sm mr-2" placeholder="Nhập từ khóa tìm kiếm...">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary btn-sm rounded-sm" type="submit">
-                                        <i class="fas fa-search"></i>
-                                        Tìm kiếm
-                                    </button>
+                        <div class="col-md-5 col-sm-6 mb-2 mb-md-0 p-0">
+                            <form th:action="@{/admin/employee}" method="get">
+                                <div class="input-group">
+                                    <input type="text" name="keyword" th:value="${keyword}"
+                                        class="form-control form-control-sm mr-2"
+                                        placeholder="Nhập từ khóa tìm kiếm...">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary btn-sm rounded-sm" type="submit">
+                                            <i class="fas fa-search"></i>
+                                            Tìm kiếm
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -52,13 +55,46 @@
                             </thead>
                             <tbody>
                                 <tr th:each="employee : ${employeis}">
-                                    <td th:text="${employee.username}"></td>
+                                    <td th:text="${employee.fullname}"></td>
                                     <td th:text="${employee.permission.name}"></td>
                                     <td th:text="${employee.salary}"></td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-1">
-                                            <a href="#" class="btn btn-success btn-sm mr-2">Cập nhật</a>
-                                            <a href="#" class="btn btn-danger btn-sm">Xóa</a>
+                                            <a th:href="@{/admin/employee/edit/{id}(id=${employee.employeeId})}"
+                                                href="#" class="btn btn-success btn-sm mr-2">Cập nhật</a>
+
+                                            <button class="btn btn-danger btn-sm" data-toggle="modal"
+                                                th:data-target="'#modalDelete_' + ${employee.employeeId}">Xóa</button>
+
+                                            <div class="modal fade" th:id="'modalDelete_' + ${employee.employeeId}"
+                                                tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel_"
+                                                th:aria-labelledby="'modalDeleteLabel_' + ${employee.employeeId}"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"
+                                                                th:id="'modalDeleteLabel_' + ${employee.employeeId}">Xác
+                                                                nhận Xóa nhân viên</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Bạn có chắc chắn muốn xóa nhân viên có ID: <span
+                                                                th:text="${employee.employeeId}"></span> không?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Hủy</button>
+
+                                                            <a th:href="@{/admin/employee/delete/{id}(id=${employee.employeeId})}"
+                                                                class="btn btn-danger">Xóa</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -66,7 +102,7 @@
                         </table>
 
                     </div>
-                    <nav aria-label="Page navigation example">
+                    <!-- <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item"><a class="page-link" href="#">Previous</a></li>
                             <li class="page-item"><a class="page-link" href="#">1</a></li>
@@ -74,7 +110,7 @@
                             <li class="page-item"><a class="page-link" href="#">3</a></li>
                             <li class="page-item"><a class="page-link" href="#">Next</a></li>
                         </ul>
-                    </nav>
+                    </nav> -->
                 </div>
             </div>
         </div>

@@ -2,41 +2,37 @@ package com.windy.cafemanagement.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
-public class CreateEmployeeDto {
-    @NotBlank(message = "Đên đăng nhập không để trống")
+public class EditEmployeeDto {
+    private Long employeeId;
+
     private String username;
 
-    @NotBlank(message = "Địa chỉ không để trgốn")
     private String address;
 
-    @NotBlank(message = "Số điện thoại không để trống")
     private String phoneNumber;
 
-    @NotBlank(message = "Mật khẫu không để trống")
-    @Size(min = 3, max = 50, message = "Mật khẩu phải từ 3 đến 50 ký tự")
     private String password;
 
-    @NotBlank(message = "Họ tên không được để trống")
     private String fullname;
 
-    @NotNull(message = "Bạn chưa chon permission")
     private Long permissionId;
 
-    @NotNull(message = "Lương không được để trống")
-    @Positive(message = "Giá phải lớn hơn 0")
     private Double salary;
 
-    public CreateEmployeeDto(@NotBlank(message = "Đên đăng nhập không để trống") String username,
-            @NotBlank(message = "Địa chỉ không để trgốn") String address,
-            @NotBlank(message = "Số điện thoại không để trống") String phoneNumber,
-            @NotBlank(message = "Mật khẫu không để trống") @Size(min = 3, max = 50, message = "Mật khẩu phải từ 3 đến 50 ký tự") String password,
-            @NotBlank(message = "Họ tên không được để trống") String fullname,
-            @NotBlank(message = "Bạn chưa chon permission") Long permissionId,
-            @NotNull(message = "Lương không được để trống") Double salary) {
+    private String avatar;
+
+    public EditEmployeeDto(Long employeeId, String username,
+            String address,
+            String phoneNumber,
+            String password,
+            String fullname,
+            Long permissionId,
+            Double salary,
+            String avatar) {
+        this.employeeId = employeeId;
         this.username = username;
         this.address = address;
         this.phoneNumber = phoneNumber;
@@ -44,9 +40,18 @@ public class CreateEmployeeDto {
         this.fullname = fullname;
         this.permissionId = permissionId;
         this.salary = salary;
+        this.avatar = avatar;
     }
 
-    public CreateEmployeeDto() {
+    public EditEmployeeDto() {
+    }
+
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getUsername() {
@@ -105,10 +110,19 @@ public class CreateEmployeeDto {
         this.salary = salary;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     @Override
     public String toString() {
-        return "CreateEmployeeDto [username=" + username + ", address=" + address + ", phoneNumber=" + phoneNumber
-                + ", password=" + password + ", fullname=" + fullname + ", permissionId=" + permissionId + ", salary="
-                + salary + "]";
+        return "EditEmployeeDto [employeeId=" + employeeId + ", username=" + username + ", address=" + address
+                + ", phoneNumber=" + phoneNumber + ", password=" + password + ", fullname=" + fullname
+                + ", permissionId=" + permissionId + ", salary=" + salary + ", avatar=" + avatar + "]";
     }
+
 }

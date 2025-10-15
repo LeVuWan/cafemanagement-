@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -12,7 +13,7 @@ import com.windy.cafemanagement.Services.EmployeeService;
 import com.windy.cafemanagement.Services.PermissionService;
 import com.windy.cafemanagement.Services.UploadService;
 import com.windy.cafemanagement.dto.CreateEmployeeDto;
-import com.windy.cafemanagement.models.Employee;
+import com.windy.cafemanagement.dto.EditEmployeeDto;
 
 import jakarta.validation.Valid;
 
@@ -34,8 +35,10 @@ public class EmployeeController {
     }
 
     @GetMapping("")
-    public String getTableUserController(Model model) {
-        model.addAttribute("employeis", employeeService.getAllEmployeesService());
+    public String getTableUserController(Model model,
+            @RequestParam(value = "keyword", required = false) String keyword) {
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("employeis", employeeService.getAllEmployeesService(keyword));
         return "/admin/employee/list-employee";
     }
 
@@ -58,6 +61,31 @@ public class EmployeeController {
         }
         String imgUrl = uploadService.uploadImage(file, "avatar");
         employeeService.createNewAEmployee(createEmployeeDto, imgUrl);
+        return "redirect:/admin/employee";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String getEditFormController(Model model, @PathVariable("id") Long id) {
+        model.addAttribute("employee", employeeService.getEmployeeById(id));
+        model.addAttribute("permissions", permissionService.getAllPermissionsService());
+        return "/admin/employee/edit-employee";
+    }
+
+    @PostMapping("/edit")
+    public String editEmployeeController(@ModelAttribute("employee") EditEmployeeDto editEmployeeDto,
+            @RequestParam("file") MultipartFile file,
+            Model model) {
+        if (file != null) {
+            editEmployeeDto.setAvatar(uploadService.uploadImage(file, "avatar"));
+        }
+
+        employeeService.editEmployee(editEmployeeDto);
+        return "redirect:/admin/employee";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteEmployeeController(@PathVariable("id") Long id) {
+        employeeService.deleteEmployeeService(id);
         return "redirect:/admin/employee";
     }
 

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Thêm mới voucher</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container-fluid">
+            <h1 class="h3 mb-2 text-gray-800">Quản lý voucher</h1>
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Thêm mới voucher</h6>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/voucher/create" method="post" class="needs-validation" th:object="${voucher}">
+                        <div class="form-group">
+                            <label>Tên khuyến mãi</label>
+                            <input type="text" class="form-control" th:field="*{voucherName}">
+                            <span th:if="${#fields.hasErrors('voucherName')}" th:errors="*{voucherName}"
+                                class="text-danger small"></span>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="startDate">Ngày bắt đầu</label>
+                                <input type="date" class="form-control" id="startDate" th:field="*{startDate}">
+                                <span th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"
+                                    class="text-danger small"></span>
+                                <span th:if="${errorDate}" th:text="${errorDate}" class="text-danger small"></span>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="endDate">Ngày kết thúc</label>
+                                <input type="date" class="form-control" id="endDate" th:field="*{endDate}">
+                                <span th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"
+                                    class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="formGroupExampleInput2">% giảm giá</label>
+                            <input type="number" class="form-control" th:field="*{discountValue}">
+                            <span th:if="${#fields.hasErrors('discountValue')}" th:errors="*{discountValue}"
+                                class="text-danger small"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                        <a th:href="@{/admin/voucher}" class="btn btn-success ml-2">Trở về</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Quản lý marketing</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Quản lý voucher</h1>
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Danh sách voucher</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap p-0 mb-2 flex-rev">
+                        <div class=" mb-2 mb-md-0 text-center text-md-left p-0">
+                            <a th:href="@{/admin/voucher/create}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus mr-1"></i>
+                                Thêm mới
+                            </a>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm align-middle" id="dataTable" width="100%"
+                            cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Tên khuyến mãi</th>
+                                    <th>Ngày bắt đầu</th>
+                                    <th>Ngày kết thúc</th>
+                                    <th>% giảm giá</th>
+                                    <th class="text-center" style="width: 150px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="voucher : ${vouchers}">
+                                    <td th:text="${voucher.voucherName}"></td>
+                                    <td th:text="${voucher.startDate}"></td>
+                                    <td th:text="${voucher.endDate}"></td>
+                                    <td th:text="${voucher.discountValue}"></td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-1">
+                                            <a th:href="@{/admin/voucher/edit/{id}(id=${voucher.voucherId})}"
+                                                class="btn btn-success btn-sm mr-2">Cập nhật</a>
+
+                                            <!-- Nút mở modal -->
+                                            <button class="btn btn-danger btn-sm" data-toggle="modal"
+                                                th:data-target="'#modalDelete_' + ${voucher.voucherId}">Xóa</button>
+
+                                            <!-- Modal xác nhận xóa -->
+                                            <div class="modal fade" th:id="'modalDelete_' + ${voucher.voucherId}"
+                                                tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel_"
+                                                th:aria-labelledby="'modalDeleteLabel_' + ${voucher.voucherId}"
+                                                aria-hidden="true">
+
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"
+                                                                th:id="'modalDeleteLabel_' + ${voucher.voucherId}">
+                                                                Xác nhận xóa voucher
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+
+                                                        <div class="modal-body">
+                                                            Bạn có chắc chắn muốn xóa voucher có ID:
+                                                            <span th:text="${voucher.voucherId}"></span> không?
+                                                        </div>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Hủy</button>
+                                                            <a th:href="@{/admin/voucher/delete/{id}(id=${voucher.voucherId})}"
+                                                                class="btn btn-danger">Xóa</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <!-- <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav> -->
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

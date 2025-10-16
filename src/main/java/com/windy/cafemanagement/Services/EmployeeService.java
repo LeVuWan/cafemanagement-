@@ -2,22 +2,25 @@ package com.windy.cafemanagement.Services;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.windy.cafemanagement.dto.CreateEmployeeDto;
 import com.windy.cafemanagement.dto.EditEmployeeDto;
 import com.windy.cafemanagement.models.Employee;
-import com.windy.cafemanagement.models.Permission;
 import com.windy.cafemanagement.repositories.EmployeeRepository;
 
 @Service
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final PermissionService permissionService;
+    private final PasswordEncoder passwordEncoder;
 
-    public EmployeeService(EmployeeRepository employeeService, PermissionService permissionService) {
+    public EmployeeService(EmployeeRepository employeeService, PermissionService permissionService,
+            PasswordEncoder passwordEncoder) {
         this.employeeRepository = employeeService;
         this.permissionService = permissionService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Employee> getAllEmployeesService(String keyword) {
@@ -31,7 +34,12 @@ public class EmployeeService {
     public void createNewAEmployee(CreateEmployeeDto createEmployeeDto, String imgUrl) {
         Employee newEmployee = createEmployeeDtoToEmpolyee(createEmployeeDto);
         newEmployee.setAvatar(imgUrl);
+        newEmployee.setPassword(passwordEncoder.encode(createEmployeeDto.getPassword()));
         employeeRepository.save(newEmployee);
+    }
+
+    public Employee findEmployeeByUsername(String username) {
+        return employeeRepository.findByUsername(username);
     }
 
     public void editEmployee(EditEmployeeDto editEmployeeDto) {

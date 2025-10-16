@@ -25,10 +25,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "(LOWER(e.username) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(e.fullname) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(e.phoneNumber) LIKE LOWER(CONCAT('%', :keyword, '%')))")
-    List<Employee> searchByKeyword(@Param("keyword") String keyword);
+    public List<Employee> searchByKeyword(@Param("keyword") String keyword);
 
     @Modifying
     @Transactional
     @Query("UPDATE Employee e SET e.isDeleted = true WHERE e.employeeId = :id")
-    void softDeleteById(@Param("id") Long id);
+    public void softDeleteById(@Param("id") Long id);
+
+    public Employee findByUsername(String username);
 }

@@ -11,4 +11,5 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
     List<Permission> findAllByIsDeleted(Boolean isDeleted);
 
     Permission findByPermissionId(Long permissionId);
+
 }

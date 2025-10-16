@@ -18,8 +18,10 @@
                     <h6 class="m-0 font-weight-bold text-primary">Danh sách bàn</h6>
                 </div>
                 <div class="card-body">
-                    <div class="row parent-grid" th:each=" : ${}">
-                        <div class="div1 col-6 col-md-3 order-1">1</div>
+                    <div class="row">
+                        <div th:each="table, stats : ${tables}" class="col-6 col-sm-4 col-md-3 col-lg-2">
+                            <a th:text="${table.tableName}" class="btn btn-success w-100 mb-2"></a>
+                        </div>
                     </div>
                 </div>
             </div>

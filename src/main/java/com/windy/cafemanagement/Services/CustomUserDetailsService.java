@@ -23,11 +23,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         Employee employee = this.employeeService.findEmployeeByUsername(username);
 
         if (employee == null) {
-            throw new UsernameNotFoundException("User not found");
+            System.out.println("Không tìm thấy user");
+            throw new UnsupportedOperationException("Unimplemented method 'loadUserByUsername'");
         }
 
         return new User(employee.getUsername(), employee.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + employee.getPermission().getName())));
     }
 
 }

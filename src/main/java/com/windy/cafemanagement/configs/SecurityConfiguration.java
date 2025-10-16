@@ -9,9 +9,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 import com.windy.cafemanagement.Services.CustomUserDetailsService;
 import com.windy.cafemanagement.Services.EmployeeService;
+
+import jakarta.servlet.DispatcherType;
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
@@ -25,6 +28,24 @@ public class SecurityConfiguration {
     @Bean
     public UserDetailsService userDetailsService(EmployeeService employeeService) {
         return new CustomUserDetailsService(employeeService);
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+                        .requestMatchers("/", "/login**", "/assets/**", "/error").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/admin", true)
+                        .failureUrl("/login?error")
+                        .permitAll());
+
+        return http.build();
     }
 
     @Bean

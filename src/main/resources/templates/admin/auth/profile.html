@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Chỉnh sửa profile</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Trang cá nhân</h1>
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card px-4 shadow-sm">
+                    <div class="row g-0 align-items-center">
+                        <!-- Avatar -->
+                        <div class="col-auto p-3">
+                            <img th:src="@{${employee.avatar}}" class="img-fluid rounded-circle" alt="Ảnh đại diện"
+                                style="width:110px; height:110px; object-fit:cover;">
+                        </div>
+
+                        <!-- Thông tin -->
+                        <div class="col">
+                            <div class="card-body">
+
+                                <ul class="list-unstyled mb-0">
+                                    <li><strong>Họ tên:</strong> <span th:text="${employee.fullname}">
+                                        </span></li>
+                                    <li><strong>Tài khoản:</strong> <span th:text="${employee.username}"></span>
+                                    </li>
+                                    <li><strong>Địa chỉ:</strong> <span th:text="${employee.address}"></span></li>
+                                    <li><strong>Điện thoại:</strong>
+                                        <span th:text="${employee.phoneNumber}"></span>
+                                    </li>
+
+                                    <li><strong>Quyền hạn:</strong>
+                                        <span th:text="${employee.permission.name}">
+                                        </span>
+                                    </li>
+                                    <hr>
+                                    <div class="d-flex justify-content-between align-items-start">
+
+                                        <div class="text-end">
+                                            <div class="mt-2">
+                                                <a th:href="@{/update-profile/{id}(id=${employee.employeeId})}"
+                                                    class="btn btn-sm btn-primary">Sửa</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

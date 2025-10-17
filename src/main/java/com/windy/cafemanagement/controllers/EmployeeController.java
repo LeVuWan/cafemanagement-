@@ -14,6 +14,7 @@ import com.windy.cafemanagement.Services.PermissionService;
 import com.windy.cafemanagement.Services.UploadService;
 import com.windy.cafemanagement.dto.CreateEmployeeDto;
 import com.windy.cafemanagement.dto.EditEmployeeDto;
+import com.windy.cafemanagement.models.Employee;
 
 import jakarta.validation.Valid;
 
@@ -60,6 +61,9 @@ public class EmployeeController {
             return "/admin/employee/create-employee";
         }
         String imgUrl = uploadService.uploadImage(file, "avatar");
+        if (imgUrl == null) {
+            imgUrl = "/assets/img/avatar/default.jpg";
+        }
         employeeService.createNewAEmployee(createEmployeeDto, imgUrl);
         return "redirect:/admin/employee";
     }
@@ -73,12 +77,8 @@ public class EmployeeController {
 
     @PostMapping("/edit")
     public String editEmployeeController(@ModelAttribute("employee") EditEmployeeDto editEmployeeDto,
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "file", required = false) MultipartFile file,
             Model model) {
-        if (file != null) {
-            editEmployeeDto.setAvatar(uploadService.uploadImage(file, "avatar"));
-        }
-
         employeeService.editEmployee(editEmployeeDto);
         return "redirect:/admin/employee";
     }

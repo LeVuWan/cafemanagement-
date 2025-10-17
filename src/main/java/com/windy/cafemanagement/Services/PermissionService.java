@@ -21,6 +21,7 @@ public class PermissionService {
     }
 
     public Permission findByPermissionById(Long id) {
-        return permissionRepository.findByPermissionId(id);
+        return permissionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy quyền với ID: " + id));
     }
 }

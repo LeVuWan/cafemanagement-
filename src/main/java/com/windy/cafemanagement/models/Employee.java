@@ -35,7 +35,7 @@ public class Employee {
 
     private Boolean isDeleted;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "permissionid")
     private Permission permission;
 
@@ -134,6 +134,13 @@ public class Employee {
 
     public void setFullname(String fullname) {
         this.fullname = fullname;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee [employeeId=" + employeeId + ", username=" + username + ", fullname=" + fullname + ", address="
+                + address + ", phoneNumber=" + phoneNumber + ", password=" + password + ", salary=" + salary
+                + ", avatar=" + avatar + ", isDeleted=" + isDeleted + ", permission=" + permission + "]";
     }
 
 }

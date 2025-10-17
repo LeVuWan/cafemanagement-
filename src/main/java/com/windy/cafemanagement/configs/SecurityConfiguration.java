@@ -33,16 +33,17 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .requestMatchers("/", "/login**", "/assets/**", "/error").permitAll()
+                        .requestMatchers("/login**", "/assets/**", "/error").permitAll()
+                        .requestMatchers("/admin/**")
+                        .hasAnyRole("employee", "bartender", "cashier", "manager")
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/admin", true)
-                        .failureUrl("/login?error")
+                        .failureUrl("/login?error=true")
                         .permitAll());
 
         return http.build();

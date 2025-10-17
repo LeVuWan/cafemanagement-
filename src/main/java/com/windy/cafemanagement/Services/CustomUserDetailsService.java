@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.windy.cafemanagement.models.CustomUserDetails;
 import com.windy.cafemanagement.models.Employee;
 
 @Service
@@ -27,8 +28,9 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UnsupportedOperationException("Unimplemented method 'loadUserByUsername'");
         }
 
-        return new User(employee.getUsername(), employee.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + employee.getPermission().getName())));
+        return new CustomUserDetails(employee.getUsername(), employee.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + employee.getPermission().getName())),
+                employee.getAvatar());
     }
 
 }

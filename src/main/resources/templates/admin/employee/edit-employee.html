@@ -85,18 +85,6 @@
                                 class="text-danger small"></span>
                         </div>
 
-                        <!-- Ảnh đại diện -->
-                        <div class="form-group">
-                            <label>Avatar:</label>
-                            <input type="file" class="form-control-file" id="imageFile" name="file" accept="image/*">
-                        </div>
-
-                        <!-- Xem trước ảnh -->
-                        <div class="mb-3">
-                            <img th:if="*{avatar != null}" th:src="@{${employee.avatar}}"
-                                style="max-width: 250px; display: block;" alt="Ảnh hiện tại" id="imagePriview">
-                        </div>
-
                         <!-- Nút thao tác -->
                         <button type="submit" class="btn btn-secondary mr-2">Lưu</button>
                         <a th:href="@{/admin/employee}" class="btn btn-secondary">Trở về</a>

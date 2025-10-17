@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Chỉnh sửa profile</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container-fluid">
+            <h1 class="h3 mb-2 text-gray-800">Chỉnh sửa thông tin cá nhân</h1>
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <form th:action="@{/update-profile}" method="post" class="needs-validation" th:object="${employee}"
+                        enctype="multipart/form-data">
+                        <input type="text" class="form-control w-75" name="employeeId" th:field="*{employeeId}" readonly
+                            style="display: none;">
+                        <div class="form-group">
+                            <label>Tên đăng nhập</label>
+                            <input type="text" class="form-control" th:field="*{username}">
+                            <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                                class="text-danger small"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Họ và tên</label>
+                            <input type="text" class="form-control" th:field="*{fullname}">
+                            <span th:if="${#fields.hasErrors('fullname')}" th:errors="*{fullname}"
+                                class="text-danger small"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Địa chỉ</label>
+                            <input type="text" class="form-control" th:field="*{address}">
+                            <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
+                                class="text-danger small"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Số điện thoại</label>
+                            <input type="text" class="form-control" th:field="*{phoneNumber}">
+                            <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
+                                class="text-danger small"></span>
+                        </div>
+                        <!-- Ảnh đại diện -->
+                        <div class="form-group">
+                            <label>Avatar:</label>
+                            <input type="file" class="form-control-file" id="imageFile" name="file" accept="image/*">
+                        </div>
+
+                        <!-- Xem trước ảnh -->
+                        <div class="mb-3">
+                            <img style="max-width: 250px; display: none;" class="img-thumbnail" alt="Ảnh xem trước"
+                                id="imagePriview">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                        <a th:href="@{/admin/voucher}" class="btn btn-success ml-2">Trở về</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

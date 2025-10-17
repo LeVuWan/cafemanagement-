@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.windy.cafemanagement.dto.CreateEmployeeDto;
 import com.windy.cafemanagement.dto.EditEmployeeDto;
+import com.windy.cafemanagement.dto.UpdateProfileDto;
 import com.windy.cafemanagement.models.Employee;
 import com.windy.cafemanagement.repositories.EmployeeRepository;
 
@@ -15,12 +17,14 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final PermissionService permissionService;
     private final PasswordEncoder passwordEncoder;
+    private final UploadService uploadService;
 
     public EmployeeService(EmployeeRepository employeeService, PermissionService permissionService,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder, UploadService uploadService) {
         this.employeeRepository = employeeService;
         this.permissionService = permissionService;
         this.passwordEncoder = passwordEncoder;
+        this.uploadService = uploadService;
     }
 
     public List<Employee> getAllEmployeesService(String keyword) {
@@ -42,6 +46,10 @@ public class EmployeeService {
         return employeeRepository.findByUsername(username);
     }
 
+    public void saveEmployeeService(Employee employee) {
+        employeeRepository.save(employee);
+    }
+
     public void editEmployee(EditEmployeeDto editEmployeeDto) {
         Employee existingEmployee = employeeRepository.findById(editEmployeeDto.getEmployeeId())
                 .orElseThrow(() -> new RuntimeException(
@@ -58,11 +66,14 @@ public class EmployeeService {
         if (isNotBlank(editEmployeeDto.getFullname()))
             existingEmployee.setFullname(editEmployeeDto.getFullname());
         if (editEmployeeDto.getPermissionId() != null)
-            existingEmployee.setPermission(permissionService.findByPermissionById(editEmployeeDto.getEmployeeId()));
+            existingEmployee.setPermission(permissionService.findByPermissionById(editEmployeeDto.getPermissionId()));
         if (editEmployeeDto.getSalary() != null)
             existingEmployee.setSalary(editEmployeeDto.getSalary());
         if (isNotBlank(editEmployeeDto.getAvatar()))
             existingEmployee.setAvatar(editEmployeeDto.getAvatar());
+        if (isNotBlank(editEmployeeDto.getPassword())) {
+            existingEmployee.setPassword(passwordEncoder.encode(editEmployeeDto.getPassword()));
+        }
 
         employeeRepository.save(existingEmployee);
     }
@@ -86,6 +97,36 @@ public class EmployeeService {
         employee.setIsDeleted(false);
         employee.setPermission(permissionService.findByPermissionById(createEmployeeDto.getPermissionId()));
         return employee;
+    }
+
+    public Employee updateProfileService(UpdateProfileDto updateProfileDto, MultipartFile file) {
+        Employee existingEmployee = employeeRepository.findById(updateProfileDto.getEmployeeId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Không tìm thấy nhân viên với ID: " + updateProfileDto.getEmployeeId()));
+
+        String avatarUrl = null;
+        if (file != null && !file.isEmpty()) {
+            avatarUrl = uploadService.uploadImage(file, "avatar");
+        }
+
+        if (isNotBlank(updateProfileDto.getUsername())) {
+            existingEmployee.setUsername(updateProfileDto.getUsername());
+        }
+        if (isNotBlank(updateProfileDto.getFullname())) {
+            existingEmployee.setFullname(updateProfileDto.getFullname());
+        }
+        if (isNotBlank(updateProfileDto.getAddress())) {
+            existingEmployee.setAddress(updateProfileDto.getAddress());
+        }
+        if (isNotBlank(updateProfileDto.getPhoneNumber())) {
+            existingEmployee.setPhoneNumber(updateProfileDto.getPhoneNumber());
+        }
+        if (isNotBlank(avatarUrl)) {
+            existingEmployee.setAvatar(avatarUrl);
+        }
+
+        employeeRepository.save(existingEmployee);
+        return existingEmployee;
     }
 
     public EditEmployeeDto employeeToCreateEmployeeDto(Employee employee) {

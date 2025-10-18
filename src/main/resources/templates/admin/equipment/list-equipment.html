@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Quản lý nhân viên</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Quản lý thiết bị</h1>
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Danh sách thiết bị</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap p-0 mb-2">
+
+                        <div class="mb-2 mb-md-0 text-center text-md-left p-0">
+                            <a th:href="@{/admin/equipment/create}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus mr-1"></i>
+                                Thêm mới
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm align-middle" id="dataTable" width="100%"
+                            cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Tên thiết bị</th>
+                                    <th>Ngày mua</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Tổng giá</th>
+
+                                    <th class="text-center" style="width: 150px;">
+                                        Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="equipment : ${equipments}">
+                                    <td th:text="${equipment.equipmentName}"></td>
+                                    <td th:text="${equipment.purchaseDate}"></td>
+                                    <td th:text="${equipment.quantity}"></td>
+                                    <td th:text="${equipment.unitPrice}"></td>
+                                    <td th:text="${equipment.unitPrice * equipment.quantity}"></td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-1">
+
+                                            <a th:href="@{/admin/equipment/edit/{id}(id=${equipment.equipmentId})}"
+                                                href="#" class="btn btn-success btn-sm mr-2">Cập nhật</a>
+
+                                            <button class="btn btn-danger btn-sm" data-toggle="modal"
+                                                th:data-target="'#modalDelete_' + ${equipment.equipmentId}">Xóa</button>
+
+                                            <div class="modal fade" th:id="'modalDelete_' + ${equipment.equipmentId}"
+                                                tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel_"
+                                                th:aria-labelledby="'modalDeleteLabel_' + ${equipment.equipmentId}"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"
+                                                                th:id="'modalDeleteLabel_' + ${equipment.equipmentId}">
+                                                                Xác
+                                                                nhận Xóa nhân viên</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Bạn có chắc chắn muốn xóa nhân viên có ID: <span
+                                                                th:text="${equipment.equipmentId}"></span> không?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Hủy</button>
+
+                                                            <a th:href="@{/admin/equipment/delete/{id}(id=${equipment.equipmentId})}"
+                                                                class="btn btn-danger">Xóa</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

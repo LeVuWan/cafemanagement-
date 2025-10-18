@@ -1,34 +1,33 @@
-package com.windy.cafemanagement.models;
+package com.windy.cafemanagement.dto;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-@Entity
-public class Equipment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class EquipmentDto {
     private Long equipmentId;
+    @NotBlank(message = "Tên thiết bị không được trống")
     private String equipmentName;
+    @NotNull(message = "Số lượng không được để trống")
     private Integer quantity;
+    @NotNull(message = "Ngày mua không được trống")
     private LocalDate purchaseDate;
+    @NotNull(message = "Đơn giá không được trống")
     private Double unitPrice;
-    private Boolean isDeleted = false;
 
-    public Equipment() {
-    }
-
-    public Equipment(Long equipmentId, String equipmentName, Integer quantity, LocalDate purchaseDate,
-            Double unitPrice, Boolean isDeleted) {
+    public EquipmentDto(Long equipmentId, @NotBlank(message = "Tên thiết bị không được trống") String equipmentName,
+            @NotNull(message = "Số lượng không được để trống") Integer quantity, String note,
+            @NotNull(message = "Ngày mua không được trống") LocalDate purchaseDate,
+            @NotNull(message = "Đơn giá không được trống") Double unitPrice) {
         this.equipmentId = equipmentId;
         this.equipmentName = equipmentName;
         this.quantity = quantity;
         this.purchaseDate = purchaseDate;
         this.unitPrice = unitPrice;
-        this.isDeleted = isDeleted;
+    }
+
+    public EquipmentDto() {
     }
 
     public Long getEquipmentId() {
@@ -69,14 +68,6 @@ public class Equipment {
 
     public void setUnitPrice(Double unitPrice) {
         this.unitPrice = unitPrice;
-    }
-
-    public Boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
     }
 
 }

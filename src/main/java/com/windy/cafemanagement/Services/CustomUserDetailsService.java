@@ -28,8 +28,11 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UnsupportedOperationException("Unimplemented method 'loadUserByUsername'");
         }
 
-        return new CustomUserDetails(employee.getUsername(), employee.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + employee.getPermission().getName())),
+        return new CustomUserDetails(
+                employee.getUsername(),
+                employee.getPassword(),
+                Collections.singletonList(
+                        new SimpleGrantedAuthority("ROLE_" + employee.getPermission().getName().toUpperCase())),
                 employee.getAvatar());
     }
 

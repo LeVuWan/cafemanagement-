@@ -37,7 +37,7 @@ public class SecurityConfiguration {
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers("/login**", "/assets/**", "/error").permitAll()
                         .requestMatchers("/admin/**")
-                        .hasAnyRole("employee", "bartender", "cashier", "manager")
+                        .hasAnyRole("EMPLOYEE", "BARTENDER", "CASHER", "MANAGER")
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")

@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -32,9 +33,6 @@ public class EquipmentController {
 
     @GetMapping("create")
     public String getFormCreateEquipment(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("==> Current User: " + authentication.getName());
-        System.out.println("==> Roles: " + authentication.getAuthorities());
         model.addAttribute("equipment", new EquipmentDto());
         return "admin/equipment/create-equipment";
     }
@@ -43,10 +41,34 @@ public class EquipmentController {
     public String createEquipment(@Valid @ModelAttribute("equipment") EquipmentDto equipmentDto, BindingResult result,
             Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("club", equipmentDto);
+            model.addAttribute("equipment", equipmentDto);
             return "admin/equipment/create-equipment";
         }
         equipmentService.createEquipmentWithImportOrder(equipmentDto);
+        return "redirect:/admin/equipment";
+    }
+
+    @GetMapping("edit/{id}")
+    public String getFormEditEquipment(@PathVariable("id") Long equipmentId, Model model) {
+        model.addAttribute("equipment", equipmentService.getEquipmentById(equipmentId));
+        return "admin/equipment/edit-equipment";
+    }
+
+    @PostMapping("/edit")
+    public String EditEquipment(@Valid @ModelAttribute("equipment") EquipmentDto equipmentDto, BindingResult result,
+            Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("equipment", equipmentDto);
+            return "admin/equipment/edit-equipment";
+        }
+
+        equipmentService.updateEquipmentWithImportOrder(equipmentDto);
+        return "redirect:/admin/equipment";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteEquipment(@PathVariable("id") Long equipmentId, Model model) {
+        equipmentService.softDeleteEquipment(equipmentId);
         return "redirect:/admin/equipment";
     }
 }

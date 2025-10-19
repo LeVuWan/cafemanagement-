@@ -1,6 +1,8 @@
 package com.windy.cafemanagement.models;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -8,16 +10,18 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class Product {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
     private String productName;
     private Integer quantity;
     private Double unitPrice;
-
+    private Boolean isDeleted = false;
     @ManyToOne
     @JoinColumn(name = "unitId")
     private Unit unit;
 
-    public Product(Long productId, String productName, Integer quantity, Double unitPrice, Unit unit) {
+    public Product(Long productId, String productName, Integer quantity, Double unitPrice, Unit unit,
+            Boolean isDeleted) {
         this.productId = productId;
         this.productName = productName;
         this.quantity = quantity;
@@ -66,6 +70,14 @@ public class Product {
 
     public void setUnit(Unit unit) {
         this.unit = unit;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
 }

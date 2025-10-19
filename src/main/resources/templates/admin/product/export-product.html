@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Thêm mới thiết bị</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container-fluid">
+            <h1 class="h3 mb-2 text-gray-800">Quản lý kho hàng</h1>
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Xuất hàng hóa</h6>
+                </div>
+                <div class="card-body">
+
+                    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+
+                    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+                        <span th:text="${successMessage}"></span>
+                    </div>
+
+                    <form action="/admin/product/export" method="post" class="needs-validation"
+                        th:object="${exportProduct}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                        <div class="form-group col-md-6">
+                            <label>Hàng hóa</label>
+                            <select class="form-control" th:field="*{productId}" required>
+                                <option value="">Chọn hàng hóa</option>
+                                <option th:each="product : ${products}" th:value="${product.productId}"
+                                    th:text="${product.productName}">
+                                </option>
+                            </select>
+                            <span th:if="${#fields.hasErrors('productId')}" th:errors="*{productId}"
+                                class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="startDate">Ngày mua</label>
+                            <input type="date" class="form-control" th:field="*{exportDate}">
+                            <span th:if="${#fields.hasErrors('exportDate')}" th:errors="*{exportDate}"
+                                class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label>Số lượng</label>
+                            <input type="number" class="form-control" th:field="*{quantity}">
+                            <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"
+                                class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                        <a th:href="@{/admin/equipment}" class="btn btn-success ml-2">Trở về</a>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

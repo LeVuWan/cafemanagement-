@@ -8,12 +8,12 @@ public class ExportProductDto {
     @NotNull(message = "Chưa chọn hàng hóa")
     private Long productId;
     @NotNull(message = "Số lượng không được để trống")
-    private Integer quantity;
+    private Double quantity;
     @NotNull(message = "Ngày mua không được trống")
     private LocalDate exportDate;
 
     public ExportProductDto(@NotNull(message = "Chưa chọn hàng hóa") Long productId,
-            @NotNull(message = "Số lượng không được để trống") Integer quantity,
+            @NotNull(message = "Số lượng không được để trống") Double quantity,
             @NotNull(message = "Ngày mua không được trống") LocalDate exportDate) {
         this.productId = productId;
         this.quantity = quantity;
@@ -31,11 +31,11 @@ public class ExportProductDto {
         this.productId = productId;
     }
 
-    public Integer getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
 

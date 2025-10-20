@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Quản lý nhân viên</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Quản lý Hàng hóa</h1>
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Danh sách hàng hóa</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+
+                        <div>
+                            <a th:href="@{/admin/product/import}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus mr-1"></i>
+                                Nhập hàng mới
+                            </a>
+                        </div>
+
+                        <div>
+                            <a th:href="@{ /admin/product/history-import-export}"
+                                class="btn btn-primary btn-sm rounded-sm">
+                                Lịch sử nhập hàng
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm align-middle" id="dataTable" width="100%">
+                            <thead>
+                                <tr class="d-flex">
+                                    <th class="col-3">Tên hàng hóa</th>
+                                    <th class="col-2">Số lượng hiện tại</th>
+                                    <th class="col-2">Đơn giá</th>
+                                    <th class="col-2">Đơn vị</th>
+                                    <th class="col-3 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="d-flex" th:each="product : ${products}">
+                                    <td class="col-3" th:text="${product.productName}"></td>
+                                    <td class="col-2" th:text="${product.quantity}"></td>
+                                    <td class="col-2" th:text="${product.unitPrice}"></td>
+                                    <td class="col-2" th:text="${product.unit.unitName}"></td>
+                                    <td class="col-3 text-center">
+                                        <div class="d-flex justify-content-center flex-wrap gap-1">
+                                            <a th:href="@{/admin/product/edit/{id}(id=${product.productId})}"
+                                                class="btn btn-success btn-sm mb-1 mr-2">Cập nhật</a>
+                                            <!-- Xuất hàng -->
+                                            <a th:href="@{/admin/product/export/{id}(id=${product.productId})}"
+                                                class="btn btn-info btn-sm mb-1 mr-2">Xuất hàng</a>
+                                            <!-- Nhập hàng -->
+                                            <a th:href="@{/admin/product/import-product-exist/{id}(id=${product.productId})}"
+                                                class="btn btn-warning btn-sm mb-1 mr-2">Nhập hàng</a>
+                                            <!-- Nút Xóa -->
+                                            <button type="button" class="btn btn-danger btn-sm mb-1 mr-2"
+                                                th:data-toggle="'modal'"
+                                                th:data-target="'#modalDelete_' + ${product.productId}">
+                                                Xóa
+                                            </button>
+
+                                            <!-- Modal Xóa -->
+                                            <div class="modal fade" th:id="'modalDelete_' + ${product.productId}"
+                                                tabindex="-1" role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Xác nhận xóa sản phẩm</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Đóng">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Bạn có chắc muốn xóa sản phẩm có ID:
+                                                            <span th:text="${product.productId}"></span> không?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Hủy</button>
+                                                            <a th:href="@{/admin/product/delete/{id}(id=${product.productId})}"
+                                                                class="btn btn-danger">Xóa</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

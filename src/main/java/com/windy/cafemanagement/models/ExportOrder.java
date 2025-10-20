@@ -26,18 +26,20 @@ public class ExportOrder {
     private Double totalExportAmount;
     private LocalDate exportDate;
     private Integer quantity;
+    private Boolean isDeleted;
 
     public ExportOrder() {
     }
 
     public ExportOrder(Long exportOrderId, Employee employee, Product product, Double totalExportAmount,
-            LocalDate exportDate, Integer quantity) {
+            LocalDate exportDate, Integer quantity, Boolean isDeleted) {
         this.exportOrderId = exportOrderId;
         this.employee = employee;
         this.product = product;
         this.totalExportAmount = totalExportAmount;
         this.exportDate = exportDate;
         this.quantity = quantity;
+        this.isDeleted = isDeleted;
     }
 
     public Long getExportOrderId() {
@@ -86,6 +88,14 @@ public class ExportOrder {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
 }

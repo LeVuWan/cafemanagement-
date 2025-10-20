@@ -13,14 +13,14 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
     private String productName;
-    private Integer quantity;
+    private Double quantity;
     private Double unitPrice;
     private Boolean isDeleted = false;
     @ManyToOne
     @JoinColumn(name = "unitId")
     private Unit unit;
 
-    public Product(Long productId, String productName, Integer quantity, Double unitPrice, Unit unit,
+    public Product(Long productId, String productName, Double quantity, Double unitPrice, Unit unit,
             Boolean isDeleted) {
         this.productId = productId;
         this.productName = productName;
@@ -48,11 +48,11 @@ public class Product {
         this.productName = productName;
     }
 
-    public Integer getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
 
@@ -78,6 +78,12 @@ public class Product {
 
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    @Override
+    public String toString() {
+        return "Product [productId=" + productId + ", productName=" + productName + ", quantity=" + quantity
+                + ", unitPrice=" + unitPrice + ", isDeleted=" + isDeleted + ", unit=" + unit + "]";
     }
 
 }

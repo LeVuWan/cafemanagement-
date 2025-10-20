@@ -29,13 +29,14 @@ public class ImportOrder {
 
     private LocalDate importDate;
     private Double totalAmount;
-    private Integer quantity;
+    private Double quantity;
+    private Boolean isDeleted;
 
     public ImportOrder() {
     }
 
     public ImportOrder(Long importOrderId, Employee employee, Product product, Equipment equipment,
-            LocalDate importDate, Double totalAmount, Integer quantity) {
+            LocalDate importDate, Double totalAmount, Double quantity, Boolean isDeleted) {
         this.importOrderId = importOrderId;
         this.employee = employee;
         this.product = product;
@@ -43,6 +44,7 @@ public class ImportOrder {
         this.importDate = importDate;
         this.totalAmount = totalAmount;
         this.quantity = quantity;
+        this.isDeleted = isDeleted;
     }
 
     public Long getImportOrderId() {
@@ -93,12 +95,20 @@ public class ImportOrder {
         this.totalAmount = totalAmount;
     }
 
-    public Integer getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
 }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Quản lý nhân viên</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container-fluid">
+            <h1 class="h3 mb-2 text-gray-800">Quản lý kho hàng</h1>
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Chỉnh sửa hàng hóa</h6>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/product/edit" method="post" class="needs-validation" th:object="${product}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                        <input type="hidden" name="productId" th:field="*{productId}">
+
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="productName">Tên hàng hóa</label>
+                                <input type="text" class="form-control" id="productName" name="productName"
+                                    th:field="*{productName}">
+                                <span th:if="${#fields.hasErrors('productName')}" th:errors="*{productName}"
+                                    class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="unitPrice">Đơn giá</label>
+                                <input type="number" class="form-control" id="unitPrice" th:field="*{unitPrice}"
+                                    name="unitPrice" step="0.01">
+                                <span th:if="${#fields.hasErrors('unitPrice')}" th:errors="*{unitPrice}"
+                                    class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label>Đơn vị</label>
+                                <select class="form-control" id="unitId" th:field="*{unitId}" required>
+                                    <option value="">Chọn đơn vị</option>
+                                    <option th:each="unit : ${units}" th:value="${unit.unitId}"
+                                        th:text="${unit.unitName}">
+                                    </option>
+                                </select>
+                                <span th:if="${#fields.hasErrors('unitId')}" th:errors="*{unitId}"
+                                    class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                        <a th:href="@{/admin/equipment}" class="btn btn-success ml-2">Trở về</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

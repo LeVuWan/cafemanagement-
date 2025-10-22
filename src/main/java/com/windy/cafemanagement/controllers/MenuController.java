@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +14,8 @@ import com.windy.cafemanagement.Services.MenuService;
 import com.windy.cafemanagement.Services.ProductService;
 import com.windy.cafemanagement.dto.MenuDTO;
 import com.windy.cafemanagement.models.Menu;
-
+import com.windy.cafemanagement.models.MenuDetail;
+import com.windy.cafemanagement.models.Product;
 
 @Controller
 @RequestMapping("/admin/menu")
@@ -44,5 +46,30 @@ public class MenuController {
     public String createMenuController(Model model, @RequestBody MenuDTO menuDTO) {
         menuService.createMenuService(menuDTO);
         return "/admin/menu";
+    }
+
+    @GetMapping("edit/{id}")
+    public String getEditMenuForm(Model model, @PathVariable("id") Long id) {
+        Menu menu = menuService.getMenuByIdService(id);
+        List<MenuDetail> menuDetails = menuService.getListMenuDetailByMenu(id);
+        List<Product> products = productService.getAllProduct();
+
+        model.addAttribute("menu", menu);
+        model.addAttribute("menuDetails", menuDetails);
+        model.addAttribute("products", products);
+        return "admin/menu/edit-menu";
+    }
+
+    @PostMapping("edit")
+    @ResponseBody
+    public String editMenu(Model model, @RequestBody MenuDTO menuDTO) {
+        menuService.updateMenuService(menuDTO);
+        return "/admin/menu";
+    }
+
+    @GetMapping("delete/{id}")
+    public String deleteMenu(Model model, @PathVariable("id") Long id) {
+        menuService.deleteMenuById(id);
+        return "redirect:/admin/menu";
     }
 }

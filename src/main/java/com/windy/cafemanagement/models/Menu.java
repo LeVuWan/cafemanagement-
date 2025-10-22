@@ -12,17 +12,15 @@ public class Menu {
     private Long menuId;
     private String dishName;
     private Double currentPrice;
-    private String dishType;
     private Boolean isDeleted;
 
     public Menu() {
     }
 
-    public Menu(Long menuId, String dishName, Double currentPrice, String dishType, Boolean isDeleted) {
+    public Menu(Long menuId, String dishName, Double currentPrice, Boolean isDeleted) {
         this.menuId = menuId;
         this.dishName = dishName;
         this.currentPrice = currentPrice;
-        this.dishType = dishType;
         this.isDeleted = isDeleted;
     }
 
@@ -48,14 +46,6 @@ public class Menu {
 
     public void setCurrentPrice(Double currentPrice) {
         this.currentPrice = currentPrice;
-    }
-
-    public String getDishType() {
-        return dishType;
-    }
-
-    public void setDishType(String dishType) {
-        this.dishType = dishType;
     }
 
     public Boolean getIsDeleted() {

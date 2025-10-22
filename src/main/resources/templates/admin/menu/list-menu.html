@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Quản lý nhân viên</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Quản lý thực đơn</h1>
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Danh sách thực đơn</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap p-0 mb-2 flex-rev">
+                        <div class=" mb-2 mb-md-0 text-center text-md-left p-0">
+                            <a th:href="@{/admin/menu/create}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus mr-1"></i>
+                                Thêm mới
+                            </a>
+                        </div>
+                        <div class="col-md-5 col-sm-6 mb-2 mb-md-0 p-0">
+                            <form th:action="@{/admin/menu}" method="get">
+                                <div class="input-group">
+                                    <input type="text" name="keyword" th:value="${keyword}"
+                                        class="form-control form-control-sm mr-2"
+                                        placeholder="Nhập từ khóa tìm kiếm...">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary btn-sm rounded-sm" type="submit">
+                                            <i class="fas fa-search"></i>
+                                            Tìm kiếm
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm align-middle" id="dataTable" width="100%"
+                            cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Số thứ tự</th>
+                                    <th>Tên món</th>
+                                    <th>Giá tiền</th>
+                                    <th class="text-center" style="width: 150px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="menu : ${menus}">
+                                    <td>1</td>
+                                    <td th:text="${menu.dishName}"></td>
+                                    <td th:text="${menu.currentPrice}"></td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-1">
+                                            <a th:href="@{/admin/menu/edit/{id}(id=${menu.menuId})}"
+                                                class="btn btn-success btn-sm mr-2">Cập nhật</a>
+
+                                            <!-- Nút mở modal -->
+                                            <button class="btn btn-danger btn-sm" data-toggle="modal"
+                                                th:data-target="'#modalDelete_' + ${menu.menuId}">Xóa</button>
+
+                                            <!-- Modal xác nhận xóa -->
+                                            <div class="modal fade" th:id="'modalDelete_' + ${menu.menuId}"
+                                                tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel_"
+                                                th:aria-labelledby="'modalDeleteLabel_' + ${menu.menuId}"
+                                                aria-hidden="true">
+
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"
+                                                                th:id="'modalDeleteLabel_' + ${menu.menuId}">
+                                                                Xác nhận xóa menu
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+
+                                                        <div class="modal-body">
+                                                            Bạn có chắc chắn muốn xóa menu có ID:
+                                                            <span th:text="${menu.menuId}"></span> không?
+                                                        </div>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Hủy</button>
+                                                            <a th:href="@{/admin/menu/delete/{id}(id=${menu.menuId})}"
+                                                                class="btn btn-danger">Xóa</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

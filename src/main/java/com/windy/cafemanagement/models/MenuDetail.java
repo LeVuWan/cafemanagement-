@@ -21,19 +21,24 @@ public class MenuDetail {
     @JoinColumn(name = "menuId")
     private Menu menu;
 
-    private Integer quantity;
+    private Double quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "unitId")
+    private Unit unit;
 
     private Boolean isDeleted;
 
     public MenuDetail() {
     }
 
-    public MenuDetail(Long menuDetailId, Product product, Menu menu, Integer quantity, Boolean isDeleted) {
+    public MenuDetail(Long menuDetailId, Product product, Menu menu, Double quantity, Boolean isDeleted, Unit unit) {
         this.menuDetailId = menuDetailId;
         this.product = product;
         this.menu = menu;
         this.quantity = quantity;
         this.isDeleted = isDeleted;
+        this.unit = unit;
     }
 
     public Long getMenuDetailId() {
@@ -60,11 +65,11 @@ public class MenuDetail {
         this.menu = menu;
     }
 
-    public Integer getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
 
@@ -74,6 +79,14 @@ public class MenuDetail {
 
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public void setUnit(Unit unit) {
+        this.unit = unit;
     }
 
 }

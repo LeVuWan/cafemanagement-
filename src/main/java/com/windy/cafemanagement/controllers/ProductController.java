@@ -51,7 +51,7 @@ public class ProductController {
         }
         try {
             productService.addNewProductAndImportOrder(importProductDto);
-            return "redirect:/admin?success=export";
+            return "redirect:/admin/product?success=export";
         } catch (RuntimeException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("products", importProductDto);
@@ -104,7 +104,6 @@ public class ProductController {
 
     @GetMapping("/history-import-export")
     public String showHistory(@RequestParam(required = false) String keyword, Model model) {
-        System.out.println("Check keyword " + keyword);
         List<ImportExportProduct> histories = productService.getImportExportHistory(keyword);
         model.addAttribute("histories", histories);
         model.addAttribute("keyword", keyword);

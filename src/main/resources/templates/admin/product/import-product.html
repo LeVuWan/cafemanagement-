@@ -17,7 +17,6 @@
                 <div class="card-body">
                     <form action="/admin/product/import" method="post" class="needs-validation"
                         th:object="${importProduct}">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="startDate">Tên hàng hóa</label>
@@ -62,7 +61,7 @@
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Lưu</button>
-                        <a th:href="@{/admin/equipment}" class="btn btn-success ml-2">Trở về</a>
+                        <a th:href="@{/admin/product}" class="btn btn-success ml-2">Trở về</a>
                     </form>
                 </div>
             </div>

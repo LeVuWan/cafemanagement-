@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.windy.cafemanagement.Services.MenuService;
 import com.windy.cafemanagement.Services.TableService;
+import com.windy.cafemanagement.dto.ChooseMenuDto;
 import com.windy.cafemanagement.dto.OrderTableDto;
 import com.windy.cafemanagement.models.Menu;
 import com.windy.cafemanagement.models.TableEntity;
@@ -39,7 +40,7 @@ public class TableController {
 
     @PostMapping("order")
     @ResponseBody
-    public ResponseEntity<?> handleOrderTable(Model model, @RequestBody OrderTableDto orderTableDto) {
+    public ResponseEntity<?> handleOrderTable(@RequestBody OrderTableDto orderTableDto) {
         try {
             tableService.orderTableService(orderTableDto);
             return ResponseEntity.ok(Map.of(
@@ -54,14 +55,27 @@ public class TableController {
 
     @GetMapping("get-menu")
     public ResponseEntity<?> getMenuAllMenu() {
-        System.out.println("Run here");
         try {
             List<Menu> menus = menuService.getAllMenuService("");
-            System.out.println("Check: " + menus.size());
             return ResponseEntity.ok(Map.of(
                     "status", "success",
                     "data", menus,
                     "message", "Lấy thức đơn thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", "error",
+                    "message", "Đặt bàn thất bại: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("choose-menu")
+    @ResponseBody
+    public ResponseEntity<?> chooseMenuController(@RequestBody ChooseMenuDto chooseMenuDto) {
+        try {
+            tableService.chooseMenuService(chooseMenuDto);
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "message", "Chọn thực đơn thành công"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                     "status", "error",

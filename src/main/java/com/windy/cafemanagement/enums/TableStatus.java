@@ -1,7 +1,7 @@
 package com.windy.cafemanagement.enums;
 
 public enum TableStatus {
-    RESERVED,
-    OCCUPIED,
-    AVAILABLE
+    RESERVED, // Bàn đã đặt trước
+    OCCUPIED, // Bàn đang được sử dụng
+    AVAILABLE// Bàn đang trống
 }

@@ -1,5 +1,7 @@
 package com.windy.cafemanagement.models;
 
+import com.windy.cafemanagement.enums.TableStatus;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,11 +12,11 @@ public class TableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tableId;
-    private String status;
+    private TableStatus status;
     private String tableName;
     private Boolean isDeleted = false;
 
-    public TableEntity(Long tableId, String status, String tableName, Boolean isDeleted) {
+    public TableEntity(Long tableId, TableStatus status, String tableName, Boolean isDeleted) {
         this.tableId = tableId;
         this.status = status;
         this.tableName = tableName;
@@ -32,11 +34,11 @@ public class TableEntity {
         this.tableId = tableId;
     }
 
-    public String getStatus() {
+    public TableStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TableStatus status) {
         this.status = status;
     }
 
@@ -56,4 +58,13 @@ public class TableEntity {
         this.isDeleted = isDeleted;
     }
 
+    @Override
+    public String toString() {
+        return "TableEntity{" +
+                "tableId=" + tableId +
+                ", status=" + status +
+                ", tableName='" + tableName + '\'' +
+                ", isDeleted=" + isDeleted +
+                '}';
+    }
 }

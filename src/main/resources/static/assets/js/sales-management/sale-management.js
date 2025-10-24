@@ -1,43 +1,63 @@
 document.addEventListener("DOMContentLoaded", function () {
     const tables = document.querySelectorAll(".table-item");
-    const managementFunctions = document.getElementById("management-functions");
-
-    // Lấy tất cả các nút để dễ điều khiển
-    const btnDatBan = document.getElementById("btn-dat-ban");
-    const btnChonThucDon = document.getElementById("btn-chon-thuc-don");
-    const otherButtons = [
-        "btn-xem-ban",
-        "btn-chuyen-ban",
-        "btn-tach-ban",
-        "btn-gop-ban",
-        "btn-huy-ban",
-        "btn-thanh-toan",
-        "btn-in-an"
-    ].map(id => document.getElementById(id));
-
+    const management = document.getElementById("management-functions");
     tables.forEach(table => {
         table.addEventListener("click", () => {
-            // Xóa class selected khỏi tất cả bàn
-            tables.forEach(t => t.classList.remove("selected"));
-            table.classList.add("selected");
+            tables.forEach(item => {
+                item.classList.remove('table-selected');
+            });
 
-            // Hiện phần nút
-            managementFunctions.style.display = "block";
+            table.classList.add('table-selected');
 
-            // Lấy status
-            const status = table.dataset.status;
+            const tableId = table.getAttribute("data-id");
+            const tableName = table.getAttribute("data-name");
+            const tableStatus = table.getAttribute("data-status");
 
-            if (status === "IS_EMPTY") {
-                // Ẩn tất cả các nút khác
-                otherButtons.forEach(btn => btn.style.display = "none");
-                btnChonThucDon.style.display = "none";
-                btnDatBan.style.display = "inline-block";
-            } else {
-                // Hiện tất cả các nút trừ "Chọn thực đơn"
-                btnDatBan.style.display = "none";
-                btnChonThucDon.style.display = "none"; // ẩn chọn thực đơn
-                otherButtons.forEach(btn => btn.style.display = "inline-block");
-            }
-        });
+            const selectedTable = {
+                id: tableId, name: tableName, status: tableStatus
+            };
+
+            sessionStorage.setItem("selectedTable", JSON.stringify(selectedTable));
+
+            management.style.display = "block"
+
+            toggleButtonsByStatus(selectedTable.status);
+        })
     });
+
+    const toggleButtonsByStatus = (status) => {
+        const buttons = {
+            xemBan: document.getElementById("btn-xem-ban"),
+            chuyenBan: document.getElementById("btn-chuyen-ban"),
+            tachBan: document.getElementById("btn-tach-ban"),
+            gopBan: document.getElementById("btn-gop-ban"),
+            huyBan: document.getElementById("btn-huy-ban"),
+            datBan: document.getElementById("btn-dat-ban"),
+            chonThucDon: document.getElementById("btn-choose-menu"),
+            thanhToan: document.getElementById("btn-thanh-toan"),
+            inAn: document.getElementById("btn-in-an"),
+        }
+
+        Object.values(buttons).forEach(btn => btn.style.display = "none");
+
+        switch (status) {
+            case "AVAILABLE":
+                buttons.datBan.style.display = "inline-block";
+                break;
+            case "RESERVED":
+                buttons.huyBan.style.display = "inline-block";
+                buttons.chonThucDon.style.display = "inline-block";
+                break;
+            case "OCCUPIED":
+                buttons.xemBan.style.display = "inline-block";
+                buttons.chuyenBan.style.display = "inline-block";
+                buttons.tachBan.style.display = "inline-block";
+                buttons.gopBan.style.display = "inline-block";
+                buttons.huyBan.style.display = "inline-block";
+                buttons.thanhToan.style.display = "inline-block";
+                buttons.inAn.style.display = "inline-block";
+                buttons.chonThucDon.style.display = "inline-block";
+                break;
+        }
+    }
 });

@@ -8,9 +8,12 @@
 
 <body>
     <section layout:fragment="content">
+        <div th:replace="admin/table/toast/toastOrderTable :: toast-order-table"></div>
         <div class="container-fluid">
 
             <h1 class="h3 mb-2 text-gray-800">Quản lý bán hàng</h1>
+
+
 
             <div class="card shadow mb-4 fw-bold">
                 <div class="card-header py-3">
@@ -19,16 +22,16 @@
 
                 <div class="card-body">
                     <div class="row" id="list-table">
-                        <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-3" id="table" th:each="table : ${tables}">
+                        <div class="col-6 col-md-4 col-lg-3 col-xl-2 mb-3" th:each="table : ${tables}">
                             <div class="table-item p-3 rounded shadow-sm border border-dark text-center fw-bold d-flex flex-column justify-content-center align-items-center hover-effect"
-                                th:classappend="${table.status == 'IS_EMPTY' ? 'bg-success text-white' : 'bg-warning text-dark'}"
+                                th:classappend="${table.status.name() == 'AVAILABLE' ? 'bg-success text-white' : 'bg-warning text-dark'}"
                                 th:attr="data-status=${table.status}, data-name=${table.tableName}, data-id=${table.tableId}">
-
                                 <span th:text="${table.tableName}" class="fs-5 mb-2"></span>
                                 <span class="badge bg-secondary"
-                                    th:text="${table.status == 'IS_EMPTY' ? 'Trống' : 'Đang sử dụng'}">Trống</span>
+                                    th:text="${table.status.name() == 'AVAILABLE' ? 'CÒN TRỐNG' : table.status.name() == 'RESERVED' ? 'ĐÃ ĐẶT TRƯỚC' : 'ĐANG SỮ DỤNG'}">Trống</span>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -39,14 +42,22 @@
                         <button class="btn btn-secondary m-1" id="btn-tach-ban">Tách bàn</button>
                         <button class="btn btn-secondary m-1" id="btn-gop-ban">Gộp bàn</button>
                         <button class="btn btn-secondary m-1" id="btn-huy-ban">Hủy bàn</button>
-                        <button class="btn btn-secondary m-1" id="btn-dat-ban">Đặt bàn</button>
-                        <button class="btn btn-secondary m-1" id="btn-chon-thuc-don">Chọn thực đơn</button>
+                        <button class="btn btn-secondary m-1" id="btn-dat-ban" data-toggle="modal"
+                            data-target="#orderTableModal">Đặt bàn</button>
+                        <button class="btn btn-secondary m-1" id="btn-choose-menu" data-toggle="modal">Chọn thực
+                            đơn</button>
                         <button class="btn btn-secondary m-1" id="btn-thanh-toan">Thanh toán</button>
                         <button class="btn btn-secondary m-1" id="btn-in-an">In ấn</button>
                     </div>
                 </div>
+
+
             </div>
         </div>
+
+        <!-- order table modal -->
+        <div th:replace="admin/table/modals/orderTableModal :: orderTableModal"></div>
+        <div th:replace="admin/table/modals/chooseMenuModal :: chooseMenuModal"></div>
     </section>
 </body>
 

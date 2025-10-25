@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.windy.cafemanagement.Responses.InfoMenuRes;
+import com.windy.cafemanagement.Responses.InformationTableRes;
 import com.windy.cafemanagement.configs.SecurityUtil;
 import com.windy.cafemanagement.dto.ChooseMenuDto;
 import com.windy.cafemanagement.dto.Menus;
@@ -146,5 +148,25 @@ public class TableService {
             invoice.setStatus(InvoiceStatus.UPDATED);
             invoiceRepository.save(invoice);
         }
+    }
+
+    public InformationTableRes getInformantionTableService(Long tableId) {
+        List<InvoiceStatus> unpaidStatuses = List.of(InvoiceStatus.UPDATED);
+        Invoice invoice = invoiceRepository
+                .findCurrentUnpaidInvoiceByTableId(tableId, unpaidStatuses)
+                .orElseThrow(() -> new RuntimeException(
+                        "Hóa đơn chưa thanh toán của bàn với id " + tableId + " không tồn tại."));
+
+        List<InfoMenuRes> invoiceDetails = invoiceDetailRepository
+                .findMenuAndQuantityByInvoiceId(invoice.getInvoiceId());
+
+        TableBookingDetail tableBookingDetail = bookingDetailRepository
+                .findActiveByTableIdAndInvoiceId(tableId, invoice.getInvoiceId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Không tìm thấy thông tin khách hàng"));
+
+        return new InformationTableRes(tableBookingDetail.getCustomerName(),
+                tableBookingDetail.getBookingTime().toLocalTime(), tableBookingDetail.getBookingTime().toLocalDate(),
+                invoiceDetails);
     }
 }

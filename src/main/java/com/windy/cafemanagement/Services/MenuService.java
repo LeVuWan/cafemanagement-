@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.windy.cafemanagement.Responses.InformationTableRes;
 import com.windy.cafemanagement.dto.ChooseMenuDto;
 import com.windy.cafemanagement.dto.MenuDTO;
 import com.windy.cafemanagement.dto.MenuIngredientDTO;

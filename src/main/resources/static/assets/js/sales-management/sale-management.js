@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const toggleButtonsByStatus = (status) => {
         const buttons = {
-            xemBan: document.getElementById("btn-xem-ban"),
+            xemBan: document.getElementById("btn-infor-table"),
             chuyenBan: document.getElementById("btn-chuyen-ban"),
             tachBan: document.getElementById("btn-tach-ban"),
             gopBan: document.getElementById("btn-gop-ban"),

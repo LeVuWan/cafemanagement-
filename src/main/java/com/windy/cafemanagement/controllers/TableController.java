@@ -8,11 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.windy.cafemanagement.Responses.InformationTableRes;
 import com.windy.cafemanagement.Services.MenuService;
 import com.windy.cafemanagement.Services.TableService;
 import com.windy.cafemanagement.dto.ChooseMenuDto;
@@ -80,6 +82,24 @@ public class TableController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                     "status", "error",
                     "message", "Đặt bàn thất bại: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("get-information-table/{id}")
+    public ResponseEntity<?> getInformationTable(@PathVariable("id") Long tableId) {
+        System.out.println("Check tableId " + tableId);
+        try {
+            InformationTableRes data = tableService.getInformantionTableService(tableId);
+            System.out.println("Check data: " + data.toString());
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "data", data,
+                    "message", "Lấy thức đơn thành công"));
+        } catch (Exception e) {
+            System.out.println("Check error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", "error",
+                    "message", "Xem thông tin bàn thất bại: " + e.getMessage()));
         }
     }
 }

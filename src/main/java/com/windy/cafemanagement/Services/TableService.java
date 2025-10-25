@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 
 import com.windy.cafemanagement.Responses.InfoMenuRes;
 import com.windy.cafemanagement.Responses.InformationTableRes;
+import com.windy.cafemanagement.Responses.TableInforRes;
 import com.windy.cafemanagement.configs.SecurityUtil;
 import com.windy.cafemanagement.dto.ChooseMenuDto;
 import com.windy.cafemanagement.dto.Menus;
+import com.windy.cafemanagement.dto.MoveTableDto;
 import com.windy.cafemanagement.dto.OrderTableDto;
 import com.windy.cafemanagement.enums.InvoiceStatus;
 import com.windy.cafemanagement.enums.TableStatus;
@@ -21,7 +23,6 @@ import com.windy.cafemanagement.models.Employee;
 import com.windy.cafemanagement.models.Invoice;
 import com.windy.cafemanagement.models.InvoiceDetail;
 import com.windy.cafemanagement.models.Menu;
-import com.windy.cafemanagement.models.MenuDetail;
 import com.windy.cafemanagement.models.TableBookingDetail;
 import com.windy.cafemanagement.models.TableEntity;
 import com.windy.cafemanagement.repositories.EmployeeRepository;
@@ -31,6 +32,7 @@ import com.windy.cafemanagement.repositories.MenuRepository;
 import com.windy.cafemanagement.repositories.TableBookingDetailRepository;
 import com.windy.cafemanagement.repositories.TableRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -168,5 +170,32 @@ public class TableService {
         return new InformationTableRes(tableBookingDetail.getCustomerName(),
                 tableBookingDetail.getBookingTime().toLocalTime(), tableBookingDetail.getBookingTime().toLocalDate(),
                 invoiceDetails);
+    }
+
+    public List<TableInforRes> getTableToMoveService(Long tableId) {
+        return tableRepository.findAllActiveExcept(tableId);
+    }
+
+    @Transactional
+    public void moveTableService(MoveTableDto moveTableDto) {
+        TableEntity selectedTable = tableRepository.findById(moveTableDto.getToTableId())
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy bàn muốn chuyển đến"));
+
+        TableEntity fromTable = tableRepository.findById(moveTableDto.getFromTableId())
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy bàn hiện tại"));
+
+        TableBookingDetail currentBooking = bookingDetailRepository
+                .findCurrentActiveByTableId(moveTableDto.getFromTableId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Không tìm thấy thông tin chi tiết đặt bàn của bàn với id: " + moveTableDto.getFromTableId()));
+
+        // cập nhật trạng thái bàn
+        selectedTable.setStatus(TableStatus.OCCUPIED);
+        fromTable.setStatus(TableStatus.AVAILABLE);
+        tableRepository.saveAll(List.of(selectedTable, fromTable));
+
+        // cập nhật booking detail
+        currentBooking.setTable(selectedTable);
+        bookingDetailRepository.save(currentBooking);
     }
 }

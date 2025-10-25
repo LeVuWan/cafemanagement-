@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.windy.cafemanagement.Responses.InformationTableRes;
+import com.windy.cafemanagement.Responses.TableInforRes;
 import com.windy.cafemanagement.Services.MenuService;
 import com.windy.cafemanagement.Services.TableService;
 import com.windy.cafemanagement.dto.ChooseMenuDto;
+import com.windy.cafemanagement.dto.MoveTableDto;
 import com.windy.cafemanagement.dto.OrderTableDto;
 import com.windy.cafemanagement.models.Menu;
 import com.windy.cafemanagement.models.TableEntity;
@@ -87,19 +89,47 @@ public class TableController {
 
     @GetMapping("get-information-table/{id}")
     public ResponseEntity<?> getInformationTable(@PathVariable("id") Long tableId) {
-        System.out.println("Check tableId " + tableId);
         try {
             InformationTableRes data = tableService.getInformantionTableService(tableId);
-            System.out.println("Check data: " + data.toString());
             return ResponseEntity.ok(Map.of(
                     "status", "success",
                     "data", data,
                     "message", "Lấy thức đơn thành công"));
         } catch (Exception e) {
-            System.out.println("Check error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                     "status", "error",
                     "message", "Xem thông tin bàn thất bại: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("get-table-move/{id}")
+    public ResponseEntity<?> getTableToMove(@PathVariable("id") Long tableId) {
+        try {
+            List<TableInforRes> data = tableService.getTableToMoveService(tableId);
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "data", data,
+                    "message", "Lấy thông tin bàn muốn chuyển thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", "error",
+                    "message", "Lấy thông tin bàn muốn chuyển thất bại: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("move-table")
+    @ResponseBody
+    public ResponseEntity<?> moveTableContorller(@RequestBody MoveTableDto moveTableDto) {
+        try {
+            System.out.println("Run here");
+            tableService.moveTableService(moveTableDto);
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "message", "Chuyển bàn thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", "error",
+                    "message", "Chuyển bàn thất bại: " + e.getMessage()));
         }
     }
 }

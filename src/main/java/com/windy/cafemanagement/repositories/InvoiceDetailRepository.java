@@ -24,4 +24,6 @@ public interface InvoiceDetailRepository extends JpaRepository<InvoiceDetail, Lo
             AND m.isDeleted = false
       """)
   List<InfoMenuRes> findMenuAndQuantityByInvoiceId(@Param("invoiceId") Long invoiceId);
+
+  List<InvoiceDetail> findAllByInvoice_InvoiceIdAndIsDeletedFalse(Long invoiceId);
 }

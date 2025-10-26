@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="mergeTableModal">
+    <div class="modal fade" id="mergeTableModal" tabindex="-1" aria-labelledby="mergeTableModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title w-100 text-center" id="mergeTableModalLabel">Gộp Bàn</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row justify-content-center">
+
+                            <div class="col-12 col-md-6 d-flex flex-column mb-3 mb-md-0">
+                                <div class="border rounded p-3 h-100 d-flex flex-column">
+                                    <h6 class="font-weight-bold mb-3">Chọn các bàn cần gộp</h6>
+                                    <div id="listTableForm" class="table-list-container">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 d-flex flex-column">
+                                <div class="border rounded p-3 h-100 d-flex flex-column">
+                                    <h6 class="font-weight-bold mb-3">Chọn bàn gộp đến</h6>
+                                    <div id="listTableTo" class="table-list-container">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary" id="comfirmMergeTabel">Gộp</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

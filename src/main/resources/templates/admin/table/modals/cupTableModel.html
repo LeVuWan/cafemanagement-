@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<style>
+    .table-list-container {
+        max-height: 400px;
+        /* Điều chỉnh chiều cao tối đa nếu cần */
+        overflow-y: auto;
+    }
+</style>
+
+<div th:fragment="cupTableModal">
+    <div class="modal fade" id="cupTableModal" tabindex="-1" aria-labelledby="cupTableModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title w-100 text-center" id="cupTableModalLabel">Tách / Gộp Bàn</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row justify-content-center mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="destinationTableSelect" class="font-weight-bold">Chọn bàn muốn chuyển
+                                        đến:</label>
+                                    <select class="form-control" id="destinationTableSelect">
+                                        <option selected disabled>-- Chọn bàn đích --</option>
+                                        <option value="1">Bàn 1</option>
+                                        <option value="2">Bàn 2</option>
+                                        <option value="3">Bàn 3</option>
+                                        <option value="4">Bàn 4</option>
+                                        <option value="5">Bàn 5</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-lg-6 lg-3 ">
+                                <div class="border rounded p-3 h-100 d-flex flex-column">
+                                    <h6 class="font-weight-bold mb-3 text-center">Bàn Gốc (Bàn 15)</h6>
+                                    <table class="table mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Chọn</th>
+                                                <th>Tên món</th>
+                                                <th>SL Chuyển</th>
+                                                <th class="text-center">Hiện tại</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center ">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input"
+                                                            id="checkItem1">
+                                                        <label class="custom-control-label" for="checkItem1"></label>
+                                                    </div>
+                                                </td>
+                                                <td>Pepsi</td>
+                                                <td>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="number" class="form-control text-center" value="0"
+                                                            min="0" max="4">
+                                                    </div>
+                                                </td>
+                                                <td class="text-center"><strong>4</strong></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <div class="border rounded p-3 h-100 d-flex flex-column">
+                                    <h6 class="font-weight-bold mb-3 text-center">Bàn Đích</h6>
+                                    <table class="table mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Tên món</th>
+                                                <th class="text-center">Số lượng</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="2" class="text-center text-muted">Chưa có món nào.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary" id="confirmMergeTable">Tách</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

@@ -2,7 +2,6 @@ const modalMoveToTable = $('#moveToTableModal');
 
 $('#btn-move-table').click(async () => {
     const table = JSON.parse(sessionStorage.getItem('selectedTable'));
-    const modalMoveToTable = $('#moveToTableModal');
     modalMoveToTable.modal('show');
 
     try {
@@ -51,8 +50,6 @@ $('#comfirmMoveTabe').click(async () => {
 
         const table = JSON.parse(selectedTable);
 
-        console.log("Check run here");
-
         const response = await $.ajax({
             url: '/admin/table/move-table',
             method: 'POST',
@@ -63,17 +60,12 @@ $('#comfirmMoveTabe').click(async () => {
             })
         });
 
-
         showToast(response.message, 'success');
         modalMoveToTable.modal('hide');
         sessionStorage.removeItem('selectedTable');
         setTimeout(() => location.reload(), 1000);
     } catch (error) {
-        console.log("Check error: " + error);
-
         const msg = error.responseJSON?.message || 'Chuyển bàn thất bại!';
-        console.log("Check msg: " + msg);
-
         showToast(msg, 'danger');
     } finally {
         btn.prop('disabled', false).text('Chuyển');

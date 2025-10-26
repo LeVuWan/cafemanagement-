@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.windy.cafemanagement.Responses.InformationTableRes;
 import com.windy.cafemanagement.Responses.TableInforRes;
+import com.windy.cafemanagement.Responses.TableToMergeRes;
 import com.windy.cafemanagement.Services.MenuService;
 import com.windy.cafemanagement.Services.TableService;
 import com.windy.cafemanagement.dto.ChooseMenuDto;
+import com.windy.cafemanagement.dto.MergeTableDto;
 import com.windy.cafemanagement.dto.MoveTableDto;
 import com.windy.cafemanagement.dto.OrderTableDto;
 import com.windy.cafemanagement.models.Menu;
@@ -130,6 +132,52 @@ public class TableController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                     "status", "error",
                     "message", "Chuyển bàn thất bại: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("get-table-merge")
+    public ResponseEntity<?> getTableToMerger() {
+        try {
+            TableToMergeRes data = tableService.getTableToMergeService();
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "data", data,
+                    "message", "Lấy thông tin bàn để gộp thành công"));
+        } catch (Exception e) {
+            System.out.println("Check error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", "error",
+                    "message", "Lấy thông tin bàn để gộp thất bại: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("merge-table")
+    @ResponseBody
+    public ResponseEntity<?> mergeTableController(@RequestBody MergeTableDto mergeTableDto) {
+        try {
+            tableService.mergeTableService(mergeTableDto);
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "message", "Chuyển bàn thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", "error",
+                    "message", "Chuyển bàn thất bại: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("cancel-table/{id}")
+    @ResponseBody
+    public ResponseEntity<?> cancelTableController(@PathVariable("id") Long tableId) {
+        try {
+            tableService.cancelTableService(tableId);
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "message", "Hủy bàn thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", "error",
+                    "message", "Hủy bàn thất bại: " + e.getMessage()));
         }
     }
 }

@@ -29,7 +29,7 @@
 .table-selected {
     border: 5px solid #0d6efd !important;
     transform: scale(1.05);
-    box-shadow:  0 0 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
 .table-item.hover-effect:hover {
@@ -43,4 +43,9 @@
     .table-col {
         width: 50%;
     }
+}
+
+.table-list-container {
+    max-height: 250px;
+    overflow-y: auto;
 }

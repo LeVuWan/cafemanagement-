@@ -15,6 +15,8 @@ $('#btn-choose-menu').click(async () => {
 
         const tbody = $('#chooseMenuModal tbody');
 
+        tbody.empty();
+
         menuList.forEach(item => {
 
             const row = `

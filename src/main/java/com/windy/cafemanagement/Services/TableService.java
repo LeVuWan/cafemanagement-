@@ -3,7 +3,9 @@ package com.windy.cafemanagement.Services;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -12,9 +14,11 @@ import org.springframework.stereotype.Service;
 import com.windy.cafemanagement.Responses.InfoMenuRes;
 import com.windy.cafemanagement.Responses.InformationTableRes;
 import com.windy.cafemanagement.Responses.TableInforRes;
+import com.windy.cafemanagement.Responses.TableToMergeRes;
 import com.windy.cafemanagement.configs.SecurityUtil;
 import com.windy.cafemanagement.dto.ChooseMenuDto;
 import com.windy.cafemanagement.dto.Menus;
+import com.windy.cafemanagement.dto.MergeTableDto;
 import com.windy.cafemanagement.dto.MoveTableDto;
 import com.windy.cafemanagement.dto.OrderTableDto;
 import com.windy.cafemanagement.enums.InvoiceStatus;
@@ -189,13 +193,148 @@ public class TableService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Không tìm thấy thông tin chi tiết đặt bàn của bàn với id: " + moveTableDto.getFromTableId()));
 
-        // cập nhật trạng thái bàn
         selectedTable.setStatus(TableStatus.OCCUPIED);
         fromTable.setStatus(TableStatus.AVAILABLE);
         tableRepository.saveAll(List.of(selectedTable, fromTable));
 
-        // cập nhật booking detail
         currentBooking.setTable(selectedTable);
         bookingDetailRepository.save(currentBooking);
     }
+
+    public TableToMergeRes getTableToMergeService() {
+        List<TableEntity> tables = tableRepository.findAllByIsDeleted(false);
+
+        TableToMergeRes tableToMerge = new TableToMergeRes();
+        tableToMerge.setTablesFrom(new ArrayList<>());
+        tableToMerge.setTablesTo(new ArrayList<>());
+
+        for (TableEntity table : tables) {
+            if (table.getStatus() == TableStatus.AVAILABLE) {
+                tableToMerge.getTablesFrom().add(new TableInforRes(table.getTableId(), table.getTableName()));
+            } else if (table.getStatus() == TableStatus.OCCUPIED || table.getStatus() == TableStatus.RESERVED) {
+                tableToMerge.getTablesTo().add(new TableInforRes(table.getTableId(), table.getTableName()));
+            }
+        }
+
+        return tableToMerge;
+    }
+
+    @Transactional
+    public void mergeTableService(MergeTableDto mergeTableDto) {
+
+        TableEntity tableTo = tableRepository.findById(mergeTableDto.getTableToId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn cần gộp đến"));
+
+        if (tableTo.getStatus() != TableStatus.AVAILABLE) {
+            throw new RuntimeException("Bàn muốn gộp đến đang được sử dụng, không thể gộp");
+        }
+
+        tableTo.setStatus(TableStatus.OCCUPIED);
+        tableRepository.save(tableTo);
+
+        String username = SecurityUtil.getSessionUser();
+        Employee employee = employeeRepository.findByUsername(username);
+
+        Invoice newInvoice = new Invoice();
+        newInvoice.setTransactionDate(LocalDate.now());
+        newInvoice.setStatus(InvoiceStatus.UPDATED);
+        newInvoice.setVoucher(null);
+        newInvoice.setIsDeleted(false);
+        invoiceRepository.save(newInvoice);
+
+        Map<Long, InvoiceDetail> mergedDetailMap = new HashMap<>();
+
+        List<InvoiceStatus> unpaidStatuses = List.of(InvoiceStatus.UPDATED, InvoiceStatus.CREATED);
+
+        for (Long tableFromId : mergeTableDto.getListIdTableFrom()) {
+            TableEntity tableFrom = tableRepository.findById(tableFromId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn cần gộp với ID: " + tableFromId));
+
+            Invoice oldInvoice = invoiceRepository
+                    .findCurrentUnpaidInvoiceByTableId(tableFromId, unpaidStatuses)
+                    .orElseThrow(() -> new RuntimeException(
+                            "Không tìm thấy hóa đơn chưa thanh toán của bàn ID: " + tableFromId));
+
+            List<InvoiceDetail> oldDetails = invoiceDetailRepository
+                    .findAllByInvoice_InvoiceIdAndIsDeletedFalse(oldInvoice.getInvoiceId());
+
+            for (InvoiceDetail detail : oldDetails) {
+                Long menuId = detail.getMenu().getMenuId();
+
+                if (mergedDetailMap.containsKey(menuId)) {
+                    InvoiceDetail existing = mergedDetailMap.get(menuId);
+                    existing.setQuantity(existing.getQuantity() + detail.getQuantity());
+                    existing.setTotalPrice(existing.getTotalPrice() + detail.getTotalPrice());
+                } else {
+                    InvoiceDetail newDetail = new InvoiceDetail();
+                    newDetail.setMenu(detail.getMenu());
+                    newDetail.setInvoice(newInvoice);
+                    newDetail.setQuantity(detail.getQuantity());
+                    newDetail.setTotalPrice(detail.getTotalPrice());
+                    newDetail.setIsDeleted(false);
+                    mergedDetailMap.put(menuId, newDetail);
+                }
+            }
+
+            oldInvoice.setStatus(InvoiceStatus.CANCELLED);
+            invoiceRepository.save(oldInvoice);
+
+            tableFrom.setStatus(TableStatus.AVAILABLE);
+            tableRepository.save(tableFrom);
+        }
+
+        List<InvoiceDetail> mergedDetails = new ArrayList<>(mergedDetailMap.values());
+        invoiceDetailRepository.saveAll(mergedDetails);
+
+        TableBookingDetail bookingDetail = new TableBookingDetail();
+        bookingDetail.setEmployee(employee);
+        bookingDetail.setInvoice(newInvoice);
+        bookingDetail.setTable(tableTo);
+        bookingDetail.setBookingTime(LocalDateTime.now());
+        bookingDetail.setIsDeleted(false);
+        bookingDetailRepository.save(bookingDetail);
+
+        double total = mergedDetails.stream()
+                .mapToDouble(InvoiceDetail::getTotalPrice)
+                .sum();
+        newInvoice.setTotalAmount(total);
+        invoiceRepository.save(newInvoice);
+    }
+
+    @Transactional
+    public void cancelTableService(Long tableId) {
+        TableEntity tableExist = tableRepository.findById(tableId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn với ID: " + tableId));
+
+        List<InvoiceStatus> unpaidStatuses = List.of(InvoiceStatus.UPDATED, InvoiceStatus.CREATED);
+
+        Invoice invoiceExist = invoiceRepository
+                .findCurrentUnpaidInvoiceByTableId(tableId, unpaidStatuses)
+                .orElseThrow(() -> new RuntimeException(
+                        "Không tìm thấy hóa đơn chưa thanh toán của bàn ID: " + tableId));
+
+        List<InvoiceDetail> invoiceDetails = invoiceDetailRepository
+                .findAllByInvoice_InvoiceIdAndIsDeletedFalse(invoiceExist.getInvoiceId());
+
+        TableBookingDetail tableBookingDetail = bookingDetailRepository
+                .findActiveByTableIdAndInvoiceId(tableId, invoiceExist.getInvoiceId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Không tìm thấy thông tin khách hàng của bàn ID: " + tableId));
+
+        tableExist.setStatus(TableStatus.AVAILABLE);
+        tableRepository.save(tableExist);
+
+        invoiceExist.setStatus(InvoiceStatus.CANCELLED);
+        invoiceExist.setIsDeleted(true);
+        invoiceRepository.save(invoiceExist);
+
+        for (InvoiceDetail detail : invoiceDetails) {
+            detail.setIsDeleted(true);
+        }
+        invoiceDetailRepository.saveAll(invoiceDetails);
+
+        tableBookingDetail.setIsDeleted(true);
+        bookingDetailRepository.save(tableBookingDetail);
+    }
+
 }

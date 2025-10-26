@@ -42,9 +42,12 @@
                         <button class="btn btn-secondary m-1" id="btn-move-table" data-toggle="modal"
                             data-target="#moveToTableModal">Chuyển
                             bàn</button>
-                        <button class="btn btn-secondary m-1" id="btn-tach-ban">Tách bàn</button>
-                        <button class="btn btn-secondary m-1" id="btn-gop-ban">Gộp bàn</button>
-                        <button class="btn btn-secondary m-1" id="btn-huy-ban">Hủy bàn</button>
+                        <button class="btn btn-secondary m-1" id="btn-cup-table" data-toggle="modal"
+                            data-target="#cupTableModal">Tách bàn</button>
+                        <button class="btn btn-secondary m-1" id="btn-merge-table" data-toggle="modal"
+                            data-target="#mergeTableModal">Gộp bàn</button>
+                        <button class="btn btn-secondary m-1" id="btn-cancel-table" data-toggle="modal"
+                            data-target="#cancelTableModal">Hủy bàn</button>
                         <button class="btn btn-secondary m-1" id="btn-dat-ban" data-toggle="modal"
                             data-target="#orderTableModal">Đặt bàn</button>
                         <button class="btn btn-secondary m-1" id="btn-choose-menu" data-toggle="modal">Chọn thực
@@ -66,6 +69,12 @@
         <div th:replace="admin/table/modals/infomationOfTableModal :: infomationTableModal"></div>
         <!-- moveTable modal  -->
         <div th:replace="admin/table/modals/moveToTableModel :: moveToTableModal"></div>
+        <!-- mergeTable modal  -->
+        <div th:replace="admin/table/modals/mergeTableModel :: mergeTableModal"></div>
+        <!-- cupTable modal  -->
+        <div th:replace="admin/table/modals/cupTableModel :: cupTableModal"></div>
+        <!-- cancelTable modal  -->
+        <div th:replace="admin/table/modals/cancelTableModel :: cancelTableModal"></div>
     </section>
 </body>
 

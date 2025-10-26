@@ -29,9 +29,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const buttons = {
             xemBan: document.getElementById("btn-infor-table"),
             chuyenBan: document.getElementById("btn-move-table"),
-            tachBan: document.getElementById("btn-tach-ban"),
-            gopBan: document.getElementById("btn-gop-ban"),
-            huyBan: document.getElementById("btn-huy-ban"),
+            tachBan: document.getElementById("btn-cup-table"),
+            gopBan: document.getElementById("btn-merge-table"),
+            huyBan: document.getElementById("btn-cancel-table"),
             datBan: document.getElementById("btn-dat-ban"),
             chonThucDon: document.getElementById("btn-choose-menu"),
             thanhToan: document.getElementById("btn-thanh-toan"),

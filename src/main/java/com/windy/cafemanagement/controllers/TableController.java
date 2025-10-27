@@ -53,6 +53,7 @@ public class TableController {
                     "status", "success",
                     "message", "Đặt bàn thành công!"));
         } catch (Exception e) {
+            System.out.println("Check error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                     "status", "error",
                     "message", "Đặt bàn thất bại: " + e.getMessage()));

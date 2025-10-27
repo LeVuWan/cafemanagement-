@@ -120,7 +120,6 @@ public class TableService {
 
         if (chooseMenuDto.getMenus() != null && !chooseMenuDto.getMenus().isEmpty()) {
             List<InvoiceDetail> invoiceDetails = new ArrayList<>();
-            double totalAmount = invoice.getTotalAmount() != null ? invoice.getTotalAmount() : 0.0;
 
             for (Menus menuDto : chooseMenuDto.getMenus()) {
 
@@ -149,6 +148,15 @@ public class TableService {
             }
 
             invoiceDetailRepository.saveAll(invoiceDetails);
+
+            List<InvoiceDetail> allDetails = invoiceDetailRepository
+                    .findAllByInvoice_InvoiceIdAndIsDeletedFalse(invoice.getInvoiceId());
+
+            double totalAmount = allDetails.stream()
+                    .mapToDouble(InvoiceDetail::getTotalPrice)
+                    .sum();
+
+            invoice.setTotalAmount(totalAmount);
 
             invoice.setTotalAmount(totalAmount);
             invoice.setStatus(InvoiceStatus.UPDATED);

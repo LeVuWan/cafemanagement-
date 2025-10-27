@@ -1,5 +1,6 @@
 package com.windy.cafemanagement.Services;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -52,6 +53,10 @@ public class VoucherService {
 
     public void deleteVoucherService(Long id) {
         voucherRepository.softDeleteById(id);
+    }
+
+    public List<Voucher> getVoucherByTimeService() {
+        return voucherRepository.findActiveVouchersByDate(LocalDate.now());
     }
 
     private Voucher createVoucherDtoToVoucher(CreateVoucherDto createVoucherDto) {

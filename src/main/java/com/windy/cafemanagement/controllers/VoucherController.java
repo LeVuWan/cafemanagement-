@@ -1,5 +1,10 @@
 package com.windy.cafemanagement.controllers;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -7,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.windy.cafemanagement.Services.VoucherService;
 import com.windy.cafemanagement.dto.CreateVoucherDto;
@@ -75,6 +81,23 @@ public class VoucherController {
     public String deleteEmployeeController(@PathVariable("id") Long id) {
         voucherService.deleteVoucherService(id);
         return "redirect:/admin/voucher";
+    }
+
+    @GetMapping("/get-voucher-by-date")
+    @ResponseBody
+    public ResponseEntity<?> getVoucherByTime() {
+        try {
+            List<Voucher> vouchers = voucherService.getVoucherByTimeService();
+
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "data", vouchers,
+                    "message", "Lấy voucher thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", "error",
+                    "message", "Lấy voucher thất bại: " + e.getMessage()));
+        }
     }
 
 }

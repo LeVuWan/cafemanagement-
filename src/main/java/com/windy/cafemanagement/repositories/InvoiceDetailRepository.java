@@ -13,7 +13,7 @@ public interface InvoiceDetailRepository extends JpaRepository<InvoiceDetail, Lo
   InvoiceDetail findByInvoice_InvoiceIdAndMenu_MenuIdAndIsDeletedFalse(Long InvoiceId, Long menuId);
 
   @Query("""
-          SELECT new com.windy.cafemanagement.Responses.InfoMenuRes(m.dishName, id.quantity)
+          SELECT new com.windy.cafemanagement.Responses.InfoMenuRes(m.menuId, m.dishName, id.quantity)
           FROM InvoiceDetail id
           JOIN id.menu m
           JOIN id.invoice i

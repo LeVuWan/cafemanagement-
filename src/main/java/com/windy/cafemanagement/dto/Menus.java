@@ -28,4 +28,9 @@ public class Menus {
         this.quantity = quantity;
     }
 
+    @Override
+    public String toString() {
+        return "Menus [menuId=" + menuId + ", quantity=" + quantity + "]";
+    }
+
 }

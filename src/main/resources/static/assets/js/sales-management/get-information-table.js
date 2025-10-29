@@ -11,6 +11,7 @@ $('#btn-infor-table').click(async () => {
             contentType: 'application/json'
         });
         const tbody = $('#infomationTableModal tbody');
+        tbody.empty();
 
         const inforTable = response.data;
 
@@ -29,7 +30,7 @@ $('#btn-infor-table').click(async () => {
 
             const row = `
                 <tr>
-                    <td>${item.menuName}</td>
+                    <td>${item.dishName}</td>
                     <td>${item.quantity}</td>
                 </tr>
             `;

@@ -194,23 +194,28 @@ $('#confirmMergeTable').click(async () => {
 
     // Gửi yêu cầu AJAX để tách bàn
     try {
-        // const response = await $.ajax({
-        //     url: '/admin/table/cut-table',
-        //     method: 'POST',
-        //     contentType: 'application/json',
-        //     data: JSON.stringify({
-        //         fromTableId: tableFromId,
-        //         toTableId: tableToId,
-        //         items: listMenuCut
-        //     })
-        // });
+        const data = {
+            fromTableId: tableFromId,
+            toTableId: tableToId,
+            menus: listMenuCut,
+            isCheckAll: allChecked && listMenuCut.length === totalRows && allQuantitiesEqual
+        };
 
-        // showToast(response.message || 'Tách bàn thành công!', 'success');
-        // $('#cupTableModal').modal('hide');
-        // sessionStorage.removeItem('selectedTable');
-        // setTimeout(() => location.reload(), 1000);
+        const response = await $.ajax({
+            url: '/admin/table/cut-table',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data)
+        });
+
+        showToast(response.message || 'Tách bàn thành công!', 'success');
+        $('#cupTableModal').modal('hide');
+        sessionStorage.removeItem('selectedTable');
+        setTimeout(() => location.reload(), 1000);
     } catch (error) {
         const msg = error.responseJSON?.message || 'Tách bàn thất bại!';
+        console.log("Check msg: " + msg);
+
         showToast(msg, 'danger');
     } finally {
         button.prop('disabled', false).text('Xác nhận');

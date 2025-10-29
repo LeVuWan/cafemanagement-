@@ -7,9 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 import com.windy.cafemanagement.Responses.InfoMenuRes;
 import com.windy.cafemanagement.Responses.InformationTableRes;
@@ -17,6 +18,7 @@ import com.windy.cafemanagement.Responses.TableInforRes;
 import com.windy.cafemanagement.Responses.TableToMergeRes;
 import com.windy.cafemanagement.configs.SecurityUtil;
 import com.windy.cafemanagement.dto.ChooseMenuDto;
+import com.windy.cafemanagement.dto.CutTableDto;
 import com.windy.cafemanagement.dto.Menus;
 import com.windy.cafemanagement.dto.MergeTableDto;
 import com.windy.cafemanagement.dto.MoveTableDto;
@@ -35,9 +37,6 @@ import com.windy.cafemanagement.repositories.InvoiceRepository;
 import com.windy.cafemanagement.repositories.MenuRepository;
 import com.windy.cafemanagement.repositories.TableBookingDetailRepository;
 import com.windy.cafemanagement.repositories.TableRepository;
-
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 
 @Service
 public class TableService {
@@ -343,6 +342,233 @@ public class TableService {
 
         tableBookingDetail.setIsDeleted(true);
         bookingDetailRepository.save(tableBookingDetail);
+    }
+
+    @Transactional
+    public void cutTableService(CutTableDto cutTableDto) {
+        // Lấy bàn nguồn
+        TableEntity tableFrom = tableRepository.findById(cutTableDto.getFromTableId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn hiện tại"));
+
+        if (tableFrom.getStatus() == TableStatus.AVAILABLE) {
+            throw new RuntimeException("Bàn hiện tại đang trống");
+        }
+
+        // Lấy bàn đích
+        TableEntity tableTo = tableRepository.findById(cutTableDto.getToTableId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn cần tách đến"));
+
+        List<InvoiceStatus> unpaidStatuses = List.of(InvoiceStatus.UPDATED, InvoiceStatus.CREATED);
+
+        // Lấy hóa đơn bàn nguồn
+        Invoice fromInvoice = invoiceRepository
+                .findCurrentUnpaidInvoiceByTableId(tableFrom.getTableId(), unpaidStatuses)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn của bàn hiện tại"));
+
+        // Lấy thông tin đặt bàn nguồn
+        TableBookingDetail bookingDetailFromExist = bookingDetailRepository
+                .findActiveByTableIdAndInvoiceId(tableFrom.getTableId(), fromInvoice.getInvoiceId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Không tìm thấy thông tin chi tiết đặt bàn của bàn ID: " + tableFrom.getTableId()));
+
+        // Lấy hoặc tạo hóa đơn bàn đích
+        Invoice toInvoice = invoiceRepository
+                .findCurrentUnpaidInvoiceByTableId(tableTo.getTableId(), unpaidStatuses)
+                .orElseGet(this::createInvoice);
+
+        // Nếu hóa đơn bàn đích chưa được cập nhật món (mới tạo)
+        if (toInvoice.getStatus() == InvoiceStatus.CREATED) {
+            for (Menus menu : cutTableDto.getMenus()) {
+                Menu menuExist = menuRepository.findById(menu.getMenuId())
+                        .orElseThrow(() -> new RuntimeException(
+                                "Không tìm thấy món ăn với id: " + menu.getMenuId()));
+
+                InvoiceDetail invoiceDetail = new InvoiceDetail();
+                invoiceDetail.setMenu(menuExist);
+                invoiceDetail.setInvoice(toInvoice);
+                invoiceDetail.setQuantity(menu.getQuantity());
+                invoiceDetail.setTotalPrice(menu.getQuantity() * menuExist.getCurrentPrice());
+                invoiceDetail.setIsDeleted(false);
+                invoiceDetailRepository.save(invoiceDetail);
+            }
+
+            // Tính lại tổng tiền bàn đích
+            List<InvoiceDetail> invoiceDetailOfInvoiceTo = invoiceDetailRepository
+                    .findAllByInvoice_InvoiceIdAndIsDeletedFalse(toInvoice.getInvoiceId());
+
+            double totalAmount = invoiceDetailOfInvoiceTo.stream()
+                    .mapToDouble(InvoiceDetail::getTotalPrice)
+                    .sum();
+            toInvoice.setTotalAmount(totalAmount);
+            toInvoice.setStatus(InvoiceStatus.UPDATED);
+            invoiceRepository.save(toInvoice);
+
+            // Cập nhật bàn đích thành OCCUPIED
+            tableTo.setStatus(TableStatus.OCCUPIED);
+            tableRepository.save(tableTo);
+
+            // Tạo mới booking detail bàn đích nếu chưa có
+            bookingDetailRepository
+                    .findActiveByTableIdAndInvoiceId(tableTo.getTableId(), toInvoice.getInvoiceId())
+                    .orElseGet(() -> createBookingDetail(
+                            tableTo,
+                            toInvoice,
+                            bookingDetailFromExist.getCustomerName(),
+                            bookingDetailFromExist.getCustomerPhone()));
+
+        } else {
+            // Nếu hóa đơn bàn đích đã có → cộng dồn món
+            List<InvoiceDetail> invoiceDetailOfInvoiceTo = invoiceDetailRepository
+                    .findAllByInvoice_InvoiceIdAndIsDeletedFalse(toInvoice.getInvoiceId());
+
+            updateInvoiceDetails(invoiceDetailOfInvoiceTo, cutTableDto.getMenus(), toInvoice);
+
+            double totalAmount = invoiceDetailOfInvoiceTo.stream()
+                    .mapToDouble(InvoiceDetail::getTotalPrice)
+                    .sum();
+            toInvoice.setTotalAmount(totalAmount);
+            toInvoice.setStatus(InvoiceStatus.UPDATED);
+            invoiceRepository.save(toInvoice);
+
+            invoiceDetailRepository.saveAll(invoiceDetailOfInvoiceTo);
+        }
+
+        // Trừ món bên bàn nguồn
+        List<InvoiceDetail> invoiceDetailOfInvoiceFrom = invoiceDetailRepository
+                .findAllByInvoice_InvoiceIdAndIsDeletedFalse(fromInvoice.getInvoiceId());
+
+        boolean allZero = subtractInvoiceDetails(invoiceDetailOfInvoiceFrom, cutTableDto.getMenus());
+
+        // Tính lại tổng tiền bàn nguồn
+        double totalAmountFrom = invoiceDetailOfInvoiceFrom.stream()
+                .mapToDouble(InvoiceDetail::getTotalPrice)
+                .sum();
+        fromInvoice.setTotalAmount(totalAmountFrom);
+        invoiceRepository.save(fromInvoice);
+        invoiceDetailRepository.saveAll(invoiceDetailOfInvoiceFrom);
+
+        // Nếu tất cả món đã trừ hết → bàn nguồn trống
+        if (allZero) {
+            tableFrom.setStatus(TableStatus.AVAILABLE);
+            tableRepository.save(tableFrom);
+
+            bookingDetailFromExist.setIsDeleted(true);
+            bookingDetailRepository.save(bookingDetailFromExist);
+
+            fromInvoice.setStatus(InvoiceStatus.CANCELLED);
+            invoiceRepository.save(fromInvoice);
+        }
+
+        // Đánh dấu các món có quantity = 0 là đã xóa
+        for (InvoiceDetail detail : invoiceDetailOfInvoiceFrom) {
+            if (detail.getQuantity() == 0) {
+                detail.setIsDeleted(true);
+            }
+        }
+        invoiceDetailRepository.saveAll(invoiceDetailOfInvoiceFrom);
+    }
+
+    private Employee getCurrentEmployee() {
+        String username = SecurityUtil.getSessionUser();
+        return employeeRepository.findByUsername(username);
+    }
+
+    private Invoice createInvoice() {
+        Invoice invoice = new Invoice();
+        invoice.setTotalAmount(0.0);
+        invoice.setTransactionDate(LocalDate.now());
+        invoice.setStatus(InvoiceStatus.CREATED);
+        invoice.setVoucher(null);
+        invoice.setIsDeleted(false);
+        return invoiceRepository.save(invoice);
+    }
+
+    private TableBookingDetail createBookingDetail(TableEntity table, Invoice invoice, String customerName,
+            String customerPhone) {
+        TableBookingDetail tableBookingDetail = new TableBookingDetail();
+
+        tableBookingDetail.setTable(table);
+        tableBookingDetail.setEmployee(getCurrentEmployee());
+        tableBookingDetail.setInvoice(invoice);
+        tableBookingDetail.setCustomerName(customerName);
+        tableBookingDetail.setCustomerPhone(customerPhone);
+        tableBookingDetail.setBookingTime(LocalDateTime.now());
+        tableBookingDetail.setIsDeleted(false);
+        return bookingDetailRepository.save(tableBookingDetail);
+    };
+
+    private void updateInvoiceDetails(List<InvoiceDetail> invoiceDetails,
+            List<Menus> menus,
+            Invoice invoice) {
+
+        for (Menus menu : menus) {
+            boolean found = false;
+            for (InvoiceDetail detail : invoiceDetails) {
+                if (detail.getMenu().getMenuId().equals(menu.getMenuId())) {
+                    found = true;
+
+                    int newQuantity = detail.getQuantity() + menu.getQuantity();
+                    detail.setQuantity(newQuantity);
+
+                    double unitPrice = detail.getMenu().getCurrentPrice();
+                    detail.setTotalPrice(unitPrice * newQuantity);
+
+                    break;
+                }
+            }
+
+            if (!found) {
+                Menu menuExist = menuRepository.findById(menu.getMenuId())
+                        .orElseThrow(() -> new RuntimeException(
+                                "Không tìm thấy món ăn với id: " + menu.getMenuId()));
+
+                InvoiceDetail newDetail = new InvoiceDetail();
+                newDetail.setMenu(menuExist);
+                newDetail.setInvoice(invoice);
+                newDetail.setQuantity(menu.getQuantity());
+                newDetail.setIsDeleted(false);
+
+                double totalPrice = menuExist.getCurrentPrice() * menu.getQuantity();
+                newDetail.setTotalPrice(totalPrice);
+
+                invoiceDetails.add(newDetail);
+            }
+        }
+    }
+
+    private boolean subtractInvoiceDetails(List<InvoiceDetail> invoiceDetails, List<Menus> menus) {
+        for (InvoiceDetail detail : invoiceDetails) {
+            for (Menus menu : menus) {
+                System.out
+                        .println("Menu id from: " + detail.getMenu().getMenuId() + "Menu id from: " + menu.getMenuId());
+                if (detail.getMenu().getMenuId().equals(menu.getMenuId())) {
+                    if (menu.getQuantity() > detail.getQuantity()) {
+                        throw new IllegalArgumentException(
+                                "Số lượng món '" + detail.getMenu().getMenuId() +
+                                        "' cần trừ (" + menu.getQuantity() +
+                                        ") nhiều hơn số lượng hiện có (" + detail.getQuantity() + ")");
+                    }
+
+                    int newQuantity = detail.getQuantity() - menu.getQuantity();
+                    detail.setQuantity(newQuantity);
+
+                    double unitPrice = detail.getMenu().getCurrentPrice();
+                    detail.setTotalPrice(unitPrice * newQuantity);
+
+                    break;
+                }
+            }
+        }
+
+        boolean allZero = true;
+        for (InvoiceDetail detail : invoiceDetails) {
+            if (detail.getQuantity() > 0) {
+                allZero = false;
+                break;
+            }
+        }
+
+        return allZero;
     }
 
 }

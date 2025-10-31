@@ -52,8 +52,7 @@
                             data-target="#orderTableModal">Đặt bàn</button>
                         <button class="btn btn-secondary m-1" id="btn-choose-menu" data-toggle="modal">Chọn thực
                             đơn</button>
-                        <button class="btn btn-secondary m-1" id="btn-thanh-toan">Thanh toán</button>
-                        <button class="btn btn-secondary m-1" id="btn-in-an">In ấn</button>
+                        <button class="btn btn-secondary m-1" id="btn-payment" data-toggle="modal">Thanh toán</button>
                     </div>
                 </div>
 
@@ -75,6 +74,8 @@
         <div th:replace="admin/table/modals/cupTableModel :: cupTableModal"></div>
         <!-- cancelTable modal  -->
         <div th:replace="admin/table/modals/cancelTableModel :: cancelTableModal"></div>
+        <!-- paymentTable modal  -->
+        <div th:replace="admin/table/modals/paymentModel :: paymentModal"></div>
     </section>
 </body>
 

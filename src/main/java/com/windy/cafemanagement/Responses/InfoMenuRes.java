@@ -4,14 +4,16 @@ public class InfoMenuRes {
     private String dishName;
     private Integer quantity;
     private Long menuId;
+    private Double totalPrice;
 
     public InfoMenuRes() {
     }
 
-    public InfoMenuRes(Long menuId, String dishName, Integer quantity) {
+    public InfoMenuRes(Long menuId, String dishName, Integer quantity, Double totalPrice) {
         this.menuId = menuId;
         this.dishName = dishName;
         this.quantity = quantity;
+        this.totalPrice = totalPrice;
     }
 
     public String getDishName() {
@@ -36,6 +38,14 @@ public class InfoMenuRes {
 
     public void setMenuId(Long menuId) {
         this.menuId = menuId;
+    }
+
+    public Double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
 }

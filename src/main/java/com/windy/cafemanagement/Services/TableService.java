@@ -23,20 +23,24 @@ import com.windy.cafemanagement.dto.Menus;
 import com.windy.cafemanagement.dto.MergeTableDto;
 import com.windy.cafemanagement.dto.MoveTableDto;
 import com.windy.cafemanagement.dto.OrderTableDto;
+import com.windy.cafemanagement.dto.PaymentDto;
 import com.windy.cafemanagement.enums.InvoiceStatus;
 import com.windy.cafemanagement.enums.TableStatus;
+import com.windy.cafemanagement.enums.VoucherStatus;
 import com.windy.cafemanagement.models.Employee;
 import com.windy.cafemanagement.models.Invoice;
 import com.windy.cafemanagement.models.InvoiceDetail;
 import com.windy.cafemanagement.models.Menu;
 import com.windy.cafemanagement.models.TableBookingDetail;
 import com.windy.cafemanagement.models.TableEntity;
+import com.windy.cafemanagement.models.Voucher;
 import com.windy.cafemanagement.repositories.EmployeeRepository;
 import com.windy.cafemanagement.repositories.InvoiceDetailRepository;
 import com.windy.cafemanagement.repositories.InvoiceRepository;
 import com.windy.cafemanagement.repositories.MenuRepository;
 import com.windy.cafemanagement.repositories.TableBookingDetailRepository;
 import com.windy.cafemanagement.repositories.TableRepository;
+import com.windy.cafemanagement.repositories.VoucherRepository;
 
 @Service
 public class TableService {
@@ -46,16 +50,19 @@ public class TableService {
     private final InvoiceRepository invoiceRepository;
     private final MenuRepository menuRepository;
     private final InvoiceDetailRepository invoiceDetailRepository;
+    private final VoucherRepository voucherRepository;
 
     public TableService(TableRepository tableRepository, EmployeeRepository employeeRepository,
             TableBookingDetailRepository bookingDetailRepository, InvoiceRepository invoiceRepository,
-            MenuRepository menuRepository, InvoiceDetailRepository invoiceDetailRepository) {
+            MenuRepository menuRepository, InvoiceDetailRepository invoiceDetailRepository,
+            VoucherRepository voucherRepository) {
         this.tableRepository = tableRepository;
         this.employeeRepository = employeeRepository;
         this.bookingDetailRepository = bookingDetailRepository;
         this.invoiceRepository = invoiceRepository;
         this.menuRepository = menuRepository;
         this.invoiceDetailRepository = invoiceDetailRepository;
+        this.voucherRepository = voucherRepository;
     }
 
     public List<TableEntity> getAllTableService() {
@@ -571,4 +578,50 @@ public class TableService {
         return allZero;
     }
 
+    @Transactional
+    public void paymentService(PaymentDto paymentDto) {
+        TableEntity table = tableRepository.findById(paymentDto.getTableId())
+                .orElseThrow(() -> new RuntimeException("Bàn không tồn tại."));
+
+        List<InvoiceStatus> unpaidStatuses = List.of(InvoiceStatus.UPDATED);
+        Invoice invoiceOfTable = invoiceRepository
+                .findCurrentUnpaidInvoiceByTableId(table.getTableId(), unpaidStatuses)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn của bàn hiện tại."));
+
+        Double totalAmount = invoiceOfTable.getTotalAmount();
+        System.out.println("Check getVoucherId: " + paymentDto.getVoucherId());
+        if (paymentDto.getVoucherId() != null) {
+            Voucher voucher = voucherRepository.findById(paymentDto.getVoucherId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy voucher."));
+
+            if (Boolean.TRUE.equals(voucher.getIsDeleted())) {
+                throw new RuntimeException("Voucher không hợp lệ hoặc đã được sử dụng.");
+            }
+            LocalDate now = LocalDate.now();
+            if (voucher.getStartDate().isAfter(now) || voucher.getEndDate().isBefore(now)) {
+                throw new RuntimeException("Voucher đã hết hạn sử dụng.");
+            }
+
+            Double discountRate = voucher.getDiscountValue() / 100;
+            Double totalAfterDiscount = totalAmount * (1 - discountRate);
+
+            totalAfterDiscount = Math.round(totalAfterDiscount * 100.0) / 100.0;
+
+            invoiceOfTable.setVoucher(voucher);
+            invoiceOfTable.setTotalAmount(totalAfterDiscount);
+
+            voucherRepository.save(voucher);
+        }
+
+        else {
+            invoiceOfTable.setTotalAmount(totalAmount);
+        }
+
+        invoiceOfTable.setStatus(InvoiceStatus.PAID);
+        invoiceOfTable.setTransactionDate(LocalDate.now());
+        invoiceRepository.save(invoiceOfTable);
+
+        table.setStatus(TableStatus.AVAILABLE);
+        tableRepository.save(table);
+    }
 }

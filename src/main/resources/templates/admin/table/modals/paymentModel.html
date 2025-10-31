@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="paymentModal">
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content payment-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">Thanh toán bàn </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="bill-details">
+                        <div class="bill-details__items">
+                            <table class="table mb-0 border">
+                                <thead>
+                                    <tr>
+                                        <th class="font-weight-normal text-center">Tên món</th>
+                                        <th class="font-weight-normal text-center">SL</th>
+                                        <th class="font-weight-normal text-right">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="payment-total d-flex justify-content-center align-items-center my-3">
+                        <span class="payment-total__label mr-2">Tổng:</span>
+                        <span id="totalPrice" class="payment-total__amount">66.000 đ</span>
+                    </div>
+
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group d-flex align-items-center mb-0">
+                                <label for="customer-paid" class="form-label mb-0 mr-2">Khách đưa:</label>
+                                <input type="number" class="form-control text-right" id="customer-paid">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group d-flex align-items-center mb-0">
+                                <label class="form-label mb-0 mr-2">Thối lại:</label>
+                                <span id="change-amount"
+                                    class="change-amount flex-grow-1 text-right border p-2 rounded bg-light">0 đ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group d-flex align-items-center mb-0">
+                                <label for="chooseVoucher" class="form-label mb-0 mr-2">Chọn voucher:</label>
+                                <select class="custom-select" id="chooseVoucher">
+                                    <option selected>Chọn voucher</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mt-3 mt-md-0">
+                            <button class="btn btn-secondary w-100">In phiếu thanh toán...</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="comfirmPayment">Thanh toán</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

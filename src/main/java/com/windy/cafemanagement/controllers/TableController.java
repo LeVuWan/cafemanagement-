@@ -24,6 +24,7 @@ import com.windy.cafemanagement.dto.CutTableDto;
 import com.windy.cafemanagement.dto.MergeTableDto;
 import com.windy.cafemanagement.dto.MoveTableDto;
 import com.windy.cafemanagement.dto.OrderTableDto;
+import com.windy.cafemanagement.dto.PaymentDto;
 import com.windy.cafemanagement.models.Menu;
 import com.windy.cafemanagement.models.TableEntity;
 
@@ -187,7 +188,6 @@ public class TableController {
     @ResponseBody
     public ResponseEntity<?> cutTableController(@RequestBody CutTableDto cutTableDto) {
         try {
-            System.out.println("Check cutTableDto: " + cutTableDto.toString());
             tableService.cutTableService(cutTableDto);
             return ResponseEntity.ok(Map.of(
                     "status", "success",
@@ -196,6 +196,21 @@ public class TableController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                     "status", "error",
                     "message", "Chuyển bàn thất bại: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("payment")
+    @ResponseBody
+    public ResponseEntity<?> paymentController(@RequestBody PaymentDto paymentDto) {
+        try {
+            tableService.paymentService(paymentDto);
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "message", "Thanh toán thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", "error",
+                    "message", "Thanh toán thất bại: " + e.getMessage()));
         }
     }
 }

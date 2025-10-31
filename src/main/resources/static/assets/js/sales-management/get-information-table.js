@@ -18,7 +18,7 @@ $('#btn-infor-table').click(async () => {
         const customerName = inforTable.nameCustomer;
         $('#customerName').text(customerName);
 
-        const orderTime = inforTable.orderTime.substring(0, 5); 
+        const orderTime = inforTable.orderTime.substring(0, 5);
         const orderDate = new Date(inforTable.orderDate);
 
         const formattedDate = `${orderDate.getDate()}/${orderDate.getMonth() + 1}/${orderDate.getFullYear()}`;
@@ -43,3 +43,4 @@ $('#btn-infor-table').click(async () => {
         showToast(msg, 'danger');
     }
 })
+

@@ -34,8 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
             huyBan: document.getElementById("btn-cancel-table"),
             datBan: document.getElementById("btn-dat-ban"),
             chonThucDon: document.getElementById("btn-choose-menu"),
-            thanhToan: document.getElementById("btn-thanh-toan"),
-            inAn: document.getElementById("btn-in-an"),
+            thanhToan: document.getElementById("btn-payment"),
         }
 
         Object.values(buttons).forEach(btn => btn.style.display = "none");
@@ -55,7 +54,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 buttons.gopBan.style.display = "inline-block";
                 buttons.huyBan.style.display = "inline-block";
                 buttons.thanhToan.style.display = "inline-block";
-                buttons.inAn.style.display = "inline-block";
                 buttons.chonThucDon.style.display = "inline-block";
                 break;
         }

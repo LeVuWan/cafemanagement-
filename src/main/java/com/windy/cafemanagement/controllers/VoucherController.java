@@ -13,15 +13,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.windy.cafemanagement.Services.VoucherService;
 import com.windy.cafemanagement.dto.CreateVoucherDto;
 import com.windy.cafemanagement.models.Voucher;
-
 import jakarta.validation.Valid;
-
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/admin/voucher")
@@ -92,6 +88,23 @@ public class VoucherController {
             return ResponseEntity.ok(Map.of(
                     "status", "success",
                     "data", vouchers,
+                    "message", "Lấy voucher thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", "error",
+                    "message", "Lấy voucher thất bại: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/get-voucher-by-id/{id}")
+    @ResponseBody
+    public ResponseEntity<?> getVoucherById(@PathVariable("id") Long id) {
+        try {
+            Voucher voucher = voucherService.findVoucherById(id);
+
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "data", voucher,
                     "message", "Lấy voucher thành công"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(

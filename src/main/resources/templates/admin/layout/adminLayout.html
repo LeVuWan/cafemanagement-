@@ -14,7 +14,7 @@
             <div id="content">
                 <!-- Topbar -->
                 <div th:replace="admin/fragments/top-nav :: admin_topbar"></div>
-
+                <div th:replace="admin/table/toast/toastOrderTable :: toast-order-table"></div>
                 <!-- Page Content -->
                 <main class="container-fluid" layout:fragment="content"></main>
             </div>
@@ -49,6 +49,9 @@
     <script th:src="@{/assets/js/sales-management/cancel-table.js}"></script>
     <script th:src="@{/assets/js/sales-management/cup-table.js}"></script>
     <script th:src="@{/assets/js/sales-management/payment.js}"></script>
+
+    <!-- expense -->
+    <script th:src="@{/assets/js/expense/createExpense.js}"></script>
 </body>
 
 </html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container bg-white p-4 rounded shadow-sm">
+
+            <form>
+                <div class="filter-section">
+                    <h3>Chọn mục</h3>
+
+                    <div class="mb-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="category" id="cat-tat-ca" value="tat-ca">
+                            <label class="form-check-label" for="cat-tat-ca">Tất cả</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="category" id="cat-nhap-xuat"
+                                value="nhap-xuat" checked>
+                            <label class="form-check-label" for="cat-nhap-xuat">Nhập-xuất</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="category" id="cat-nhap" value="nhap">
+                            <label class="form-check-label" for="cat-nhap">Nhập</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="category" id="cat-ban-hang"
+                                value="ban-hang">
+                            <label class="form-check-label" for="cat-ban-hang">Bán hàng</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="category" id="cat-tt-nhan-vien"
+                                value="tt-nhan-vien">
+                            <label class="form-check-label" for="cat-tt-nhan-vien">TT nhân
+                                viên</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="category" id="cat-phi-khac"
+                                value="phi-khac">
+                            <label class="form-check-label" for="cat-phi-khac">Phí khác</label>
+                        </div>
+                    </div>
+
+                    <h3>Chọn khoảng thời gian</h3>
+                    <div class="form-row align-items-end mb-3">
+                        <div class="col-auto">
+                            <div class="form-group">
+                                <label for="date-from">Từ ngày:</label>
+                                <input type="date" class="form-control" id="date-from" value="2014-12-23">
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-group">
+                                <label for="date-to">đến ngày:</label>
+                                <input type="date" class="form-control" id="date-to" value="2014-12-25">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Xem</button>
+                </div>
+            </form>
+
+
+            <hr>
+            <table class="table table-bordered text-center">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Thu</th>
+                        <th>Chi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>23/12/2014</td>
+                        <td>500.000</td>
+                        <td>1.000.000</td>
+                    </tr>
+                    <tr>
+                        <td>24/12/2014</td>
+                        <td>1.000.000</td>
+                        <td>200.000</td>
+                    </tr>
+                    <tr>
+                        <td>25/12/2014</td>
+                        <td>1.500.000</td>
+                        <td>400.000</td>
+                    </tr>
+                    <tr class="font-weight-bold bg-light">
+                        <td>Tổng</td>
+                        <td>3.000.000</td>
+                        <td>1.600.000</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </section>
+</body>
+
+</html>

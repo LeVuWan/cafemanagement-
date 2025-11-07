@@ -43,7 +43,8 @@ public class EmployeeService {
     }
 
     public Employee findEmployeeByUsername(String username) {
-        return employeeRepository.findByUsername(username);
+        Employee employee = employeeRepository.findByUsername(username);
+        return employee;
     }
 
     public void saveEmployeeService(Employee employee) {

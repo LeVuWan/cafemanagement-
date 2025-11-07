@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -26,7 +27,7 @@ import com.windy.cafemanagement.dto.OrderTableDto;
 import com.windy.cafemanagement.dto.PaymentDto;
 import com.windy.cafemanagement.enums.InvoiceStatus;
 import com.windy.cafemanagement.enums.TableStatus;
-import com.windy.cafemanagement.enums.VoucherStatus;
+// VoucherStatus import removed (unused)
 import com.windy.cafemanagement.models.Employee;
 import com.windy.cafemanagement.models.Invoice;
 import com.windy.cafemanagement.models.InvoiceDetail;
@@ -44,6 +45,8 @@ import com.windy.cafemanagement.repositories.VoucherRepository;
 
 @Service
 public class TableService {
+    private static final List<InvoiceStatus> UNPAID_STATUSES = List.of(InvoiceStatus.CREATED, InvoiceStatus.UPDATED);
+    private final Logger logger = LoggerFactory.getLogger(TableService.class);
     private final TableRepository tableRepository;
     private final EmployeeRepository employeeRepository;
     private final TableBookingDetailRepository bookingDetailRepository;
@@ -113,22 +116,19 @@ public class TableService {
         if (table.getStatus() == TableStatus.AVAILABLE) {
             throw new RuntimeException("Vui lòng đặt bàn trước khi chọn món");
         }
-
         table.setStatus(TableStatus.OCCUPIED);
 
-        List<InvoiceStatus> unpaidStatuses = List.of(InvoiceStatus.CREATED, InvoiceStatus.UPDATED);
         Invoice invoice = invoiceRepository
-                .findCurrentUnpaidInvoiceByTableId(chooseMenuDto.getTableId(), unpaidStatuses)
+                .findCurrentUnpaidInvoiceByTableId(chooseMenuDto.getTableId(), UNPAID_STATUSES)
                 .orElseThrow(() -> new RuntimeException(
                         "Hóa đơn chưa thanh toán của bàn với id " + chooseMenuDto.getTableId() + " không tồn tại."));
 
         invoice.setStatus(InvoiceStatus.UPDATED);
 
         if (chooseMenuDto.getMenus() != null && !chooseMenuDto.getMenus().isEmpty()) {
-            List<InvoiceDetail> invoiceDetails = new ArrayList<>();
+            List<InvoiceDetail> toSave = new ArrayList<>();
 
             for (Menus menuDto : chooseMenuDto.getMenus()) {
-
                 Menu menuExist = menuRepository.findById(menuDto.getMenuId())
                         .orElseThrow(() -> new RuntimeException(
                                 "Thực đơn với id: " + menuDto.getMenuId() + " không tồn tại"));
@@ -141,7 +141,7 @@ public class TableService {
                     int newQty = existingDetail.getQuantity() + menuDto.getQuantity();
                     existingDetail.setQuantity(newQty);
                     existingDetail.setTotalPrice(newQty * existingDetail.getMenu().getCurrentPrice());
-                    invoiceDetailRepository.save(existingDetail);
+                    toSave.add(existingDetail);
                 } else {
                     InvoiceDetail detail = new InvoiceDetail();
                     detail.setInvoice(invoice);
@@ -149,11 +149,11 @@ public class TableService {
                     detail.setQuantity(menuDto.getQuantity());
                     detail.setTotalPrice(menuExist.getCurrentPrice() * menuDto.getQuantity());
                     detail.setIsDeleted(false);
-                    invoiceDetailRepository.save(detail);
+                    toSave.add(detail);
                 }
             }
 
-            invoiceDetailRepository.saveAll(invoiceDetails);
+            invoiceDetailRepository.saveAll(toSave);
 
             List<InvoiceDetail> allDetails = invoiceDetailRepository
                     .findAllByInvoice_InvoiceIdAndIsDeletedFalse(invoice.getInvoiceId());
@@ -161,8 +161,6 @@ public class TableService {
             double totalAmount = allDetails.stream()
                     .mapToDouble(InvoiceDetail::getTotalPrice)
                     .sum();
-
-            invoice.setTotalAmount(totalAmount);
 
             invoice.setTotalAmount(totalAmount);
             invoice.setStatus(InvoiceStatus.UPDATED);
@@ -258,14 +256,12 @@ public class TableService {
 
         Map<Long, InvoiceDetail> mergedDetailMap = new HashMap<>();
 
-        List<InvoiceStatus> unpaidStatuses = List.of(InvoiceStatus.UPDATED, InvoiceStatus.CREATED);
-
         for (Long tableFromId : mergeTableDto.getListIdTableFrom()) {
             TableEntity tableFrom = tableRepository.findById(tableFromId)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn cần gộp với ID: " + tableFromId));
 
             Invoice oldInvoice = invoiceRepository
-                    .findCurrentUnpaidInvoiceByTableId(tableFromId, unpaidStatuses)
+                    .findCurrentUnpaidInvoiceByTableId(tableFromId, UNPAID_STATUSES)
                     .orElseThrow(() -> new RuntimeException(
                             "Không tìm thấy hóa đơn chưa thanh toán của bàn ID: " + tableFromId));
 
@@ -365,11 +361,11 @@ public class TableService {
         TableEntity tableTo = tableRepository.findById(cutTableDto.getToTableId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn cần tách đến"));
 
-        List<InvoiceStatus> unpaidStatuses = List.of(InvoiceStatus.UPDATED, InvoiceStatus.CREATED);
+        // reuse UNPAID_STATUSES
 
         // Lấy hóa đơn bàn nguồn
         Invoice fromInvoice = invoiceRepository
-                .findCurrentUnpaidInvoiceByTableId(tableFrom.getTableId(), unpaidStatuses)
+                .findCurrentUnpaidInvoiceByTableId(tableFrom.getTableId(), UNPAID_STATUSES)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn của bàn hiện tại"));
 
         // Lấy thông tin đặt bàn nguồn
@@ -380,7 +376,7 @@ public class TableService {
 
         // Lấy hoặc tạo hóa đơn bàn đích
         Invoice toInvoice = invoiceRepository
-                .findCurrentUnpaidInvoiceByTableId(tableTo.getTableId(), unpaidStatuses)
+                .findCurrentUnpaidInvoiceByTableId(tableTo.getTableId(), UNPAID_STATUSES)
                 .orElseGet(this::createInvoice);
 
         // Nếu hóa đơn bàn đích chưa được cập nhật món (mới tạo)
@@ -589,7 +585,7 @@ public class TableService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn của bàn hiện tại."));
 
         Double totalAmount = invoiceOfTable.getTotalAmount();
-        System.out.println("Check getVoucherId: " + paymentDto.getVoucherId());
+        logger.debug("Check getVoucherId: {}", paymentDto.getVoucherId());
         if (paymentDto.getVoucherId() != null) {
             Voucher voucher = voucherRepository.findById(paymentDto.getVoucherId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy voucher."));

@@ -23,7 +23,7 @@
                         </a>
                 </li>
 
-                <div>
+                <div sec:authorize="hasRole('ROLE_MANAGER')">
 
                         <hr class="sidebar-divider">
                         <li class="nav-item">
@@ -75,15 +75,7 @@
 
                         <hr class="sidebar-divider">
                         <li class="nav-item">
-                                <a class="nav-link" href="index.html">
-                                        <i class="fas fa-fw fa-tachometer-alt"></i>
-                                        <span>Quản lý dữ liệu </span>
-                                </a>
-                        </li>
-
-                        <hr class="sidebar-divider">
-                        <li class="nav-item">
-                                <a class="nav-link" href="index.html">
+                                <a class="nav-link" th:href="@{/admin/report}">
                                         <i class="fas fa-fw fa-tachometer-alt"></i>
                                         <span>Báo cáo thống kê </span>
                                 </a>

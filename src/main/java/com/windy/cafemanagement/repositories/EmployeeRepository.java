@@ -33,4 +33,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     public void softDeleteById(@Param("id") Long id);
 
     public Employee findByUsername(String username);
+
+    @Query(value = """
+                SELECT e.fullname, e.address, e.phone_number, e.salary, p.name AS permission_name
+                FROM employee e
+                JOIN permission p ON e.permissionid = p.permissionid
+                WHERE e.is_deleted = false
+            """, nativeQuery = true)
+    List<Object[]> getEmployeeInformation();
 }

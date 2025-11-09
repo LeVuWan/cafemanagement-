@@ -2,10 +2,12 @@ package com.windy.cafemanagement.Services;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.windy.cafemanagement.Responses.EmployeeInfoRes;
 import com.windy.cafemanagement.dto.CreateEmployeeDto;
 import com.windy.cafemanagement.dto.EditEmployeeDto;
 import com.windy.cafemanagement.dto.UpdateProfileDto;
@@ -161,5 +163,16 @@ public class EmployeeService {
 
     private boolean isNotBlank(String value) {
         return value != null && !value.trim().isEmpty();
+    }
+
+    public List<EmployeeInfoRes> getEmployeeInformationService() {
+        return employeeRepository.getEmployeeInformation().stream()
+                .map(obj -> new EmployeeInfoRes(
+                        (String) obj[0],
+                        (String) obj[1],
+                        (String) obj[2],
+                        (Double) obj[3],
+                        (String) obj[4]))
+                .toList();
     }
 }

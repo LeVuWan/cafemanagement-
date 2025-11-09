@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.windy.cafemanagement.Responses.ImportExportProduct;
+import com.windy.cafemanagement.Responses.ImportExportRes;
 import com.windy.cafemanagement.configs.SecurityUtil;
 import com.windy.cafemanagement.dto.EditProductDto;
 import com.windy.cafemanagement.dto.ExportProductDto;
@@ -191,19 +192,15 @@ public class ProductService {
 
     @Transactional
     public void softDeleteProduct(Long productId) {
-        // 1️⃣ Tìm product
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy hàng hóa có ID: " + productId));
 
-        // 2️⃣ Đánh dấu Product đã xóa
         product.setIsDeleted(true);
         productRepository.save(product);
 
-        // 3️⃣ Tìm các import/export order liên quan
         List<ImportOrder> importOrders = importOrderRepository.findByProduct_ProductIdAndIsDeletedFalse(productId);
         List<ExportOrder> exportOrders = exportOrderRepository.findByProduct_ProductIdAndIsDeletedFalse(productId);
 
-        // 4️⃣ Đánh dấu isDeleted = true cho chúng
         importOrders.forEach(order -> order.setIsDeleted(true));
         exportOrders.forEach(order -> order.setIsDeleted(true));
 

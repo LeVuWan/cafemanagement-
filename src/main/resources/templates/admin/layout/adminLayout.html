@@ -4,7 +4,7 @@
 <head th:replace="admin/fragments/head :: admin_head"></head>
 
 <body id="page-top">
-
+    <div th:replace="admin/table/toast/toastOrderTable :: toast-order-table"></div>
     <div id="wrapper">
         <!-- Sidebar -->
         <div th:replace="admin/fragments/side-nav :: admin_sidebar"></div>
@@ -49,6 +49,15 @@
     <script th:src="@{/assets/js/sales-management/cancel-table.js}"></script>
     <script th:src="@{/assets/js/sales-management/cup-table.js}"></script>
     <script th:src="@{/assets/js/sales-management/payment.js}"></script>
+
+    <!-- report -->
+    <script th:src="@{/assets/js/report/report-general.js}"></script>
+
+    <!-- budget -->
+    <script th:src="@{/assets/js/budget/budget.js}"></script>
+
+    <!-- expense -->
+    <script th:src="@{/assets/js/expense/expense.js}"></script>
 </body>
 
 </html>

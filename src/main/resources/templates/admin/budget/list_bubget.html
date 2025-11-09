@@ -23,20 +23,12 @@
                             <input type="date" class="form-control" id="toDate" style="width: 220px;">
                         </div>
 
-                        <button class="btn btn-primary px-4">Xem</button>
+                        <button class="btn btn-primary px-4" id="fetchBudget">Xem</button>
                     </div>
                 </div>
 
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap p-0 mb-2">
 
-                        <div class="mb-2 mb-md-0 text-center text-md-left p-0">
-                            <a th:href="@{/admin/employee/create}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-plus mr-1"></i>
-                                Thêm mới chi tiêu
-                            </a>
-                        </div>
-                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-sm align-middle" id="dataTable" width="100%"
                             cellspacing="0">
@@ -48,10 +40,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>23/12/2025</td>
-                                    <td>50000</td>
-                                    <td>60000</td>
+                                <tr th:each="report : ${reports}">
+                                    <td th:text="${report.date}"></td>
+                                    <td th:text="${report.income}"></td>
+                                    <td th:text="${report.expense}"></td>
                                 </tr>
                             </tbody>
                         </table>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container">
+            <h1 class="h3 mb-2 text-gray-800">Quản lý chi tiêu</h1>
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Danh sách chi tiêu khác</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap p-0 mb-2">
+
+                        <div class="mb-2 mb-md-0 text-center text-md-left p-0">
+                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addNewExpense">
+                                <i class="fas fa-plus mr-1"></i>
+                                Thêm mới chi tiêu
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm align-middle" id="dataTable" width="100%"
+                            cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Ngày</th>
+                                    <th>Khoản chi</th>
+                                    <th>Số tền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="expense : ${expenses}">
+                                    <td th:text="${expense.amount}"></td>
+                                    <td th:text="${expense.expenseName}"></td>
+                                    <td th:text="${expense.expenseDate}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="addNewExpense" tabindex="-1" aria-labelledby="addNewExpenseModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addNewExpenseModalLabel">Thêm mơi chi tiêu khác</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="expenseDate">Ngày</label>
+                            <input type="date" class="form-control" id="expenseDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="expenseName">Khoản chi</label>
+                            <input type="text" class="form-control" id="expenseName">
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Số tiền</label>
+                            <input type="number" class="form-control" id="amount">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="comfirmAddNewExpense">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

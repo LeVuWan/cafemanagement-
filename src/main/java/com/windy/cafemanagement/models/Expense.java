@@ -9,6 +9,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name = "expense")
@@ -19,8 +22,14 @@ public class Expense {
     @ManyToOne
     @JoinColumn(name = "employeeid")
     private Employee employee;
+    @NotNull(message = "Số tiền không được để trống")
+    @Positive(message = "Số tiền phải lớn hơn 0")
     private Double amount;
+
+    @NotBlank(message = "Tên chi tiêu không được để trống")
     private String expenseName;
+
+    @NotNull(message = "Ngày chi tiêu không được để trống")
     private LocalDate expenseDate;
     private Boolean isDelete;
 
@@ -83,6 +92,12 @@ public class Expense {
 
     public void setIsDelete(Boolean isDelete) {
         this.isDelete = isDelete;
+    }
+
+    @Override
+    public String toString() {
+        return "Expense [expenseId=" + expenseId + ", employee=" + employee + ", amount=" + amount + ", expenseName="
+                + expenseName + ", expenseDate=" + expenseDate + ", isDelete=" + isDelete + "]";
     }
 
 }

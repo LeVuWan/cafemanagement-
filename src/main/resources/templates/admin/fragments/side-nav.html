@@ -10,7 +10,7 @@
 
                 <li class="nav-item">
                         <a class="nav-link" th:href="@{/admin}">
-                                <i class="fas fa-fw fa-tachometer-alt"></i>
+                                <i class="fas fa-fw fa-home"></i>
                                 <span>Trang chủ </span>
                         </a>
                 </li>
@@ -18,7 +18,7 @@
                 <hr class="sidebar-divider">
                 <li class="nav-item">
                         <a class="nav-link" th:href="@{/admin/table}">
-                                <i class="fas fa-fw fa-tachometer-alt"></i>
+                                <i class="fas fa-fw fa-shopping-cart"></i>
                                 <span>Quản lý bán hàng </span>
                         </a>
                 </li>
@@ -28,7 +28,7 @@
                         <hr class="sidebar-divider">
                         <li class="nav-item">
                                 <a class="nav-link" th:href="@{/admin/employee}">
-                                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                                        <i class="fas fa-fw fa-users"></i>
                                         <span>Quản lý nhân viên </span>
                                 </a>
                         </li>
@@ -36,7 +36,7 @@
                         <hr class="sidebar-divider">
                         <li class="nav-item">
                                 <a class="nav-link" th:href="@{/admin/equipment}">
-                                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                                        <i class="fas fa-fw fa-tools"></i>
                                         <span>Quản lý thiết bị </span>
                                 </a>
                         </li>
@@ -44,7 +44,7 @@
                         <hr class="sidebar-divider">
                         <li class="nav-item">
                                 <a class="nav-link" th:href="@{/admin/product}">
-                                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                                        <i class="fas fa-fw fa-boxes"></i>
                                         <span>Quản lý kho hàng </span>
                                 </a>
                         </li>
@@ -52,7 +52,7 @@
                         <hr class="sidebar-divider">
                         <li class="nav-item">
                                 <a class="nav-link" th:href="@{/admin/menu}">
-                                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                                        <i class="fas fa-fw fa-utensils"></i>
                                         <span>Quản lý thực đơn </span>
                                 </a>
                         </li>
@@ -60,26 +60,35 @@
                         <hr class="sidebar-divider">
                         <li class="nav-item">
                                 <a class="nav-link" th:href="@{/admin/voucher}">
-                                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                                        <i class="fas fa-fw fa-tags"></i>
                                         <span>Quản lý marketing </span>
                                 </a>
                         </li>
 
                         <hr class="sidebar-divider">
                         <li class="nav-item">
-                                <a class="nav-link" th:href="@{/admin/bubget}">
-                                        <i class="fas fa-fw fa-tachometer-alt"></i>
-                                        <span>Quản lý ngân sách </span>
+                                <a class="nav-link collapsed" href="#" data-toggle="collapse"
+                                        data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+                                        <i class="fas fa-fw fa-coins"></i>
+                                        <span>Quản lý ngân sách</span>
                                 </a>
+                                <div id="collapsePages" class="collapse" aria-labelledby="headingPages"
+                                        data-parent="#accordionSidebar">
+                                        <div class="bg-white py-2 collapse-inner rounded">
+                                                <a class="collapse-item" th:href="@{/admin/bubget}">Xem thu chi</a>
+                                                <a class="collapse-item" th:href="@{/admin/expense}">Thêm chi tiêu</a>
+                                        </div>
+                                </div>
                         </li>
 
                         <hr class="sidebar-divider">
                         <li class="nav-item">
                                 <a class="nav-link" th:href="@{/admin/report}">
-                                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                                        <i class="fas fa-fw fa-chart-line"></i>
                                         <span>Báo cáo thống kê </span>
                                 </a>
                         </li>
+
 
                         <hr class="sidebar-divider d-none d-md-block">
 

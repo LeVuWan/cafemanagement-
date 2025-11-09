@@ -10,61 +10,61 @@
     <section layout:fragment="content">
         <div class="container bg-white p-4 rounded shadow-sm">
 
-            <form>
-                <div class="filter-section">
-                    <h3>Chọn mục</h3>
+            <div class="filter-section">
+                <h3>Chọn mục</h3>
 
-                    <div class="mb-3">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="category" id="cat-tat-ca" value="tat-ca">
-                            <label class="form-check-label" for="cat-tat-ca">Tất cả</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="category" id="cat-nhap-xuat"
-                                value="nhap-xuat" checked>
-                            <label class="form-check-label" for="cat-nhap-xuat">Nhập-xuất</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="category" id="cat-nhap" value="nhap">
-                            <label class="form-check-label" for="cat-nhap">Nhập</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="category" id="cat-ban-hang"
-                                value="ban-hang">
-                            <label class="form-check-label" for="cat-ban-hang">Bán hàng</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="category" id="cat-tt-nhan-vien"
-                                value="tt-nhan-vien">
-                            <label class="form-check-label" for="cat-tt-nhan-vien">TT nhân
-                                viên</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="category" id="cat-phi-khac"
-                                value="phi-khac">
-                            <label class="form-check-label" for="cat-phi-khac">Phí khác</label>
-                        </div>
+                <div class="mb-3">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="category" id="cat-tat-ca" value="general">
+                        <label class="form-check-label" for="cat-tat-ca">Tất cả</label>
                     </div>
-
-                    <h3>Chọn khoảng thời gian</h3>
-                    <div class="form-row align-items-end mb-3">
-                        <div class="col-auto">
-                            <div class="form-group">
-                                <label for="date-from">Từ ngày:</label>
-                                <input type="date" class="form-control" id="date-from" value="2014-12-23">
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <div class="form-group">
-                                <label for="date-to">đến ngày:</label>
-                                <input type="date" class="form-control" id="date-to" value="2014-12-25">
-                            </div>
-                        </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="category" id="input-output"
+                            value="input-output" checked>
+                        <label class="form-check-label" for="cat-nhap-xuat">Nhập-xuất</label>
                     </div>
-
-                    <button type="submit" class="btn btn-primary">Xem</button>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="category" id="cat-nhap" value="input">
+                        <label class="form-check-label" for="cat-nhap">Nhập</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="category" id="cat-nhap" value="export">
+                        <label class="form-check-label" for="cat-nhap">Xuất</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="category" id="cat-ban-hang" value="sell">
+                        <label class="form-check-label" for="cat-ban-hang">Bán hàng</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="category" id="cat-tt-nhan-vien"
+                            value="employee-info">
+                        <label class="form-check-label" for="cat-tt-nhan-vien">TT nhân
+                            viên</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="category" id="cat-phi-khac" value="expense">
+                        <label class="form-check-label" for="cat-phi-khac">Phí khác</label>
+                    </div>
                 </div>
-            </form>
+
+                <h3>Chọn khoảng thời gian</h3>
+                <div class="form-row align-items-end mb-3">
+                    <div class="col-auto">
+                        <div class="form-group">
+                            <label for="date-from">Từ ngày:</label>
+                            <input type="date" class="form-control" id="date-from">
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-group">
+                            <label for="date-to">đến ngày:</label>
+                            <input type="date" class="form-control" id="date-to">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="send-report" class="btn btn-primary">Xem</button>
+            </div>
 
 
             <hr>

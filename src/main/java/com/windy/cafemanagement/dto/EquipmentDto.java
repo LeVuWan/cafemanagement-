@@ -1,10 +1,23 @@
 package com.windy.cafemanagement.dto;
 
 import java.time.LocalDate;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * create equipment dto class
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright 
+ *
+ * Modification Logs:
+ * DATE                 AUTHOR          DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025         VuLQ            Create
+ */
 public class EquipmentDto {
     private Long equipmentId;
     @NotBlank(message = "Tên thiết bị không được trống")

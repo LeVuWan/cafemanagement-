@@ -13,6 +13,20 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+/**
+ * Expense class
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright 
+ *
+ * Modification Logs:
+ * DATE                 AUTHOR          DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025         VuLQ            Create
+ */
 @Entity
 @Table(name = "expense")
 public class Expense {

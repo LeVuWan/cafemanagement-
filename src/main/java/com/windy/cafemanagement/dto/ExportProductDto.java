@@ -1,9 +1,22 @@
 package com.windy.cafemanagement.dto;
 
 import java.time.LocalDate;
-
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * create exprort product dto class
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright 
+ *
+ * Modification Logs:
+ * DATE                 AUTHOR          DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025         VuLQ            Create
+ */
 public class ExportProductDto {
     @NotNull(message = "Chưa chọn hàng hóa")
     private Long productId;

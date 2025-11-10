@@ -3,7 +3,11 @@ package com.windy.cafemanagement.Services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 import com.windy.cafemanagement.configs.SecurityUtil;
 import com.windy.cafemanagement.dto.EquipmentDto;
@@ -14,8 +18,20 @@ import com.windy.cafemanagement.repositories.EmployeeRepository;
 import com.windy.cafemanagement.repositories.EquipmentRepository;
 import com.windy.cafemanagement.repositories.ImportOrderRepository;
 
-import jakarta.transaction.Transactional;
-
+/**
+ * EquipmentService
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025 VuLQ Create
+ */
 @Service
 public class EquipmentService {
     private final EquipmentRepository equipmentRepository;
@@ -29,17 +45,41 @@ public class EquipmentService {
         this.employeeRepository = employeeRepository;
     }
 
-    public List<Equipment> getAllEquipmentsService() {
+    /**
+     * get all equipments by isDeleted = false
+     * 
+     * @return List<Equipment>
+     * @throws DataAccessException
+     */
+    public List<Equipment> getAllEquipmentsService() throws DataAccessException {
         return equipmentRepository.findAllByIsDeleted(false);
     }
 
-    public Equipment getEquipmentById(Long emquepmentId) {
+    /**
+     * get equipment by id
+     * 
+     * @param emquepmentId
+     * @return Equipment
+     * @throws DataAccessException
+     * @throws EntityNotFoundException
+     */
+    public Equipment getEquipmentById(Long emquepmentId)
+            throws DataAccessException, EntityNotFoundException, SecurityException {
         return equipmentRepository.findById(emquepmentId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy thiết bị với ID: " + emquepmentId));
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy thiết bị với ID: " + emquepmentId));
     }
 
+    /**
+     * create equipment with import order
+     * 
+     * @param dto
+     * @return Equipment
+     * @throws DataAccessException
+     * @throws EntityNotFoundException
+     */
     @Transactional
-    public Equipment createEquipmentWithImportOrder(EquipmentDto dto) {
+    public Equipment createEquipmentWithImportOrder(EquipmentDto dto)
+            throws EntityNotFoundException, Exception, DataAccessException, SecurityException {
         Equipment equipment = new Equipment();
         equipment.setEquipmentName(dto.getEquipmentName());
         equipment.setQuantity(dto.getQuantity());
@@ -49,7 +89,16 @@ public class EquipmentService {
 
         Equipment savedEquipment = equipmentRepository.save(equipment);
         String username = SecurityUtil.getSessionUser();
+
+        if (username == null) {
+            throw new SecurityException("Không tìm thấy người dùng trong phiên làm việc.");
+        }
+
         Employee user = employeeRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new EntityNotFoundException("Không tìm thấy nhân viên với username: " + username);
+        }
 
         ImportOrder importOrder = new ImportOrder();
         importOrder.setEquipment(savedEquipment);
@@ -63,12 +112,21 @@ public class EquipmentService {
         return savedEquipment;
     }
 
+    /**
+     * create equipment with import order
+     * 
+     * @param dto
+     * @return Equipment
+     * @throws DataAccessException
+     * @throws EntityNotFoundException
+     */
     @Transactional
-    public Equipment updateEquipmentWithImportOrder(EquipmentDto dto) {
+    public Equipment updateEquipmentWithImportOrder(EquipmentDto dto) throws EntityNotFoundException, Exception {
         if (dto.getEquipmentId() == null) {
             throw new IllegalArgumentException("Thiếu ID thiết bị cần cập nhật");
         }
 
+        // 1. Tìm và cập nhật Equipment
         Equipment equipment = equipmentRepository.findById(dto.getEquipmentId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy thiết bị với ID: " + dto.getEquipmentId()));
 
@@ -79,31 +137,50 @@ public class EquipmentService {
 
         Equipment updatedEquipment = equipmentRepository.save(equipment);
 
-        Optional<ImportOrder> importOrderOpt = importOrderRepository.findByEquipment(updatedEquipment);
-        if (importOrderOpt.isPresent()) {
-            ImportOrder importOrder = importOrderOpt.get();
+        List<ImportOrder> importOrders = importOrderRepository.findByEquipment(updatedEquipment);
+
+        if (importOrders.isEmpty()) {
+            return updatedEquipment;
+        }
+        for (ImportOrder importOrder : importOrders) {
             importOrder.setImportDate(dto.getPurchaseDate());
             importOrder.setQuantity(dto.getQuantity());
             importOrder.setTotalAmount(dto.getQuantity() * dto.getUnitPrice());
+
             importOrderRepository.save(importOrder);
         }
 
         return updatedEquipment;
     }
 
+    /**
+     * soft delete equipment
+     * 
+     * @param equipmentId
+     * @throws DataAccessException
+     * @throws EntityNotFoundException
+     */
     @Transactional
-    public void softDeleteEquipment(Long equipmentId) {
+    public void softDeleteEquipment(Long equipmentId) throws EntityNotFoundException, DataAccessException {
         Equipment equipment = equipmentRepository.findById(equipmentId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy thiết bị với ID: " + equipmentId));
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy thiết bị với ID: " + equipmentId));
 
         if (Boolean.TRUE.equals(equipment.getIsDeleted())) {
-            throw new RuntimeException("Thiết bị này đã bị xóa trước đó");
+            throw new EntityNotFoundException("Thiết bị này đã bị xóa trước đó");
         }
 
         equipment.setIsDeleted(true);
         equipmentRepository.save(equipment);
 
-        importOrderRepository.findByEquipment(equipment)
-                .ifPresent(importOrderRepository::delete);
+        List<ImportOrder> importOrders = importOrderRepository.findByEquipment(equipment);
+
+        if(importOrders.isEmpty()) {
+            return;
+        }
+
+        for (ImportOrder importOrder : importOrders) {
+            importOrder.setIsDeleted(true);
+            importOrderRepository.save(importOrder);
+        }
     }
 }

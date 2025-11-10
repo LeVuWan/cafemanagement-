@@ -1,5 +1,19 @@
 package com.windy.cafemanagement.Responses;
 
+/**
+ * EmployeeLoginInfoRes class
+ *
+ * Version 1.0
+ *
+ * Date: 11-10-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 11-10-2025 VuLQ Create
+ */
 public class EmployeeLoginInfoRes {
     private Long employeeId;
 

@@ -2,6 +2,7 @@ package com.windy.cafemanagement.Services;
 
 import java.util.List;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.windy.cafemanagement.configs.SecurityUtil;
@@ -11,6 +12,20 @@ import com.windy.cafemanagement.models.Expense;
 import com.windy.cafemanagement.repositories.EmployeeRepository;
 import com.windy.cafemanagement.repositories.ExpenseRepository;
 
+/**
+ * ExpenseService
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025 VuLQ Create
+ */
 @Service
 public class ExpenseService {
 
@@ -22,12 +37,24 @@ public class ExpenseService {
         this.employeeRepository = employeeRepository;
     }
 
-    public void createExpense(ExpenseDTO expenseDTO) {
+    /**
+     * create expense
+     * 
+     * @param expenseDTO
+     * @throws DataAccessException
+     */
+    public void createExpense(ExpenseDTO expenseDTO) throws DataAccessException {
         Expense expense = expenseDTOToExpense(expenseDTO);
         expenseRepository.save(expense);
     }
 
-    public List<ExpenseDTO> getAllExpenses() {
+    /**
+     * get list expense
+     * 
+     * @return List<ExpenseDTO>
+     * @throws DataAccessException
+     */
+    public List<ExpenseDTO> getAllExpenses() throws DataAccessException {
         List<Expense> expenses = expenseRepository.findByIsDeleteFalse();
         List<ExpenseDTO> expenseDTOs = expenses.stream()
                 .map(this::expenseToExpenseDTO)
@@ -35,6 +62,12 @@ public class ExpenseService {
         return expenseDTOs;
     }
 
+    /**
+     * Convert ExpenseDTO to Expense 
+     * 
+     * @param expenseDTO
+     * @return Expense
+     */
     private Expense expenseDTOToExpense(ExpenseDTO expenseDTO) {
         Expense expense = new Expense();
         expense.setAmount(expenseDTO.getAmount());
@@ -47,6 +80,12 @@ public class ExpenseService {
         return expense;
     }
 
+    /**
+     * Convert Expense to ExpenseDTO
+     * 
+     * @param expense
+     * @return ExpenseDTO
+     */
     private ExpenseDTO expenseToExpenseDTO(Expense expense) {
         ExpenseDTO expenseDTO = new ExpenseDTO();
         expenseDTO.setAmount(expense.getAmount());

@@ -1,11 +1,25 @@
 package com.windy.cafemanagement.Responses;
 
-public class exportByDateReportRes {
+/**
+ * ExportByDateReportRes class
+ *
+ * Version 1.0
+ *
+ * Date: 11-10-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 11-10-2025 VuLQ Create
+ */
+public class ExportByDateReportRes {
     private String exportDate;
 
     private Double totalAmount;
 
-    public exportByDateReportRes(String exportDate, Double totalAmount) {
+    public ExportByDateReportRes(String exportDate, Double totalAmount) {
         this.exportDate = exportDate;
         this.totalAmount = totalAmount;
     }

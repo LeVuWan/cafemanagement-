@@ -1,7 +1,6 @@
 package com.windy.cafemanagement.dto;
 
 import java.time.LocalDate;
-
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Future;
@@ -9,6 +8,20 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * create voucher dto class
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright 
+ *
+ * Modification Logs:
+ * DATE                 AUTHOR          DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025         VuLQ            Create
+ */
 public class CreateVoucherDto {
     @NotBlank(message = "Voucher name cannot be blank")
     private String voucherName;

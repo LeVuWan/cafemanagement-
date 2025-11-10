@@ -3,6 +3,20 @@ package com.windy.cafemanagement.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * edit product dto class
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright 
+ *
+ * Modification Logs:
+ * DATE                 AUTHOR          DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025         VuLQ            Create
+ */
 public class EditProductDto {
     private Long productId;
     @NotBlank(message = "Tên hành hóa không được trống")

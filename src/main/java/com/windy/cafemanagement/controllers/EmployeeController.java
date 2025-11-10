@@ -8,18 +8,30 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.windy.cafemanagement.Services.EmployeeService;
 import com.windy.cafemanagement.Services.PermissionService;
 import com.windy.cafemanagement.Services.UploadService;
 import com.windy.cafemanagement.dto.CreateEmployeeDto;
 import com.windy.cafemanagement.dto.EditEmployeeDto;
-import com.windy.cafemanagement.models.Employee;
 
-import jakarta.validation.Valid;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+/**
+ * Employee Controller
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025 VuLQ Employee Controller
+ */
 
 @Controller
 @RequestMapping("/admin/employee")
@@ -35,6 +47,13 @@ public class EmployeeController {
         this.permissionService = permissionService;
     }
 
+    /**
+     * get list employee by keyword
+     * 
+     * @param model, keyword
+     * @return String
+     * @throws 
+     */
     @GetMapping("")
     public String getTableUserController(Model model,
             @RequestParam(value = "keyword", required = false) String keyword) {
@@ -43,6 +62,13 @@ public class EmployeeController {
         return "/admin/employee/list-employee";
     }
 
+    /**
+     * get form create employee
+     * 
+     * @param model
+     * @return String
+     * @throws 
+     */
     @GetMapping("/create")
     public String getFormCreateController(Model model) {
         model.addAttribute("permissions", permissionService.getAllPermissionsService());
@@ -50,6 +76,13 @@ public class EmployeeController {
         return "/admin/employee/create-employee";
     }
 
+    /**
+     * create new employee
+     * 
+     * @param createEmployeeDto, bindingResult, file, model
+     * @return String
+     * @throws 
+     */
     @PostMapping("/create")
     public String createEmployeeController(
             @Valid @ModelAttribute("employee") CreateEmployeeDto createEmployeeDto,
@@ -68,6 +101,13 @@ public class EmployeeController {
         return "redirect:/admin/employee";
     }
 
+    /**
+     * get form edit employee
+     * 
+     * @param model, id
+     * @return String
+     * @throws 
+     */
     @GetMapping("/edit/{id}")
     public String getEditFormController(Model model, @PathVariable("id") Long id) {
         model.addAttribute("employee", employeeService.getEmployeeById(id));
@@ -75,6 +115,13 @@ public class EmployeeController {
         return "/admin/employee/edit-employee";
     }
 
+    /**
+     * edit employee
+     * 
+     * @param editEmployeeDto, file, model
+     * @return String
+     * @throws 
+     */
     @PostMapping("/edit")
     public String editEmployeeController(@ModelAttribute("employee") EditEmployeeDto editEmployeeDto,
             @RequestParam(value = "file", required = false) MultipartFile file,
@@ -83,6 +130,13 @@ public class EmployeeController {
         return "redirect:/admin/employee";
     }
 
+    /**
+     * delete employee by id
+     * 
+     * @param id
+     * @return String
+     * @throws 
+     */
     @GetMapping("/delete/{id}")
     public String deleteEmployeeController(@PathVariable("id") Long id) {
         employeeService.deleteEmployeeService(id);

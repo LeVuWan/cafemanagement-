@@ -1,14 +1,16 @@
 package com.windy.cafemanagement.Services;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+
 import com.windy.cafemanagement.Responses.ImportExportProduct;
-import com.windy.cafemanagement.Responses.ImportExportRes;
 import com.windy.cafemanagement.configs.SecurityUtil;
 import com.windy.cafemanagement.dto.EditProductDto;
 import com.windy.cafemanagement.dto.ExportProductDto;
@@ -24,8 +26,20 @@ import com.windy.cafemanagement.repositories.ImportOrderRepository;
 import com.windy.cafemanagement.repositories.ProductRepository;
 import com.windy.cafemanagement.repositories.UnitRepository;
 
-import jakarta.transaction.Transactional;
-
+/**
+ * ProductService
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025 VuLQ Create
+ */
 @Service
 public class ProductService {
     private final UnitRepository unitRepository;
@@ -44,20 +58,40 @@ public class ProductService {
         this.exportOrderRepository = exportOrderRepository;
     }
 
-    public List<Unit> getAllUnitService() {
+    /**
+     * get list unit
+     * 
+     * @return List<Unit>
+     * @throws DataAccessException
+     */
+    public List<Unit> getAllUnitService() throws DataAccessException {
         return unitRepository.findAll();
     }
 
-    public List<Product> getAllProductService() {
+    /**
+     * get list product by isDeleted = false
+     * 
+     * @return List<Product>
+     * @throws DataAccessException
+     */
+    public List<Product> getAllProductService() throws DataAccessException {
         return productRepository.findAllByIsDeleted(false);
     }
 
+    /**
+     * add new product and create import order
+     * 
+     * @param dto
+     * @return Product
+     * @throws DataAccessException, EntityNotFoundException, SecurityException
+     */
     @Transactional
-    public Product addNewProductAndImportOrder(ImportProductDto dto) {
+    public Product addNewProductAndImportOrder(ImportProductDto dto)
+            throws DataAccessException, EntityNotFoundException, SecurityException {
         Unit unit = unitRepository.findById(dto.getUnitId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị tính với ID: " + dto.getUnitId()));
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Không tìm thấy đơn vị tính với ID: " + dto.getUnitId()));
 
-        // Tạo Product mới
         Product product = new Product();
         product.setProductName(dto.getProductName());
         product.setQuantity(dto.getQuantity());
@@ -68,7 +102,16 @@ public class ProductService {
         Product savedProduct = productRepository.save(product);
 
         String username = SecurityUtil.getSessionUser();
+
+        if (username == null) {
+            throw new SecurityException("Người dùng chưa đăng nhập");
+        }
+
         Employee user = employeeRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new EntityNotFoundException("Không tìm thấy nhân viên với username: " + username);
+        }
 
         ImportOrder importOrder = new ImportOrder();
         importOrder.setProduct(savedProduct);
@@ -84,9 +127,10 @@ public class ProductService {
     }
 
     @Transactional
-    public ExportOrder createExportOrder(ExportProductDto dto) {
+    public ExportOrder createExportOrder(ExportProductDto dto)
+            throws DataAccessException, NullPointerException, SecurityException {
         Product product = productRepository.findByProductIdAndIsDeletedFalse(dto.getProductId())
-                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại hoặc đã bị xóa"));
+                .orElseThrow(() -> new NullPointerException("Sản phẩm không tồn tại hoặc đã bị xóa"));
 
         if (product.getQuantity() < dto.getQuantity()) {
             throw new RuntimeException("Số lượng tồn kho không đủ để xuất");
@@ -96,10 +140,19 @@ public class ProductService {
         productRepository.save(product);
 
         String username = SecurityUtil.getSessionUser();
-        Employee employee = employeeRepository.findByUsername(username);
+
+        if (username == null) {
+            throw new SecurityException("Người dùng chưa đăng nhập");
+        }
+
+        Employee user = employeeRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new NullPointerException("Không tìm thấy nhân viên với username: " + username);
+        }
 
         ExportOrder exportOrder = new ExportOrder();
-        exportOrder.setEmployee(employee);
+        exportOrder.setEmployee(user);
         exportOrder.setProduct(product);
         exportOrder.setExportDate(dto.getExportDate());
         exportOrder.setQuantity(dto.getQuantity().intValue());
@@ -109,7 +162,7 @@ public class ProductService {
         return exportOrderRepository.save(exportOrder);
     }
 
-    public List<ImportExportProduct> getImportExportHistory(String keyword) {
+    public List<ImportExportProduct> getImportExportHistory(String keyword) throws DataAccessException{
         if (keyword != null && keyword.trim().isEmpty()) {
             keyword = null;
         }
@@ -127,13 +180,14 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public List<Product> getAllProduct() {
+
+    public List<Product> getAllProduct() throws DataAccessException{
         return productRepository.findAllByIsDeleted(false);
     }
 
     public Product getProductByIdService(Long id) {
         return productRepository.findByProductIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại hoặc đã bị xóa"));
+                .orElseThrow(() -> new EntityNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa"));
     }
 
     public void updateProductService(EditProductDto dto) {

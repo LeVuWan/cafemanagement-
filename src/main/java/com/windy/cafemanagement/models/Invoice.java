@@ -1,9 +1,6 @@
 package com.windy.cafemanagement.models;
 
 import java.time.LocalDate;
-
-import com.windy.cafemanagement.enums.InvoiceStatus;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +10,22 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import com.windy.cafemanagement.enums.InvoiceStatus;
+
+/**
+ * Invoice class
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright 
+ *
+ * Modification Logs:
+ * DATE                 AUTHOR          DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025         VuLQ            Create
+ */
 @Entity
 @Table(name = "invoice")
 public class Invoice {

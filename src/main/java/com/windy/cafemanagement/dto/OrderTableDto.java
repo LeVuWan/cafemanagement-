@@ -3,6 +3,20 @@ package com.windy.cafemanagement.dto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Order Table Dto class
+ *
+ * Version 1.0
+ *
+ * Date: 12-11-2013
+ *
+ * Copyright 
+ *
+ * Modification Logs:
+ * DATE                 AUTHOR          DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 12-11-2013         VuLQ            Create
+ */
 public class OrderTableDto {
     private Long tableId;
     private String customerName;

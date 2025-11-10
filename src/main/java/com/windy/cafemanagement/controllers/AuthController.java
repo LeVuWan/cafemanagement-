@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.validation.Valid;
 
 import com.windy.cafemanagement.Services.CustomUserDetailsService;
 import com.windy.cafemanagement.Services.EmployeeService;
@@ -22,8 +23,20 @@ import com.windy.cafemanagement.dto.EditEmployeeDto;
 import com.windy.cafemanagement.dto.UpdateProfileDto;
 import com.windy.cafemanagement.models.Employee;
 
-import jakarta.validation.Valid;
-
+/**
+ * EmploymentDetailsDAO
+ *
+ * Version 1.0
+ *
+ * Date: 11-10-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 11-10-2025 VuLQ Create AuthController class
+ */
 @Controller
 public class AuthController {
     private final EmployeeService employeeService;
@@ -37,11 +50,23 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * get form login
+     * 
+     * @return String
+     */
     @GetMapping("login")
     public String getMethodName() {
         return "/admin/auth/login";
     }
 
+    /**
+     * get form profile
+     * 
+     * @param  model, authentication
+     * @return String
+     * @throws 
+     */
     @GetMapping("get-profile")
     public String getProfile(Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
@@ -51,6 +76,13 @@ public class AuthController {
         return "/admin/auth/profile";
     }
 
+    /**
+     * get form update profile
+     * 
+     * @param  model, id
+     * @return String
+     * @throws 
+     */
     @GetMapping("update-profile/{id}")
     public String getUpdateProfileForm(Model model, @PathVariable("id") Long id) {
         EditEmployeeDto employee = employeeService.getEmployeeById(id);
@@ -60,6 +92,13 @@ public class AuthController {
         return "/admin/auth/update-profile";
     }
 
+    /**
+     * post update profile
+     * 
+     * @param  model, updateProfileDto, bindingResult, file
+     * @return String
+     * @throws 
+     */
     @PostMapping("update-profile")
     public String UpdateProfile(Model model, @Valid @ModelAttribute("employee") UpdateProfileDto updateProfileDto,
             BindingResult bindingResult,
@@ -79,12 +118,26 @@ public class AuthController {
         return "redirect:/get-profile";
     }
 
+    /**
+     * get form change password
+     * 
+     * @param  model
+     * @return String
+     * @throws 
+     */
     @GetMapping("change-password")
     public String getChangePassword(Model model) {
         model.addAttribute("employee", new ChangePasswordDto());
         return "admin/auth/change-password";
     }
 
+    /**
+     * post change password
+     * 
+     * @param  model, authentication, changePasswordDto, bindingResult
+     * @return String
+     * @throws 
+     */
     @PostMapping("change-password")
     public String ChangePassword(Model model, Authentication authentication,
             @Valid @ModelAttribute("employee") ChangePasswordDto changePasswordDto, BindingResult bindingResult) {

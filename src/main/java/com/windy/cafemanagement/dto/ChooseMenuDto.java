@@ -2,16 +2,30 @@ package com.windy.cafemanagement.dto;
 
 import java.util.List;
 
+/**
+ * Choose Menu Dto class
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright 
+ *
+ * Modification Logs:
+ * DATE                 AUTHOR          DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025         VuLQ            Create
+ */
 public class ChooseMenuDto {
     private Long tableId;
-    private List<Menus> menus;
+    private List<Menu> menu;
 
     public ChooseMenuDto() {
     }
 
-    public ChooseMenuDto(Long tableId, List<Menus> menus) {
+    public ChooseMenuDto(Long tableId, List<Menu> menu) {
         this.tableId = tableId;
-        this.menus = menus;
+        this.menu = menu;
     }
 
     public Long getTableId() {
@@ -22,12 +36,12 @@ public class ChooseMenuDto {
         this.tableId = tableId;
     }
 
-    public List<Menus> getMenus() {
-        return menus;
+    public List<Menu> getMenu() {
+        return menu;
     }
 
-    public void setMenus(List<Menus> menus) {
-        this.menus = menus;
+    public void setMenu(List<Menu> menu) {
+        this.menu = menu;
     }
 
 }

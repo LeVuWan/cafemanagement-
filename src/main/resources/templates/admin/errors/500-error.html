@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/layout/adminLayout}">
+
+<head>
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container-fluid">
+
+            <!-- 404 Error Text -->
+            <div class="text-center">
+                <div class="error mx-auto" data-text="404">500</div>
+                <p class="text-gray-500 mb-0" th:text="${errorMessage}"></p>
+                <a th:href="@{admin}">&larr; Back to Dashboard</a>
+            </div>
+
+        </div>
+    </section>
+</body>
+
+</html>

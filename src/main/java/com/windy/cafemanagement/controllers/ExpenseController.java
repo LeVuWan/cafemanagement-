@@ -2,7 +2,6 @@ package com.windy.cafemanagement.controllers;
 
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,12 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import jakarta.validation.Valid;
 
 import com.windy.cafemanagement.Services.ExpenseService;
 import com.windy.cafemanagement.dto.ExpenseDTO;
-import com.windy.cafemanagement.models.Expense;
-
-import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/admin/expense")
@@ -31,9 +28,14 @@ public class ExpenseController {
 
     @GetMapping("")
     public String getExpense(Model model) {
-        List<ExpenseDTO> expenses = expenseService.getAllExpenses();
-        model.addAttribute("expenses", expenses);
-        return "admin/expense/list-expense";
+        try {
+            List<ExpenseDTO> expenses = expenseService.getAllExpenses();
+            model.addAttribute("expenses", expenses);
+            return "admin/expense/list-expense";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Lấy danh sách chi tiêu thất bại: " + e.getMessage());
+            return "admin/error/error-500";
+        }
     }
 
     @GetMapping("list-expense")

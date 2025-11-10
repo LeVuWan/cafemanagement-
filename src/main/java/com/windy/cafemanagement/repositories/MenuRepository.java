@@ -8,8 +8,29 @@ import org.springframework.stereotype.Repository;
 
 import com.windy.cafemanagement.models.Menu;
 
+/**
+ * MenuRepository interface
+ *
+ * Version 1.0
+ *
+ * Date: 11-10-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 11-10-2025 VuLQ Create
+ */
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long> {
+
+    /**
+     * get all menu by keyword search and isDeleted false
+     * 
+     * @param keyword
+     * @return List<Menu>
+     */
     @Query("""
             SELECT m
             FROM Menu m

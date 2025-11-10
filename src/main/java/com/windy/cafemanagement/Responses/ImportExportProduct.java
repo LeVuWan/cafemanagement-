@@ -2,6 +2,20 @@ package com.windy.cafemanagement.Responses;
 
 import java.time.LocalDate;
 
+/**
+ * ImportExportProduct class
+ *
+ * Version 1.0
+ *
+ * Date: 11-10-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 11-10-2025 VuLQ Create
+ */
 public class ImportExportProduct {
     private String nameProduct;
     private LocalDate importDate;

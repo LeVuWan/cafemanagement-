@@ -2,7 +2,7 @@ package com.windy.cafemanagement.Services;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +14,23 @@ import com.windy.cafemanagement.dto.UpdateProfileDto;
 import com.windy.cafemanagement.models.Employee;
 import com.windy.cafemanagement.repositories.EmployeeRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+import javassist.NotFoundException;
+
+/**
+ * EmployeeService
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025 VuLQ Create
+ */
 @Service
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
@@ -29,7 +46,14 @@ public class EmployeeService {
         this.uploadService = uploadService;
     }
 
-    public List<Employee> getAllEmployeesService(String keyword) {
+    /**
+     * get all employees by keyword and isDeleted false
+     * 
+     * @param keyword
+     * @return List<Employee>
+     * @throws DataAccessException
+     */
+    public List<Employee> getAllEmployeesService(String keyword) throws DataAccessException {
         if (keyword == null || keyword.trim().isEmpty()) {
             return employeeRepository.findAllByIsDeleted(false);
         } else {
@@ -37,25 +61,56 @@ public class EmployeeService {
         }
     }
 
-    public void createNewAEmployee(CreateEmployeeDto createEmployeeDto, String imgUrl) {
+    /**
+     * create new employee
+     * 
+     * @param createEmployeeDto
+     * @param imgUrl
+     * @throws DataAccessException
+     */
+    public void createNewAEmployee(CreateEmployeeDto createEmployeeDto, String imgUrl) throws DataAccessException {
         Employee newEmployee = createEmployeeDtoToEmpolyee(createEmployeeDto);
         newEmployee.setAvatar(imgUrl);
         newEmployee.setPassword(passwordEncoder.encode(createEmployeeDto.getPassword()));
         employeeRepository.save(newEmployee);
     }
 
+    /**
+     * get employee by username
+     * 
+     * @param username
+     * @return Employee
+     * @throws DataAccessException
+     * @throws NotFoundException
+     */
     public Employee findEmployeeByUsername(String username) {
         Employee employee = employeeRepository.findByUsername(username);
+        if (employee == null || employee.getIsDeleted() == true) {
+            throw new EntityNotFoundException("Không tìm thấy nhân viên có username: " + username);
+        }
         return employee;
     }
 
-    public void saveEmployeeService(Employee employee) {
+    /**
+     * save employee
+     * 
+     * @param employee
+     * @throws DataAccessException
+     */
+    public void saveEmployeeService(Employee employee) throws DataAccessException {
         employeeRepository.save(employee);
     }
 
-    public void editEmployee(EditEmployeeDto editEmployeeDto) {
+    /**
+     * Edit employee
+     * 
+     * @param editEmployeeDto
+     * @throws DataAccessException
+     * @throws EntityNotFoundException
+     */
+    public void editEmployee(EditEmployeeDto editEmployeeDto) throws DataAccessException {
         Employee existingEmployee = employeeRepository.findById(editEmployeeDto.getEmployeeId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "Không tìm thấy nhân viên với ID: " + editEmployeeDto.getEmployeeId()));
 
         if (isNotBlank(editEmployeeDto.getUsername()))
@@ -81,14 +136,42 @@ public class EmployeeService {
         employeeRepository.save(existingEmployee);
     }
 
-    public void deleteEmployeeService(Long id) {
-        employeeRepository.softDeleteById(id);
+    /**
+     * Soft delete employee
+     * 
+     * @param id
+     * @return Employee
+     * @throws DataAccessException
+     * @throws EntityNotFoundException
+     */
+    public Employee deleteEmployeeService(Long id) throws DataAccessException, EntityNotFoundException {
+        Employee employee = employeeRepository.softDeleteById(id);
+        if (employee == null) {
+            throw new EntityNotFoundException("Không tìm thấy nhân viên có ID: " + id);
+        }
+        return employee;
     }
 
-    public EditEmployeeDto getEmployeeById(Long id) {
-        return employeeToCreateEmployeeDto(employeeRepository.findById(id).get());
+    /**
+     * get EditEmployeeDto by id
+     * 
+     * @param id
+     * @return Employee
+     * @throws DataAccessException
+     * @throws EntityNotFoundException
+     */
+    public EditEmployeeDto getEmployeeById(Long id) throws DataAccessException, EntityNotFoundException {
+        return employeeToCreateEmployeeDto(
+                employeeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+                        "Không tìm thấy nhân viên với ID: " + id)));
     }
 
+    /**
+     * convert CreateEmployeeDto to Employee
+     * 
+     * @param createEmployeeDto
+     * @return Employee
+     */
     public Employee createEmployeeDtoToEmpolyee(CreateEmployeeDto createEmployeeDto) {
         Employee employee = new Employee();
         employee.setAddress(createEmployeeDto.getAddress());
@@ -102,12 +185,25 @@ public class EmployeeService {
         return employee;
     }
 
-    public Employee updateProfileService(UpdateProfileDto updateProfileDto, MultipartFile file) {
+    /**
+     * update profile
+     * 
+     * @param updateProfileDto
+     * @param file
+     * @return Employee
+     * @throws DataAccessException
+     * @throws EntityNotFoundException
+     * @throws Exception
+     */
+    public Employee updateProfileService(UpdateProfileDto updateProfileDto, MultipartFile file)
+            throws EntityNotFoundException, Exception {
+
         Employee existingEmployee = employeeRepository.findById(updateProfileDto.getEmployeeId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "Không tìm thấy nhân viên với ID: " + updateProfileDto.getEmployeeId()));
 
         String avatarUrl = null;
+
         if (file != null && !file.isEmpty()) {
             avatarUrl = uploadService.uploadImage(file, "avatar");
         }
@@ -129,9 +225,16 @@ public class EmployeeService {
         }
 
         employeeRepository.save(existingEmployee);
+
         return existingEmployee;
     }
 
+    /**
+     * convert Employee to EditEmployeeDto
+     * 
+     * @param employee
+     * @return EditEmployeeDto
+     */
     public EditEmployeeDto employeeToCreateEmployeeDto(Employee employee) {
         EditEmployeeDto editEmployeeDto = new EditEmployeeDto();
         editEmployeeDto.setAvatar(employee.getAvatar());
@@ -146,6 +249,12 @@ public class EmployeeService {
         return editEmployeeDto;
     }
 
+    /**
+     * convert EditEmployeeDto to Employee
+     * 
+     * @param editEmployeeDto
+     * @return Employee
+     */
     public Employee editEmployeeDtoToEmployee(EditEmployeeDto editEmployeeDto) {
         Employee employee = new Employee();
         employee.setEmployeeId(editEmployeeDto.getEmployeeId());
@@ -161,10 +270,21 @@ public class EmployeeService {
         return employee;
     }
 
+    /**
+     * check string is not blank
+     * 
+     * @param value
+     * @return boolean
+     */
     private boolean isNotBlank(String value) {
         return value != null && !value.trim().isEmpty();
     }
 
+    /**
+     * get employee information with permission name
+     * 
+     * @return List<EmployeeInfoRes>
+     */
     public List<EmployeeInfoRes> getEmployeeInformationService() {
         return employeeRepository.getEmployeeInformation().stream()
                 .map(obj -> new EmployeeInfoRes(

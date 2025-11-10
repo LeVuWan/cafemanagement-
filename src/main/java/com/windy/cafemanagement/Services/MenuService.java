@@ -3,10 +3,12 @@ package com.windy.cafemanagement.Services;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.windy.cafemanagement.Responses.InformationTableRes;
-import com.windy.cafemanagement.dto.ChooseMenuDto;
 import com.windy.cafemanagement.dto.MenuDTO;
 import com.windy.cafemanagement.dto.MenuIngredientDTO;
 import com.windy.cafemanagement.models.Menu;
@@ -18,8 +20,20 @@ import com.windy.cafemanagement.repositories.MenuRepository;
 import com.windy.cafemanagement.repositories.ProductRepository;
 import com.windy.cafemanagement.repositories.UnitRepository;
 
-import jakarta.transaction.Transactional;
-
+/**
+ * MenuService
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025 VuLQ Create
+ */
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
@@ -35,8 +49,14 @@ public class MenuService {
         this.unitRepository = unitRepository;
     }
 
+    /**
+     * Create menu with menu details
+     * 
+     * @param menuDTO
+     * @throws EntityNotFoundException, DataAccessException
+     */
     @Transactional
-    public void createMenuService(MenuDTO menuDTO) {
+    public void createMenuService(MenuDTO menuDTO) throws EntityNotFoundException, DataAccessException {
         Menu menu = new Menu();
         menu.setDishName(menuDTO.getName());
         menu.setCurrentPrice(menuDTO.getPrice());
@@ -47,10 +67,10 @@ public class MenuService {
             for (MenuIngredientDTO ing : menuDTO.getIngredients()) {
 
                 Product product = productRepository.findById(ing.getProductId())
-                        .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại hoặc đã bị xóa"));
+                        .orElseThrow(() -> new EntityNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa"));
 
                 Unit unit = unitRepository.findById(ing.getUnitId())
-                        .orElseThrow(() -> new RuntimeException("Đơn vị tính không tồn tại hoặc đã bị xóa"));
+                        .orElseThrow(() -> new EntityNotFoundException("Đơn vị tính không tồn tại hoặc đã bị xóa"));
 
                 MenuDetail detail = new MenuDetail();
                 detail.setMenu(savedMenu);
@@ -64,26 +84,52 @@ public class MenuService {
         }
     }
 
-    public List<Menu> getAllMenuService(String keyword) {
+    /**
+     * get all menu by keyword
+     * 
+     * @param keyword
+     * @return List<Menu>
+     * @throws DataAccessException
+     */
+    public List<Menu> getAllMenuService(String keyword) throws DataAccessException {
         if (keyword == null) {
-            System.out.println("Run here");
             keyword = "";
         }
         return menuRepository.findAllMenu(keyword.trim());
     }
 
-    public Menu getMenuByIdService(Long id) {
+    /**
+     * get menu by id
+     * 
+     * @param id
+     * @return Menu
+     * @throws DataAccessException
+     */
+    public Menu getMenuByIdService(Long id) throws DataAccessException {
         return menuRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại hoặc đã bị xóa"));
+                .orElseThrow(() -> new EntityNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa"));
     }
 
-    public List<MenuDetail> getListMenuDetailByMenu(Long id) {
+    /**
+     * get list menu detail by menu id
+     * 
+     * @param id
+     * @return List<MenuDetail>
+     * @throws DataAccessException
+     */
+    public List<MenuDetail> getListMenuDetailByMenu(Long id) throws DataAccessException {
         return menuDetailRepository.findByMenu_MenuIdAndIsDeletedFalse(id);
     }
 
-    public void updateMenuService(MenuDTO menuDTO) {
+    /**
+     * update menu and menu details
+     * 
+     * @param menuDTO
+     * @throws DataAccessException, EntityNotFoundException
+     */
+    public void updateMenuService(MenuDTO menuDTO) throws DataAccessException, EntityNotFoundException {
         Menu updateMenu = menuRepository.findById(menuDTO.getMenuId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy menu với id: " + menuDTO.getMenuId()));
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy menu với id: " + menuDTO.getMenuId()));
 
         updateMenu.setDishName(menuDTO.getName());
         updateMenu.setCurrentPrice(menuDTO.getPrice());
@@ -100,10 +146,11 @@ public class MenuService {
 
         for (MenuIngredientDTO ing : menuDTO.getIngredients()) {
             Product product = productRepository.findById(ing.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm ID: " + ing.getProductId()));
+                    .orElseThrow(
+                            () -> new EntityNotFoundException("Không tìm thấy sản phẩm ID: " + ing.getProductId()));
 
             Unit unit = unitRepository.findById(ing.getUnitId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị ID: " + ing.getUnitId()));
+                    .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đơn vị ID: " + ing.getUnitId()));
 
             MenuDetail detail = new MenuDetail();
             detail.setMenu(updateMenu);
@@ -119,10 +166,15 @@ public class MenuService {
         menuRepository.save(updateMenu);
     }
 
-    public void deleteMenuById(Long id) {
-        System.out.println("Run here");
+    /**
+     * delete menu by id
+     * 
+     * @param id
+     * @throws DataAccessException, EntityNotFoundException
+     */
+    public void deleteMenuById(Long id) throws DataAccessException, EntityNotFoundException {
         Menu menu = menuRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy menu với id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy menu với id: " + id));
         List<MenuDetail> menuDetails = menuDetailRepository.findByMenu_MenuIdAndIsDeletedFalse(id);
 
         menu.setIsDeleted(true);

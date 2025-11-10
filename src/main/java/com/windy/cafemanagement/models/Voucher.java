@@ -1,9 +1,6 @@
 package com.windy.cafemanagement.models;
 
 import java.time.LocalDate;
-
-import com.windy.cafemanagement.enums.VoucherStatus;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +9,22 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import com.windy.cafemanagement.enums.VoucherStatus;
+
+/**
+ * Voucher class
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright 
+ *
+ * Modification Logs:
+ * DATE                 AUTHOR          DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025         VuLQ            Create
+ */
 @Entity
 public class Voucher {
     @Id

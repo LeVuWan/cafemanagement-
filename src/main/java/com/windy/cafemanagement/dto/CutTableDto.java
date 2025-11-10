@@ -2,18 +2,32 @@ package com.windy.cafemanagement.dto;
 
 import java.util.List;
 
+/**
+ * cut table dto class
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025 VuLQ Create
+ */
 public class CutTableDto {
     private Long fromTableId;
     private Long toTableId;
-    private List<Menus> menus;
+    private List<Menu> menu;
 
     public CutTableDto() {
     }
 
-    public CutTableDto(Long fromTableId, Long toTableId, List<Menus> menus) {
+    public CutTableDto(Long fromTableId, Long toTableId, List<Menu> menu) {
         this.fromTableId = fromTableId;
         this.toTableId = toTableId;
-        this.menus = menus;
+        this.menu = menu;
     }
 
     public Long getFromTableId() {
@@ -26,7 +40,7 @@ public class CutTableDto {
 
     @Override
     public String toString() {
-        return "CutTableDto [fromTableId=" + fromTableId + ", toTableId=" + toTableId + ", menus=" + menus + "]";
+        return "CutTableDto [fromTableId=" + fromTableId + ", toTableId=" + toTableId + ", menu=" + menu + "]";
     }
 
     public Long getToTableId() {
@@ -37,12 +51,12 @@ public class CutTableDto {
         this.toTableId = toTableId;
     }
 
-    public List<Menus> getMenus() {
-        return menus;
+    public List<Menu> getMenus() {
+        return menu;
     }
 
-    public void setMenus(List<Menus> menus) {
-        this.menus = menus;
+    public void setMenus(List<Menu> menu) {
+        this.menu = menu;
     }
 
 }

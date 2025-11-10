@@ -11,28 +11,48 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-// CustomUserDetailsService is registered as a @Service; do not create a second bean here.
-
 import jakarta.servlet.DispatcherType;
 
+/**
+ * SecurityConfiguration
+ *
+ * Version 1.0
+ *
+ * Date: 11-10-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 11-10-2025 VuLQ Create
+ */
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
 
+        /**
+         * Password encoder bean
+         * 
+         * @return PasswordEncoder
+         * 
+         */
         @Bean
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
         }
 
-        // UserDetailsService bean is provided by the @Service-annotated
-        // `CustomUserDetailsService` class. Avoid creating a second instance here
-        // which can cause loadUserByUsername() to be invoked multiple times.
-
+        /**
+         * Security filter chain bean
+         * 
+         * @param http HttpSecurity
+         * @return SecurityFilterChain
+         * @throws Exception Exception
+         */
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 http
-                                .csrf(csrf -> csrf.disable()) // Disabled for now; enable and add CSRF token to forms
-                                                              // for production
+                                .csrf(csrf -> csrf.disable())
                                 .authorizeHttpRequests(auth -> auth
                                                 .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                                                 .requestMatchers("/assets/**", "/css/**", "/js/**", "/img/**",
@@ -61,6 +81,15 @@ public class SecurityConfiguration {
                 return http.build();
         }
 
+        /**
+         * Authentication manager bean
+         * 
+         * @param http               HttpSecurity
+         * @param passwordEncoder    PasswordEncoder
+         * @param userDetailsService UserDetailsService
+         * @return AuthenticationManager
+         * @throws Exception Exception
+         */
         @Bean
         public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder,
                         UserDetailsService userDetailsService) throws Exception {

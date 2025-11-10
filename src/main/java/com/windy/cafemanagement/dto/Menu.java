@@ -1,13 +1,27 @@
 package com.windy.cafemanagement.dto;
 
-public class Menus {
+/**
+ * Menu DTO
+ *
+ * Version 1.0
+ *
+ * Date: 10-11-2025
+ *
+ * Copyright 
+ *
+ * Modification Logs:
+ * DATE                 AUTHOR          DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 10-11-2025         VuLQ            Create
+ */
+public class Menu {
     private Long menuId;
     private Integer quantity;
 
-    public Menus() {
+    public Menu() {
     }
 
-    public Menus(Long menuId, Integer quantity) {
+    public Menu(Long menuId, Integer quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
     }

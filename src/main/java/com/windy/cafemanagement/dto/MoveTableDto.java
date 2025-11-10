@@ -1,5 +1,20 @@
 package com.windy.cafemanagement.dto;
 
+/**
+ * Move Table Dto class
+ *
+ * Version 1.0
+ *
+ * Date: 12-11-2013
+ *
+ * Copyright 
+ *
+ * Modification Logs:
+ * DATE                 AUTHOR          DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 12-11-2013         VuLQ            Create
+ */
+
 public class MoveTableDto {
     private Long fromTableId;
     private Long toTableId;

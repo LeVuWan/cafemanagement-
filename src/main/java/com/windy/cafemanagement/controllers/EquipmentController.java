@@ -16,6 +16,20 @@ import com.windy.cafemanagement.dto.EquipmentDto;
 
 import jakarta.validation.Valid;
 
+/**
+ * Equipment Controller
+ *
+ * Version 1.0
+ *
+ * Date: 11-10-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 11-10-2025 VuLQ Create EquipmentController
+ */
 @Controller
 @RequestMapping("admin/equipment")
 public class EquipmentController {
@@ -25,18 +39,39 @@ public class EquipmentController {
         this.equipmentService = equipmentService;
     }
 
+    /**
+     * get list equipment
+     * 
+     * @param model
+     * @return String
+     * @throws
+     */
     @GetMapping("")
     public String getListEquipment(Model model) {
         model.addAttribute("equipments", equipmentService.getAllEquipmentsService());
         return "admin/equipment/list-equipment";
     }
 
+    /**
+     * get form create equipment
+     * 
+     * @param model
+     * @return String
+     * @throws
+     */
     @GetMapping("create")
     public String getFormCreateEquipment(Model model) {
         model.addAttribute("equipment", new EquipmentDto());
         return "admin/equipment/create-equipment";
     }
 
+    /**
+     * create equipment
+     * 
+     * @param equipmentDto, result, model
+     * @return String
+     * @throws
+     */
     @PostMapping("create")
     public String createEquipment(@Valid @ModelAttribute("equipment") EquipmentDto equipmentDto, BindingResult result,
             Model model) {
@@ -48,12 +83,26 @@ public class EquipmentController {
         return "redirect:/admin/equipment";
     }
 
+    /**
+     * get form edit equipment
+     * 
+     * @param equipmentId, model
+     * @return String
+     * @throws
+     */
     @GetMapping("edit/{id}")
     public String getFormEditEquipment(@PathVariable("id") Long equipmentId, Model model) {
         model.addAttribute("equipment", equipmentService.getEquipmentById(equipmentId));
         return "admin/equipment/edit-equipment";
     }
 
+    /**
+     * edit equipment
+     * 
+     * @param equipmentDto, result, model
+     * @return String
+     * @throws
+     */
     @PostMapping("/edit")
     public String EditEquipment(@Valid @ModelAttribute("equipment") EquipmentDto equipmentDto, BindingResult result,
             Model model) {
@@ -66,6 +115,13 @@ public class EquipmentController {
         return "redirect:/admin/equipment";
     }
 
+    /**
+     * delete equipment by id
+     * 
+     * @param equipmentId, model
+     * @return String
+     * @throws
+     */
     @GetMapping("/delete/{id}")
     public String deleteEquipment(@PathVariable("id") Long equipmentId, Model model) {
         equipmentService.softDeleteEquipment(equipmentId);

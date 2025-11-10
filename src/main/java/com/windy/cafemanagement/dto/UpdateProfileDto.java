@@ -2,6 +2,20 @@ package com.windy.cafemanagement.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * Update Profile Dto class
+ *
+ * Version 1.0
+ *
+ * Date: 12-11-2013
+ *
+ * Copyright 
+ *
+ * Modification Logs:
+ * DATE                 AUTHOR          DESCRIPTION
+ * -----------------------------------------------------------------------
+ * 12-11-2013         VuLQ            Create
+ */
 public class UpdateProfileDto {
     private Long employeeId;
     @NotBlank(message = "Tên đăng nhập không để trống")

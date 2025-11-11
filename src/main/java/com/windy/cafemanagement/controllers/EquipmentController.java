@@ -15,6 +15,10 @@ import com.windy.cafemanagement.Services.EquipmentService;
 import com.windy.cafemanagement.dto.EquipmentDto;
 
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataAccessException;
 
 /**
  * Equipment Controller
@@ -34,6 +38,7 @@ import jakarta.validation.Valid;
 @RequestMapping("admin/equipment")
 public class EquipmentController {
     private final EquipmentService equipmentService;
+    private final Logger logger = LoggerFactory.getLogger(EquipmentController.class);
 
     public EquipmentController(EquipmentService equipmentService) {
         this.equipmentService = equipmentService;
@@ -48,8 +53,26 @@ public class EquipmentController {
      */
     @GetMapping("")
     public String getListEquipment(Model model) {
-        model.addAttribute("equipments", equipmentService.getAllEquipmentsService());
-        return "admin/equipment/list-equipment";
+        try {
+            model.addAttribute("equipments", equipmentService.getAllEquipmentsService());
+            return "admin/equipment/list-equipment";
+        } catch (EntityNotFoundException e) {
+            logger.warn("Entity not found in getListEquipment: {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (DataAccessException e) {
+            logger.error("Data access error in getListEquipment: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Lỗi truy cập dữ liệu");
+            return "admin/errors/500-error";
+        } catch (IllegalArgumentException | NullPointerException e) {
+            logger.warn("Invalid input in getListEquipment: {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (Exception e) {
+            logger.error("Unexpected error in getListEquipment: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi");
+            return "admin/errors/500-error";
+        }
     }
 
     /**
@@ -61,8 +84,14 @@ public class EquipmentController {
      */
     @GetMapping("create")
     public String getFormCreateEquipment(Model model) {
-        model.addAttribute("equipment", new EquipmentDto());
-        return "admin/equipment/create-equipment";
+        try {
+            model.addAttribute("equipment", new EquipmentDto());
+            return "admin/equipment/create-equipment";
+        } catch (Exception e) {
+            logger.error("Unexpected error in getFormCreateEquipment: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi");
+            return "admin/errors/500-error";
+        }
     }
 
     /**
@@ -75,12 +104,30 @@ public class EquipmentController {
     @PostMapping("create")
     public String createEquipment(@Valid @ModelAttribute("equipment") EquipmentDto equipmentDto, BindingResult result,
             Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("equipment", equipmentDto);
-            return "admin/equipment/create-equipment";
+        try {
+            if (result.hasErrors()) {
+                model.addAttribute("equipment", equipmentDto);
+                return "admin/equipment/create-equipment";
+            }
+            equipmentService.createEquipmentWithImportOrder(equipmentDto);
+            return "redirect:/admin/equipment";
+        } catch (EntityNotFoundException e) {
+            logger.warn("Entity not found in createEquipment: {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (DataAccessException e) {
+            logger.error("Data access error in createEquipment: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Lỗi truy cập dữ liệu");
+            return "admin/errors/500-error";
+        } catch (IllegalArgumentException | NullPointerException e) {
+            logger.warn("Invalid input in createEquipment: {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (Exception e) {
+            logger.error("Unexpected error in createEquipment: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi");
+            return "admin/errors/500-error";
         }
-        equipmentService.createEquipmentWithImportOrder(equipmentDto);
-        return "redirect:/admin/equipment";
     }
 
     /**
@@ -92,8 +139,22 @@ public class EquipmentController {
      */
     @GetMapping("edit/{id}")
     public String getFormEditEquipment(@PathVariable("id") Long equipmentId, Model model) {
-        model.addAttribute("equipment", equipmentService.getEquipmentById(equipmentId));
-        return "admin/equipment/edit-equipment";
+        try {
+            model.addAttribute("equipment", equipmentService.getEquipmentById(equipmentId));
+            return "admin/equipment/edit-equipment";
+        } catch (EntityNotFoundException e) {
+            logger.warn("Entity not found in getFormEditEquipment id={}: {}", equipmentId, e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (DataAccessException e) {
+            logger.error("Data access error in getFormEditEquipment id={}: {}", equipmentId, e.getMessage(), e);
+            model.addAttribute("errorMessage", "Lỗi truy cập dữ liệu");
+            return "admin/errors/500-error";
+        } catch (Exception e) {
+            logger.error("Unexpected error in getFormEditEquipment id={}: {}", equipmentId, e.getMessage(), e);
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi");
+            return "admin/errors/500-error";
+        }
     }
 
     /**
@@ -106,13 +167,31 @@ public class EquipmentController {
     @PostMapping("/edit")
     public String EditEquipment(@Valid @ModelAttribute("equipment") EquipmentDto equipmentDto, BindingResult result,
             Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("equipment", equipmentDto);
-            return "admin/equipment/edit-equipment";
-        }
+        try {
+            if (result.hasErrors()) {
+                model.addAttribute("equipment", equipmentDto);
+                return "admin/equipment/edit-equipment";
+            }
 
-        equipmentService.updateEquipmentWithImportOrder(equipmentDto);
-        return "redirect:/admin/equipment";
+            equipmentService.updateEquipmentWithImportOrder(equipmentDto);
+            return "redirect:/admin/equipment";
+        } catch (EntityNotFoundException e) {
+            logger.warn("Entity not found in EditEquipment: {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (DataAccessException e) {
+            logger.error("Data access error in EditEquipment: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Lỗi truy cập dữ liệu");
+            return "admin/errors/500-error";
+        } catch (IllegalArgumentException | NullPointerException e) {
+            logger.warn("Invalid input in EditEquipment: {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (Exception e) {
+            logger.error("Unexpected error in EditEquipment: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi");
+            return "admin/errors/500-error";
+        }
     }
 
     /**
@@ -124,7 +203,21 @@ public class EquipmentController {
      */
     @GetMapping("/delete/{id}")
     public String deleteEquipment(@PathVariable("id") Long equipmentId, Model model) {
-        equipmentService.softDeleteEquipment(equipmentId);
-        return "redirect:/admin/equipment";
+        try {
+            equipmentService.softDeleteEquipment(equipmentId);
+            return "redirect:/admin/equipment";
+        } catch (EntityNotFoundException e) {
+            logger.warn("Entity not found in deleteEquipment id={}: {}", equipmentId, e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (DataAccessException e) {
+            logger.error("Data access error in deleteEquipment id={}: {}", equipmentId, e.getMessage(), e);
+            model.addAttribute("errorMessage", "Lỗi truy cập dữ liệu");
+            return "admin/errors/500-error";
+        } catch (Exception e) {
+            logger.error("Unexpected error in deleteEquipment id={}: {}", equipmentId, e.getMessage(), e);
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi");
+            return "admin/errors/500-error";
+        }
     }
 }

@@ -51,11 +51,11 @@ public class CutTableDto {
         this.toTableId = toTableId;
     }
 
-    public List<Menu> getMenus() {
+    public List<Menu> getMenu() {
         return menu;
     }
 
-    public void setMenus(List<Menu> menu) {
+    public void setMenu(List<Menu> menu) {
         this.menu = menu;
     }
 

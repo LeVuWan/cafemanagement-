@@ -8,15 +8,45 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * UploadService
+ *
+ * Version 1.0
+ *
+ * Date: 11-11-2025
+ *
+ * Copyright
+ *
+ * Modification Logs:
+ * DATE AUTHOR DESCRIPTION
+ * -----------------------------------------------------------------------
+ */
 @Service
 public class UploadService {
 
     public UploadService() {
     }
 
+    /**
+     * upload image to target folder under src/main/resources/static/assets/img
+     * 
+     * @param file
+     * @param target
+     * @return relative URL path to saved image (e.g.,
+     *         /assets/img/{target}/{filename})
+     * @throws NullPointerException when file or target is null/empty
+     */
     public String uploadImage(MultipartFile file, String target) {
-        if (file == null || file.isEmpty()) {
-            return null;
+        if (file == null) {
+            throw new NullPointerException("file not found");
+        }
+
+        if (file.isEmpty()) {
+            throw new NullPointerException("file is empty");
+        }
+
+        if (target == null || target.trim().isEmpty()) {
+            throw new NullPointerException("target not found");
         }
 
         try {

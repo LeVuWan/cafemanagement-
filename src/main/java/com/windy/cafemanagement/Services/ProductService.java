@@ -3,10 +3,8 @@ package com.windy.cafemanagement.Services;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -62,9 +60,8 @@ public class ProductService {
      * get list unit
      * 
      * @return List<Unit>
-     * @throws DataAccessException
      */
-    public List<Unit> getAllUnitService() throws DataAccessException {
+    public List<Unit> getAllUnitService() {
         return unitRepository.findAll();
     }
 
@@ -72,9 +69,8 @@ public class ProductService {
      * get list product by isDeleted = false
      * 
      * @return List<Product>
-     * @throws DataAccessException
      */
-    public List<Product> getAllProductService() throws DataAccessException {
+    public List<Product> getAllProductService() {
         return productRepository.findAllByIsDeleted(false);
     }
 
@@ -86,8 +82,12 @@ public class ProductService {
      * @throws DataAccessException, EntityNotFoundException, SecurityException
      */
     @Transactional
-    public Product addNewProductAndImportOrder(ImportProductDto dto)
-            throws DataAccessException, EntityNotFoundException, SecurityException {
+    public Product addNewProductAndImportOrder(ImportProductDto dto) {
+
+        if (dto == null) {
+            throw new NullPointerException("dto not found");
+        }
+
         Unit unit = unitRepository.findById(dto.getUnitId())
                 .orElseThrow(
                         () -> new EntityNotFoundException("Không tìm thấy đơn vị tính với ID: " + dto.getUnitId()));
@@ -126,14 +126,25 @@ public class ProductService {
         return savedProduct;
     }
 
+    /**
+     * create export order
+     * 
+     * @param dto
+     * @return ExportOrder
+     * @throws NullPointerException, EntityNotFoundException, SecurityException
+     */
     @Transactional
-    public ExportOrder createExportOrder(ExportProductDto dto)
-            throws DataAccessException, NullPointerException, SecurityException {
+    public ExportOrder createExportOrder(ExportProductDto dto) {
+
+        if (dto == null) {
+            throw new NullPointerException("dto not found");
+        }
+
         Product product = productRepository.findByProductIdAndIsDeletedFalse(dto.getProductId())
                 .orElseThrow(() -> new NullPointerException("Sản phẩm không tồn tại hoặc đã bị xóa"));
 
         if (product.getQuantity() < dto.getQuantity()) {
-            throw new RuntimeException("Số lượng tồn kho không đủ để xuất");
+            throw new IllegalStateException("Số lượng tồn kho không đủ để xuất");
         }
 
         product.setQuantity(product.getQuantity() - dto.getQuantity());
@@ -148,7 +159,7 @@ public class ProductService {
         Employee user = employeeRepository.findByUsername(username);
 
         if (user == null) {
-            throw new NullPointerException("Không tìm thấy nhân viên với username: " + username);
+            throw new EntityNotFoundException("Không tìm thấy nhân viên với username: " + username);
         }
 
         ExportOrder exportOrder = new ExportOrder();
@@ -162,7 +173,13 @@ public class ProductService {
         return exportOrderRepository.save(exportOrder);
     }
 
-    public List<ImportExportProduct> getImportExportHistory(String keyword) throws DataAccessException{
+    /**
+     * get history import export order
+     * 
+     * @param keyword
+     * @return List<ImportExportProduct>
+     */
+    public List<ImportExportProduct> getImportExportHistory(String keyword) {
         if (keyword != null && keyword.trim().isEmpty()) {
             keyword = null;
         }
@@ -180,24 +197,47 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-
-    public List<Product> getAllProduct() throws DataAccessException{
+    /**
+     * get product with isDeleted = false
+     * 
+     * @param keyword
+     * @return List<ImportExportProduct>
+     */
+    public List<Product> getAllProduct() {
         return productRepository.findAllByIsDeleted(false);
     }
 
+    /**
+     * get product by id
+     * 
+     * @param id
+     * @return Product
+     * @throws EntityNotFoundException
+     */
     public Product getProductByIdService(Long id) {
         return productRepository.findByProductIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Sản phẩm không tồn tại hoặc đã bị xóa"));
     }
 
+    /**
+     * update product and import export order of product
+     * 
+     * @param dto
+     * @throws EntityNotFoundException. NullPointerException
+     */
     public void updateProductService(EditProductDto dto) {
+        if (dto == null) {
+            throw new NullPointerException("dto not found");
+        }
+
         Product product = productRepository.findById(dto.getProductId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy hàng hóa với id: " + dto.getProductId()));
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Không tìm thấy hàng hóa với id: " + dto.getProductId()));
 
         product.setProductName(dto.getProductName());
         product.setUnitPrice(dto.getUnitPrice());
         product.setUnit(unitRepository.findById(dto.getUnitId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị tính!")));
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đơn vị tính!")));
 
         productRepository.save(product);
 
@@ -220,10 +260,20 @@ public class ProductService {
 
     }
 
+    /**
+     * update product and import export order of product
+     * 
+     * @param dto
+     * @throws EntityNotFoundException. NullPointerException
+     */
     @Transactional
     public void importExistingProduct(ExportProductDto dto) {
+        if (dto == null) {
+            throw new NullPointerException("dto not found");
+        }
+
         Product product = productRepository.findById(dto.getProductId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy hàng hóa có ID: " + dto.getProductId()));
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy hàng hóa có ID: " + dto.getProductId()));
 
         Double newQuantity = product.getQuantity() + dto.getQuantity();
         product.setQuantity(newQuantity);
@@ -244,10 +294,20 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    /**
+     * soft delete product and import export order of product
+     * 
+     * @param productId
+     * @throws EntityNotFoundException. NullPointerException
+     */
     @Transactional
     public void softDeleteProduct(Long productId) {
+        if (productId == null) {
+            throw new NullPointerException("productId not found");
+        }
+
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy hàng hóa có ID: " + productId));
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy hàng hóa có ID: " + productId));
 
         product.setIsDeleted(true);
         productRepository.save(product);

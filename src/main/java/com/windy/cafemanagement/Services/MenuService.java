@@ -56,7 +56,11 @@ public class MenuService {
      * @throws EntityNotFoundException, DataAccessException
      */
     @Transactional
-    public void createMenuService(MenuDTO menuDTO) throws EntityNotFoundException, DataAccessException {
+    public void createMenuService(MenuDTO menuDTO) {
+        if (menuDTO == null) {
+            throw new NullPointerException("menuDTO not found");
+        }
+
         Menu menu = new Menu();
         menu.setDishName(menuDTO.getName());
         menu.setCurrentPrice(menuDTO.getPrice());
@@ -91,7 +95,7 @@ public class MenuService {
      * @return List<Menu>
      * @throws DataAccessException
      */
-    public List<Menu> getAllMenuService(String keyword) throws DataAccessException {
+    public List<Menu> getAllMenuService(String keyword) {
         if (keyword == null) {
             keyword = "";
         }
@@ -127,7 +131,7 @@ public class MenuService {
      * @param menuDTO
      * @throws DataAccessException, EntityNotFoundException
      */
-    public void updateMenuService(MenuDTO menuDTO) throws DataAccessException, EntityNotFoundException {
+    public void updateMenuService(MenuDTO menuDTO) {
         Menu updateMenu = menuRepository.findById(menuDTO.getMenuId())
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy menu với id: " + menuDTO.getMenuId()));
 

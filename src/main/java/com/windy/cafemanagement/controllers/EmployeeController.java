@@ -17,6 +17,10 @@ import com.windy.cafemanagement.Services.PermissionService;
 import com.windy.cafemanagement.Services.UploadService;
 import com.windy.cafemanagement.dto.CreateEmployeeDto;
 import com.windy.cafemanagement.dto.EditEmployeeDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataAccessException;
 
 /**
  * Employee Controller
@@ -36,6 +40,7 @@ import com.windy.cafemanagement.dto.EditEmployeeDto;
 @Controller
 @RequestMapping("/admin/employee")
 public class EmployeeController {
+    private final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
     private final EmployeeService employeeService;
     private final PermissionService permissionService;
     private final UploadService uploadService;
@@ -57,9 +62,27 @@ public class EmployeeController {
     @GetMapping("")
     public String getTableUserController(Model model,
             @RequestParam(value = "keyword", required = false) String keyword) {
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("employeis", employeeService.getAllEmployeesService(keyword));
-        return "/admin/employee/list-employee";
+        try {
+            model.addAttribute("keyword", keyword);
+            model.addAttribute("employeis", employeeService.getAllEmployeesService(keyword));
+            return "/admin/employee/list-employee";
+        } catch (EntityNotFoundException e) {
+            logger.warn("Entity not found in getTableUserController: {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (DataAccessException e) {
+            logger.error("Data access error in getTableUserController: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Lỗi truy cập dữ liệu");
+            return "admin/errors/500-error";
+        } catch (IllegalArgumentException | NullPointerException e) {
+            logger.warn("Invalid input in getTableUserController: {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (Exception e) {
+            logger.error("Unexpected error in getTableUserController: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi");
+            return "admin/errors/500-error";
+        }
     }
 
     /**
@@ -71,9 +94,19 @@ public class EmployeeController {
      */
     @GetMapping("/create")
     public String getFormCreateController(Model model) {
-        model.addAttribute("permissions", permissionService.getAllPermissionsService());
-        model.addAttribute("employee", new CreateEmployeeDto());
-        return "/admin/employee/create-employee";
+        try {
+            model.addAttribute("permissions", permissionService.getAllPermissionsService());
+            model.addAttribute("employee", new CreateEmployeeDto());
+            return "/admin/employee/create-employee";
+        } catch (DataAccessException e) {
+            logger.error("Data access error in getFormCreateController: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Lỗi truy cập dữ liệu");
+            return "admin/errors/500-error";
+        } catch (Exception e) {
+            logger.error("Unexpected error in getFormCreateController: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi");
+            return "admin/errors/500-error";
+        }
     }
 
     /**
@@ -89,16 +122,35 @@ public class EmployeeController {
             BindingResult bindingResult,
             @RequestParam("file") MultipartFile file,
             Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("permissions", permissionService.getAllPermissionsService());
-            return "/admin/employee/create-employee";
+        try {
+            if (bindingResult.hasErrors()) {
+                model.addAttribute("permissions", permissionService.getAllPermissionsService());
+                return "/admin/employee/create-employee";
+            }
+
+            String imgUrl = uploadService.uploadImage(file, "avatar");
+            if (imgUrl == null) {
+                imgUrl = "/assets/img/avatar/default.jpg";
+            }
+            employeeService.createNewAEmployee(createEmployeeDto, imgUrl);
+            return "redirect:/admin/employee";
+        } catch (EntityNotFoundException e) {
+            logger.warn("Entity not found in createEmployeeController: {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (DataAccessException e) {
+            logger.error("Data access error in createEmployeeController: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Lỗi truy cập dữ liệu");
+            return "admin/errors/500-error";
+        } catch (IllegalArgumentException | NullPointerException e) {
+            logger.warn("Invalid input in createEmployeeController: {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (Exception e) {
+            logger.error("Unexpected error in createEmployeeController: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi");
+            return "admin/errors/500-error";
         }
-        String imgUrl = uploadService.uploadImage(file, "avatar");
-        if (imgUrl == null) {
-            imgUrl = "/assets/img/avatar/default.jpg";
-        }
-        employeeService.createNewAEmployee(createEmployeeDto, imgUrl);
-        return "redirect:/admin/employee";
     }
 
     /**
@@ -110,9 +162,23 @@ public class EmployeeController {
      */
     @GetMapping("/edit/{id}")
     public String getEditFormController(Model model, @PathVariable("id") Long id) {
-        model.addAttribute("employee", employeeService.getEmployeeById(id));
-        model.addAttribute("permissions", permissionService.getAllPermissionsService());
-        return "/admin/employee/edit-employee";
+        try {
+            model.addAttribute("employee", employeeService.getEmployeeById(id));
+            model.addAttribute("permissions", permissionService.getAllPermissionsService());
+            return "/admin/employee/edit-employee";
+        } catch (EntityNotFoundException e) {
+            logger.warn("Entity not found in getEditFormController id={}: {}", id, e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (DataAccessException e) {
+            logger.error("Data access error in getEditFormController id={}: {}", id, e.getMessage(), e);
+            model.addAttribute("errorMessage", "Lỗi truy cập dữ liệu");
+            return "admin/errors/500-error";
+        } catch (Exception e) {
+            logger.error("Unexpected error in getEditFormController id={}: {}", id, e.getMessage(), e);
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi");
+            return "admin/errors/500-error";
+        }
     }
 
     /**
@@ -126,8 +192,26 @@ public class EmployeeController {
     public String editEmployeeController(@ModelAttribute("employee") EditEmployeeDto editEmployeeDto,
             @RequestParam(value = "file", required = false) MultipartFile file,
             Model model) {
-        employeeService.editEmployee(editEmployeeDto);
-        return "redirect:/admin/employee";
+        try {
+            employeeService.editEmployee(editEmployeeDto);
+            return "redirect:/admin/employee";
+        } catch (EntityNotFoundException e) {
+            logger.warn("Entity not found in editEmployeeController: {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (DataAccessException e) {
+            logger.error("Data access error in editEmployeeController: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Lỗi truy cập dữ liệu");
+            return "admin/errors/500-error";
+        } catch (IllegalArgumentException | NullPointerException e) {
+            logger.warn("Invalid input in editEmployeeController: {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (Exception e) {
+            logger.error("Unexpected error in editEmployeeController: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi");
+            return "admin/errors/500-error";
+        }
     }
 
     /**
@@ -138,9 +222,23 @@ public class EmployeeController {
      * @throws 
      */
     @GetMapping("/delete/{id}")
-    public String deleteEmployeeController(@PathVariable("id") Long id) {
-        employeeService.deleteEmployeeService(id);
-        return "redirect:/admin/employee";
+    public String deleteEmployeeController(@PathVariable("id") Long id, Model model) {
+        try {
+            employeeService.deleteEmployeeService(id);
+            return "redirect:/admin/employee";
+        } catch (EntityNotFoundException e) {
+            logger.warn("Entity not found in deleteEmployeeController id={}: {}", id, e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/errors/500-error";
+        } catch (DataAccessException e) {
+            logger.error("Data access error in deleteEmployeeController id={}: {}", id, e.getMessage(), e);
+            model.addAttribute("errorMessage", "Lỗi truy cập dữ liệu");
+            return "admin/errors/500-error";
+        } catch (Exception e) {
+            logger.error("Unexpected error in deleteEmployeeController id={}: {}", id, e.getMessage(), e);
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi");
+            return "admin/errors/500-error";
+        }
     }
 
 }

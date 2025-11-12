@@ -1,11 +1,10 @@
 package com.windy.cafemanagement.models;
 
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 
 /**
@@ -15,26 +14,27 @@ import jakarta.persistence.Table;
  *
  * Date: 10-11-2025
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 @Entity
 @Table(name = "invoice_detail")
 public class InvoiceDetail {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long invoiceDetailId;
+    @EmbeddedId
+    private InvoiceDetailId id;
 
     @ManyToOne
-    @JoinColumn(name = "menuId")
+    @MapsId("menuId")
+    @JoinColumn(name = "menu_id")
     private Menu menu;
 
     @ManyToOne
-    @JoinColumn(name = "invoiceId")
+    @MapsId("invoiceId")
+    @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
     private Integer quantity;
@@ -44,9 +44,9 @@ public class InvoiceDetail {
     public InvoiceDetail() {
     }
 
-    public InvoiceDetail(Long invoiceDetailId, Menu menu, Invoice invoice, Integer quantity,
-            Double totalPrice, Boolean isDeleted) {
-        this.invoiceDetailId = invoiceDetailId;
+    public InvoiceDetail(InvoiceDetailId id, Menu menu, Invoice invoice, Integer quantity, Double totalPrice,
+            Boolean isDeleted) {
+        this.id = id;
         this.menu = menu;
         this.invoice = invoice;
         this.quantity = quantity;
@@ -54,12 +54,12 @@ public class InvoiceDetail {
         this.isDeleted = isDeleted;
     }
 
-    public Long getInvoiceDetailId() {
-        return invoiceDetailId;
+    public InvoiceDetailId getId() {
+        return id;
     }
 
-    public void setInvoiceDetailId(Long invoiceDetailId) {
-        this.invoiceDetailId = invoiceDetailId;
+    public void setId(InvoiceDetailId id) {
+        this.id = id;
     }
 
     public Menu getMenu() {
@@ -82,14 +82,6 @@ public class InvoiceDetail {
         return quantity;
     }
 
-    public Boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
@@ -100,6 +92,14 @@ public class InvoiceDetail {
 
     public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
 }

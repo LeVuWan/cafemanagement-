@@ -1,11 +1,16 @@
 package com.windy.cafemanagement.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 /**
  * Product class
@@ -14,12 +19,12 @@ import jakarta.persistence.ManyToOne;
  *
  * Date: 10-11-2025
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 @Entity
 public class Product {
@@ -33,6 +38,8 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "unitId")
     private Unit unit;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MenuDetail> menuDetails = new ArrayList<>();
 
     public Product(Long productId, String productName, Double quantity, Double unitPrice, Unit unit,
             Boolean isDeleted) {
@@ -98,6 +105,14 @@ public class Product {
     public String toString() {
         return "Product [productId=" + productId + ", productName=" + productName + ", quantity=" + quantity
                 + ", unitPrice=" + unitPrice + ", isDeleted=" + isDeleted + ", unit=" + unit + "]";
+    }
+
+    public List<MenuDetail> getMenuDetails() {
+        return menuDetails;
+    }
+
+    public void setMenuDetails(List<MenuDetail> menuDetails) {
+        this.menuDetails = menuDetails;
     }
 
 }

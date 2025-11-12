@@ -1,9 +1,14 @@
 package com.windy.cafemanagement.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.windy.cafemanagement.enums.TableStatus;
 
@@ -14,12 +19,12 @@ import com.windy.cafemanagement.enums.TableStatus;
  *
  * Date: 10-11-2025
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 @Entity
 public class TableEntity {
@@ -29,6 +34,8 @@ public class TableEntity {
     private TableStatus status;
     private String tableName;
     private Boolean isDeleted = false;
+    @OneToMany(mappedBy = "table", cascade = CascadeType.ALL)
+    private List<TableBookingDetail> tableBookingDetails = new ArrayList<>();
 
     public TableEntity(Long tableId, TableStatus status, String tableName, Boolean isDeleted) {
         this.tableId = tableId;
@@ -80,5 +87,13 @@ public class TableEntity {
                 ", tableName='" + tableName + '\'' +
                 ", isDeleted=" + isDeleted +
                 '}';
+    }
+
+    public List<TableBookingDetail> getTableBookingDetails() {
+        return tableBookingDetails;
+    }
+
+    public void setTableBookingDetails(List<TableBookingDetail> tableBookingDetails) {
+        this.tableBookingDetails = tableBookingDetails;
     }
 }

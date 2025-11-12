@@ -1,11 +1,10 @@
 package com.windy.cafemanagement.models;
 
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 
 /**
  * MenuDetail class
@@ -23,22 +22,23 @@ import jakarta.persistence.ManyToOne;
  */
 @Entity
 public class MenuDetail {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long menuDetailId;
+    @EmbeddedId
+    private MenuDetailId menuDetailId;
 
     @ManyToOne
-    @JoinColumn(name = "productId")
+    @MapsId("productId")
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "menuId")
+    @MapsId("menuId")
+    @JoinColumn(name = "menu_id")
     private Menu menu;
 
     private Double quantity;
 
     @ManyToOne
-    @JoinColumn(name = "unitId")
+    @JoinColumn(name = "unit_id")
     private Unit unit;
 
     private Boolean isDeleted;
@@ -46,7 +46,7 @@ public class MenuDetail {
     public MenuDetail() {
     }
 
-    public MenuDetail(Long menuDetailId, Product product, Menu menu, Double quantity, Boolean isDeleted, Unit unit) {
+    public MenuDetail(MenuDetailId menuDetailId, Product product, Menu menu, Double quantity, Boolean isDeleted, Unit unit) {
         this.menuDetailId = menuDetailId;
         this.product = product;
         this.menu = menu;
@@ -55,11 +55,11 @@ public class MenuDetail {
         this.unit = unit;
     }
 
-    public Long getMenuDetailId() {
+    public MenuDetailId getMenuDetailId() {
         return menuDetailId;
     }
 
-    public void setMenuDetailId(Long menuDetailId) {
+    public void setMenuDetailId(MenuDetailId menuDetailId) {
         this.menuDetailId = menuDetailId;
     }
 

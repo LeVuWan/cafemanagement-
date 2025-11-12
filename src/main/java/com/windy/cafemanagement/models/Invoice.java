@@ -1,6 +1,10 @@
 package com.windy.cafemanagement.models;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import com.windy.cafemanagement.enums.InvoiceStatus;
@@ -19,30 +24,35 @@ import com.windy.cafemanagement.enums.InvoiceStatus;
  *
  * Date: 10-11-2025
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 @Entity
 @Table(name = "invoice")
 public class Invoice {
     @Id
-    @Column(name = "invoice_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long invoiceId;
     private Double totalAmount;
     private LocalDate transactionDate;
     private InvoiceStatus status;
     private Boolean isDeleted;
-
     @ManyToOne
     @JoinColumn(name = "voucherId")
     private Voucher voucher;
 
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
+    private List<InvoiceDetail> invoiceDetails = new ArrayList<>();
+
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
+    private List<TableBookingDetail> tableBookingDetails = new ArrayList<>();
+
     public Invoice() {
+
     }
 
     public Invoice(Long invoiceId, Double totalAmount, LocalDate transactionDate, InvoiceStatus status, Voucher voucher,
@@ -101,6 +111,22 @@ public class Invoice {
 
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public List<InvoiceDetail> getInvoiceDetails() {
+        return invoiceDetails;
+    }
+
+    public void setInvoiceDetails(List<InvoiceDetail> invoiceDetails) {
+        this.invoiceDetails = invoiceDetails;
+    }
+
+    public List<TableBookingDetail> getTableBookingDetails() {
+        return tableBookingDetails;
+    }
+
+    public void setTableBookingDetails(List<TableBookingDetail> tableBookingDetails) {
+        this.tableBookingDetails = tableBookingDetails;
     }
 
 }

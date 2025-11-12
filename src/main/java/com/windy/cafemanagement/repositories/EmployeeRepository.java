@@ -29,7 +29,7 @@ import com.windy.cafemanagement.models.Employee;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     /**
-     * get all employees by isDeleted 
+     * get all employees by isDeleted
      * 
      * @param isDeleted
      * @return List<Employee>
@@ -84,6 +84,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     /**
      * geting employee information with permission name
+     * 
      * @return List<Object[]>
      */
     @Query(value = """
@@ -93,4 +94,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
                 WHERE e.is_deleted = false
             """, nativeQuery = true)
     List<Object[]> getEmployeeInformation();
+
 }

@@ -1,12 +1,12 @@
 package com.windy.cafemanagement.models;
 
 import java.time.LocalDateTime;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 
 /**
@@ -26,20 +26,22 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "table_booking_detail")
 public class TableBookingDetail {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tableBookingDetailId;
+    @EmbeddedId
+    private TableBookingDetailId tableBookingDetailId;
 
     @ManyToOne
-    @JoinColumn(name = "tableId")
+    @MapsId("tableId")
+    @JoinColumn(name = "table_id")
     private TableEntity table;
 
     @ManyToOne
-    @JoinColumn(name = "employeeId")
+    @MapsId("employeeId")
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
     @ManyToOne
-    @JoinColumn(name = "invoiceId")
+    @MapsId("invoiceId")
+    @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
     private String customerName;
@@ -50,7 +52,7 @@ public class TableBookingDetail {
     public TableBookingDetail() {
     }
 
-    public TableBookingDetail(Long tableBookingDetailId, TableEntity table, Employee employee, Invoice invoice,
+    public TableBookingDetail(TableBookingDetailId tableBookingDetailId, TableEntity table, Employee employee, Invoice invoice,
             String customerName, String customerPhone, LocalDateTime bookingTime, Boolean isDeleted) {
         this.tableBookingDetailId = tableBookingDetailId;
         this.table = table;
@@ -62,11 +64,11 @@ public class TableBookingDetail {
         this.isDeleted = isDeleted;
     }
 
-    public Long getTableBookingDetailId() {
+    public TableBookingDetailId getTableBookingDetailId() {
         return tableBookingDetailId;
     }
 
-    public void setTableBookingDetailId(Long tableBookingDetailId) {
+    public void setTableBookingDetailId(TableBookingDetailId tableBookingDetailId) {
         this.tableBookingDetailId = tableBookingDetailId;
     }
 

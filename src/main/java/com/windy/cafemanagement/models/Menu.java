@@ -1,9 +1,14 @@
 package com.windy.cafemanagement.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 /**
  * Menu class
@@ -12,12 +17,12 @@ import jakarta.persistence.Id;
  *
  * Date: 10-11-2025
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 @Entity
 public class Menu {
@@ -27,6 +32,8 @@ public class Menu {
     private String dishName;
     private Double currentPrice;
     private Boolean isDeleted;
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MenuDetail> menuDetails = new ArrayList<>();
 
     public Menu() {
     }
@@ -68,6 +75,14 @@ public class Menu {
 
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public List<MenuDetail> getMenuDetails() {
+        return menuDetails;
+    }
+
+    public void setMenuDetails(List<MenuDetail> menuDetails) {
+        this.menuDetails = menuDetails;
     }
 
 }

@@ -1,5 +1,9 @@
 package com.windy.cafemanagement.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -8,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
@@ -17,12 +22,12 @@ import jakarta.persistence.Table;
  *
  * Date: 12-11-2013
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 @Entity
 @Table(name = "employee")
@@ -52,6 +57,9 @@ public class Employee {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "permissionid")
     private Permission permission;
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    private List<TableBookingDetail> tableBookingDetails = new ArrayList<>();
 
     public Employee(Long employeeId, String username, String address, String phoneNumber, String password,
             Double salary, String avatar, Permission permission, String fullname) {
@@ -155,6 +163,14 @@ public class Employee {
         return "Employee [employeeId=" + employeeId + ", username=" + username + ", fullname=" + fullname + ", address="
                 + address + ", phoneNumber=" + phoneNumber + ", password=" + password + ", salary=" + salary
                 + ", avatar=" + avatar + ", isDeleted=" + isDeleted + ", permission=" + permission + "]";
+    }
+
+    public List<TableBookingDetail> getTableBookingDetails() {
+        return tableBookingDetails;
+    }
+
+    public void setTableBookingDetails(List<TableBookingDetail> tableBookingDetails) {
+        this.tableBookingDetails = tableBookingDetails;
     }
 
 }

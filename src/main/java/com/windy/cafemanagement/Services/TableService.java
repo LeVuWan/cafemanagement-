@@ -447,23 +447,17 @@ public class TableService {
             throw new NullPointerException("tableId not found");
         }
 
-        TableEntity tableExist = tableRepository.findById(tableId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn với ID: " + tableId));
+        TableEntity tableExist = getTableEntityById(tableId);
 
         List<InvoiceStatus> unpaidStatuses = List.of(InvoiceStatus.UPDATED, InvoiceStatus.CREATED);
 
-        Invoice invoiceExist = invoiceRepository
-                .findCurrentUnpaidInvoiceByTableId(tableId, unpaidStatuses)
-                .orElseThrow(() -> new RuntimeException(
-                        "Không tìm thấy hóa đơn chưa thanh toán của bàn ID: " + tableId));
+        Invoice invoiceExist = getInvoiceByTableIdAndStatusInvoice(tableId, unpaidStatuses);
 
-        List<InvoiceDetail> invoiceDetails = invoiceDetailRepository
-                .findAllByInvoice_InvoiceIdAndIsDeletedFalse(invoiceExist.getInvoiceId());
+        List<InvoiceDetail> invoiceDetails = invoiceExist.getInvoiceDetails();
 
-        TableBookingDetail tableBookingDetail = bookingDetailRepository
-                .findActiveByTableIdAndInvoiceId(tableId, invoiceExist.getInvoiceId())
-                .orElseThrow(() -> new RuntimeException(
-                        "Không tìm thấy thông tin khách hàng của bàn ID: " + tableId));
+        TableStatus tableStatus = tableExist.getStatus() == TableStatus.OCCUPIED ? TableStatus.OCCUPIED : TableStatus.RESERVED;
+
+        TableBookingDetail tableBookingDetail = getBookingDetailByTableIdAndStatusInvoice(tableId, unpaidStatuses, tableStatus);
 
         tableExist.setStatus(TableStatus.AVAILABLE);
         tableRepository.save(tableExist);
@@ -475,9 +469,11 @@ public class TableService {
         for (InvoiceDetail detail : invoiceDetails) {
             detail.setIsDeleted(true);
         }
+
         invoiceDetailRepository.saveAll(invoiceDetails);
 
         tableBookingDetail.setIsDeleted(true);
+
         bookingDetailRepository.save(tableBookingDetail);
     }
 
@@ -726,7 +722,7 @@ public class TableService {
 
     private TableEntity getTableEntityById(Long id) {
         return tableRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy bàn cần gộp đến"));
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy bàn với id: " + id));
     }
 
     private Invoice getInvoiceByTableIdAndStatusInvoice(Long tableId, List<InvoiceStatus> UNPAID_STATUSES) {

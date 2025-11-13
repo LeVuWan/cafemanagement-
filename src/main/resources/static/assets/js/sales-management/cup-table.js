@@ -197,7 +197,7 @@ $('#confirmMergeTable').click(async () => {
         const data = {
             fromTableId: tableFromId,
             toTableId: tableToId,
-            menus: listMenuCut,
+            menu: listMenuCut,
             isCheckAll: allChecked && listMenuCut.length === totalRows && allQuantitiesEqual
         };
 

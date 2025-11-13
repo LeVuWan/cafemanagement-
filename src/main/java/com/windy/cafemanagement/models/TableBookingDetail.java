@@ -16,12 +16,12 @@ import jakarta.persistence.Table;
  *
  * Date: 10-11-2025
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 @Entity
 @Table(name = "table_booking_detail")
@@ -52,7 +52,8 @@ public class TableBookingDetail {
     public TableBookingDetail() {
     }
 
-    public TableBookingDetail(TableBookingDetailId tableBookingDetailId, TableEntity table, Employee employee, Invoice invoice,
+    public TableBookingDetail(TableBookingDetailId tableBookingDetailId, TableEntity table, Employee employee,
+            Invoice invoice,
             String customerName, String customerPhone, LocalDateTime bookingTime, Boolean isDeleted) {
         this.tableBookingDetailId = tableBookingDetailId;
         this.table = table;
@@ -126,6 +127,13 @@ public class TableBookingDetail {
 
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    @Override
+    public String toString() {
+        return "TableBookingDetail [tableBookingDetailId=" + tableBookingDetailId + ", table=" + table + ", employee="
+                + employee + ", invoice=" + invoice + ", customerName=" + customerName + ", customerPhone="
+                + customerPhone + ", bookingTime=" + bookingTime + ", isDeleted=" + isDeleted + "]";
     }
 
 }

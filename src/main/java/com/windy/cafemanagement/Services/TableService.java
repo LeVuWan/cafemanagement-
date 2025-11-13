@@ -29,7 +29,9 @@ import com.windy.cafemanagement.enums.TableStatus;
 import com.windy.cafemanagement.models.Employee;
 import com.windy.cafemanagement.models.Invoice;
 import com.windy.cafemanagement.models.InvoiceDetail;
+import com.windy.cafemanagement.models.InvoiceDetailId;
 import com.windy.cafemanagement.models.TableBookingDetail;
+import com.windy.cafemanagement.models.TableBookingDetailId;
 import com.windy.cafemanagement.models.TableEntity;
 import com.windy.cafemanagement.models.Voucher;
 import com.windy.cafemanagement.repositories.EmployeeRepository;
@@ -55,7 +57,8 @@ import com.windy.cafemanagement.repositories.VoucherRepository;
  */
 @Service
 public class TableService {
-    private static final List<InvoiceStatus> UNPAID_STATUSES = List.of(InvoiceStatus.CREATED, InvoiceStatus.UPDATED);
+    // private static final List<InvoiceStatus> UNPAID_STATUSES =
+    // List.of(InvoiceStatus.CREATED, InvoiceStatus.UPDATED);
     private final Logger logger = LoggerFactory.getLogger(TableService.class);
     private final TableRepository tableRepository;
     private final EmployeeRepository employeeRepository;
@@ -99,33 +102,31 @@ public class TableService {
         if (orderTableDto == null) {
             throw new NullPointerException("orderTableDto not found");
         }
-        if (orderTableDto.getTableId() == null) {
-            throw new NullPointerException("tableId not found in orderTableDto");
-        }
-        if (orderTableDto.getDateOrder() == null || orderTableDto.getTimeOrder() == null) {
-            throw new NullPointerException("dateOrder or timeOrder not found in orderTableDto");
-        }
+
         TableEntity table = tableRepository.findById(orderTableDto.getTableId())
                 .orElseThrow(
-                        () -> new RuntimeException("Không tìm thấy hàng hóa có ID: " + orderTableDto.getTableId()));
+                        () -> new EntityNotFoundException(
+                                "Không tìm thấy hàng hóa có ID: " + orderTableDto.getTableId()));
 
         if (table.getStatus() != TableStatus.AVAILABLE) {
             throw new RuntimeException("Bàn với id: " + orderTableDto.getTableId() + " đã được sữ dụng");
         }
 
-        Invoice invoice = new Invoice();
-        invoice.setTotalAmount(0.0);
-        invoice.setTransactionDate(LocalDate.now());
-        invoice.setStatus(InvoiceStatus.CREATED);
-        invoice.setVoucher(null);
-        invoice.setIsDeleted(false);
-        invoiceRepository.save(invoice);
+        Invoice invoice = createInvoice();
 
         String username = SecurityUtil.getSessionUser();
-        Employee employee = employeeRepository.findByUsername(username);
+
+        if (username == null) {
+            throw new SecurityException("Người dùng chưa đăng nhập");
+        }
+
+        Employee employee = getCurrentEmployee();
 
         TableBookingDetail tableBookingDetail = new TableBookingDetail();
+        TableBookingDetailId id = new TableBookingDetailId(table.getTableId(), employee.getEmployeeId(),
+                invoice.getInvoiceId());
 
+        tableBookingDetail.setTableBookingDetailId(id);
         tableBookingDetail.setTable(table);
         tableBookingDetail.setEmployee(employee);
         tableBookingDetail.setInvoice(invoice);
@@ -153,22 +154,15 @@ public class TableService {
             throw new NullPointerException("chooseMenuDto not found");
         }
 
-        if (chooseMenuDto.getTableId() == null) {
-            throw new NullPointerException("tableId not found in chooseMenuDto");
-        }
-
-        if (chooseMenuDto.getMenu() == null || chooseMenuDto.getMenu().isEmpty()) {
-            throw new NullPointerException("There is no menu in chooseMenuDto");
-        }
-
         TableEntity table = tableRepository.findById(chooseMenuDto.getTableId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn có ID: " + chooseMenuDto.getTableId()));
 
         if (table.getStatus() == TableStatus.AVAILABLE) {
             throw new RuntimeException("Vui lòng đặt bàn trước khi chọn món");
         }
-        table.setStatus(TableStatus.OCCUPIED);
 
+        table.setStatus(TableStatus.OCCUPIED);
+        List<InvoiceStatus> UNPAID_STATUSES = List.of(InvoiceStatus.CREATED, InvoiceStatus.UPDATED);
         Invoice invoice = invoiceRepository
                 .findCurrentUnpaidInvoiceByTableId(chooseMenuDto.getTableId(), UNPAID_STATUSES)
                 .orElseThrow(() -> new RuntimeException(
@@ -193,6 +187,8 @@ public class TableService {
                 toSave.add(existingDetail);
             } else {
                 InvoiceDetail detail = new InvoiceDetail();
+                InvoiceDetailId id = new InvoiceDetailId(invoice.getInvoiceId(), menuDto.getMenuId());
+                detail.setId(id);
                 detail.setInvoice(invoice);
                 detail.setMenu(menuExist);
                 detail.setQuantity(menuDto.getQuantity());
@@ -274,30 +270,47 @@ public class TableService {
             throw new NullPointerException("moveTableDto not found");
         }
 
-        if (moveTableDto.getFromTableId() == null) {
-            throw new NullPointerException("fromTableId not found in moveTableDto");
-        }
-
-        if (moveTableDto.getToTableId() == null) {
-            throw new NullPointerException("toTableId not found in moveTableDto");
-        }
         TableEntity selectedTable = tableRepository.findById(moveTableDto.getToTableId())
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy bàn muốn chuyển đến"));
+
+        if (selectedTable.getStatus() != TableStatus.AVAILABLE) {
+            throw new IllegalArgumentException("Bàn được chọn hiện tại không trống");
+        }
 
         TableEntity fromTable = tableRepository.findById(moveTableDto.getFromTableId())
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy bàn hiện tại"));
 
-        TableBookingDetail currentBooking = bookingDetailRepository
-                .findCurrentActiveByTableId(moveTableDto.getFromTableId())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Không tìm thấy thông tin chi tiết đặt bàn của bàn với id: " + moveTableDto.getFromTableId()));
+        if (fromTable.getStatus() == TableStatus.AVAILABLE) {
+            throw new IllegalArgumentException("Bàn hiện tại đang không được sử dụng");
+        }
+
+        TableBookingDetail currentBooking = getBookingDetailByTableIdAndStatusInvoice(moveTableDto.getFromTableId(),
+                List.of(InvoiceStatus.CREATED, InvoiceStatus.UPDATED),
+                TableStatus.OCCUPIED);
 
         selectedTable.setStatus(TableStatus.OCCUPIED);
         fromTable.setStatus(TableStatus.AVAILABLE);
         tableRepository.saveAll(List.of(selectedTable, fromTable));
 
-        currentBooking.setTable(selectedTable);
+        currentBooking.setIsDeleted(true);
         bookingDetailRepository.save(currentBooking);
+
+        TableBookingDetailId newId = new TableBookingDetailId();
+        newId.setTableId(selectedTable.getTableId());
+        newId.setEmployeeId(currentBooking.getTableBookingDetailId().getEmployeeId());
+        newId.setInvoiceId(currentBooking.getTableBookingDetailId().getInvoiceId());
+
+        TableBookingDetail newBooking = new TableBookingDetail();
+        newBooking.setTableBookingDetailId(newId);
+        newBooking.setTable(selectedTable);
+        newBooking.setEmployee(currentBooking.getEmployee());
+        newBooking.setInvoice(currentBooking.getInvoice());
+        newBooking.setCustomerName(currentBooking.getCustomerName());
+        newBooking.setCustomerPhone(currentBooking.getCustomerPhone());
+        newBooking.setBookingTime(currentBooking.getBookingTime());
+        newBooking.setIsDeleted(false);
+
+        bookingDetailRepository.save(newBooking);
     }
 
     /**
@@ -331,64 +344,39 @@ public class TableService {
      */
     @Transactional
     public void mergeTableService(MergeTableDto mergeTableDto) {
-
         if (mergeTableDto == null) {
             throw new NullPointerException("mergeTableDto not found");
         }
 
-        if (mergeTableDto.getTableToId() == null) {
-            throw new NullPointerException("tableToId not found in mergeTableDto");
-        }
-
-        if (mergeTableDto.getListIdTableFrom() == null || mergeTableDto.getListIdTableFrom().isEmpty()) {
-            throw new NullPointerException("listIdTableFrom not found or empty in mergeTableDto");
-        }
-
-        TableEntity tableTo = tableRepository.findById(mergeTableDto.getTableToId())
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy bàn cần gộp đến"));
-
+        TableEntity tableTo = getTableEntityById(mergeTableDto.getTableToId());
         if (tableTo.getStatus() != TableStatus.AVAILABLE) {
-            throw new EntityNotFoundException("Bàn muốn gộp đến đang được sử dụng, không thể gộp");
+            throw new IllegalArgumentException("Bàn muốn gộp đến đang được sử dụng, không thể gộp");
         }
-
         tableTo.setStatus(TableStatus.OCCUPIED);
         tableRepository.save(tableTo);
 
-        String username = SecurityUtil.getSessionUser();
+        Employee employee = getCurrentEmployee();
 
-        if (username == null) {
-            throw new SecurityException("Người dùng chưa đăng nhập");
+        if (employee == null) {
+            throw new EntityNotFoundException("Không tim thấy nhân viên đang đăng nhập.");
         }
 
-        Employee user = employeeRepository.findByUsername(username);
-
-        if (user == null) {
-            throw new EntityNotFoundException("Không tìm thấy nhân viên với username: " + username);
-        }
-
-        Invoice newInvoice = new Invoice();
-        newInvoice.setTransactionDate(LocalDate.now());
-        newInvoice.setStatus(InvoiceStatus.UPDATED);
-        newInvoice.setVoucher(null);
-        newInvoice.setIsDeleted(false);
-        invoiceRepository.save(newInvoice);
+        Invoice newInvoice = createInvoice();
 
         Map<Long, InvoiceDetail> mergedDetailMap = new HashMap<>();
+        List<InvoiceStatus> UNPAID_STATUSES = List.of(InvoiceStatus.CREATED, InvoiceStatus.UPDATED);
 
         for (Long tableFromId : mergeTableDto.getListIdTableFrom()) {
-            TableEntity tableFrom = tableRepository.findById(tableFromId)
-                    .orElseThrow(
-                            () -> new EntityNotFoundException("Không tìm thấy bàn cần gộp với ID: " + tableFromId));
+            TableEntity tableFrom = getTableEntityById(tableFromId);
 
-            Invoice oldInvoice = invoiceRepository
-                    .findCurrentUnpaidInvoiceByTableId(tableFromId, UNPAID_STATUSES)
-                    .orElseThrow(() -> new EntityNotFoundException(
-                            "Không tìm thấy hóa đơn chưa thanh toán của bàn ID: " + tableFromId));
+            Invoice oldInvoice = getInvoiceByTableIdAndStatusInvoice(tableFromId, UNPAID_STATUSES);
 
-            List<InvoiceDetail> oldDetails = invoiceDetailRepository
-                    .findAllByInvoice_InvoiceIdAndIsDeletedFalse(oldInvoice.getInvoiceId());
+            List<InvoiceDetail> oldDetails = oldInvoice.getInvoiceDetails();
 
             for (InvoiceDetail detail : oldDetails) {
+                if (Boolean.TRUE.equals(detail.getIsDeleted()))
+                    continue;
+
                 Long menuId = detail.getMenu().getMenuId();
 
                 if (mergedDetailMap.containsKey(menuId)) {
@@ -397,6 +385,8 @@ public class TableService {
                     existing.setTotalPrice(existing.getTotalPrice() + detail.getTotalPrice());
                 } else {
                     InvoiceDetail newDetail = new InvoiceDetail();
+                    InvoiceDetailId id = new InvoiceDetailId(newInvoice.getInvoiceId(), menuId);
+                    newDetail.setId(id);
                     newDetail.setMenu(detail.getMenu());
                     newDetail.setInvoice(newInvoice);
                     newDetail.setQuantity(detail.getQuantity());
@@ -406,7 +396,15 @@ public class TableService {
                 }
             }
 
+            TableBookingDetail oldBookingDetail = getBookingDetailByTableIdAndStatusInvoice(tableFromId,
+                    UNPAID_STATUSES,
+                    TableStatus.OCCUPIED);
+
+            oldBookingDetail.setIsDeleted(true);
+            bookingDetailRepository.save(oldBookingDetail);
+
             oldInvoice.setStatus(InvoiceStatus.CANCELLED);
+            oldInvoice.setIsDeleted(true);
             invoiceRepository.save(oldInvoice);
 
             tableFrom.setStatus(TableStatus.AVAILABLE);
@@ -417,7 +415,12 @@ public class TableService {
         invoiceDetailRepository.saveAll(mergedDetails);
 
         TableBookingDetail bookingDetail = new TableBookingDetail();
-        bookingDetail.setEmployee(user);
+        TableBookingDetailId bookingId = new TableBookingDetailId();
+        bookingId.setTableId(tableTo.getTableId());
+        bookingId.setEmployeeId(employee.getEmployeeId());
+        bookingId.setInvoiceId(newInvoice.getInvoiceId());
+        bookingDetail.setTableBookingDetailId(bookingId);
+        bookingDetail.setEmployee(employee);
         bookingDetail.setInvoice(newInvoice);
         bookingDetail.setTable(tableTo);
         bookingDetail.setBookingTime(LocalDateTime.now());
@@ -428,6 +431,7 @@ public class TableService {
                 .mapToDouble(InvoiceDetail::getTotalPrice)
                 .sum();
         newInvoice.setTotalAmount(total);
+        newInvoice.setStatus(InvoiceStatus.UPDATED);
         invoiceRepository.save(newInvoice);
     }
 
@@ -514,6 +518,7 @@ public class TableService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn cần tách đến"));
 
         // reuse UNPAID_STATUSES
+        List<InvoiceStatus> UNPAID_STATUSES = List.of(InvoiceStatus.CREATED, InvoiceStatus.UPDATED);
 
         // Lấy hóa đơn bàn nguồn
         Invoice fromInvoice = invoiceRepository
@@ -621,11 +626,6 @@ public class TableService {
         invoiceDetailRepository.saveAll(invoiceDetailOfInvoiceFrom);
     }
 
-    private Employee getCurrentEmployee() {
-        String username = SecurityUtil.getSessionUser();
-        return employeeRepository.findByUsername(username);
-    }
-
     private Invoice createInvoice() {
         Invoice invoice = new Invoice();
         invoice.setTotalAmount(0.0);
@@ -724,6 +724,35 @@ public class TableService {
         return allZero;
     }
 
+    private TableEntity getTableEntityById(Long id) {
+        return tableRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy bàn cần gộp đến"));
+    }
+
+    private Invoice getInvoiceByTableIdAndStatusInvoice(Long tableId, List<InvoiceStatus> UNPAID_STATUSES) {
+        return invoiceRepository
+                .findCurrentUnpaidInvoiceByTableId(tableId, UNPAID_STATUSES)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Không tìm thấy hóa đơn chưa thanh toán của bàn ID: " + tableId));
+    }
+
+    private Employee getCurrentEmployee() {
+        String username = SecurityUtil.getSessionUser();
+        return employeeRepository.findByUsername(username);
+    }
+
+    private TableBookingDetail getBookingDetailByTableIdAndStatusInvoice(Long id, List<InvoiceStatus> invoiceStatus,
+            TableStatus tableStatus) {
+        return bookingDetailRepository
+                .findCurrentActiveByTableId(
+                        id,
+                        invoiceStatus,
+                        tableStatus)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Không tìm thấy thông tin chi tiết đặt bàn với id: " + id));
+
+    }
+
     /**
      * process payment for a table's invoice
      * 
@@ -740,16 +769,14 @@ public class TableService {
             throw new NullPointerException("tableId not found in paymentDto");
         }
 
-        TableEntity table = tableRepository.findById(paymentDto.getTableId())
-                .orElseThrow(() -> new RuntimeException("Bàn không tồn tại."));
+        TableEntity table = getTableEntityById(paymentDto.getTableId());
 
         List<InvoiceStatus> unpaidStatuses = List.of(InvoiceStatus.UPDATED);
-        Invoice invoiceOfTable = invoiceRepository
-                .findCurrentUnpaidInvoiceByTableId(table.getTableId(), unpaidStatuses)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn của bàn hiện tại."));
+
+        Invoice invoiceOfTable = getInvoiceByTableIdAndStatusInvoice(table.getTableId(), unpaidStatuses);
 
         Double totalAmount = invoiceOfTable.getTotalAmount();
-        logger.debug("Check getVoucherId: {}", paymentDto.getVoucherId());
+
         if (paymentDto.getVoucherId() != null) {
             Voucher voucher = voucherRepository.findById(paymentDto.getVoucherId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy voucher."));

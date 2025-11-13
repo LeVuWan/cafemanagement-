@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.windy.cafemanagement.Responses.InfoMenuRes;
 import com.windy.cafemanagement.models.InvoiceDetail;
+import com.windy.cafemanagement.models.InvoiceDetailId;
 
 /**
  * InvoiceDetailRepository interface
@@ -22,7 +23,7 @@ import com.windy.cafemanagement.models.InvoiceDetail;
  * -----------------------------------------------------------------------
  * 11-10-2025 VuLQ Create
  */
-public interface InvoiceDetailRepository extends JpaRepository<InvoiceDetail, Long> {
+public interface InvoiceDetailRepository extends JpaRepository<InvoiceDetail, InvoiceDetailId> {
 
   /**
    * get invoice detail by invoice id and menu id and isDeleted false

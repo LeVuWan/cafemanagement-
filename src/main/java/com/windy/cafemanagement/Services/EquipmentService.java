@@ -1,11 +1,8 @@
 package com.windy.cafemanagement.Services;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 

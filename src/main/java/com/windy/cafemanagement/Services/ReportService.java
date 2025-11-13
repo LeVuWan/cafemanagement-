@@ -3,8 +3,6 @@ package com.windy.cafemanagement.Services;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.windy.cafemanagement.Responses.GenaralReportRes;

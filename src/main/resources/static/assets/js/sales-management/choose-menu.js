@@ -70,7 +70,7 @@ $('#btn-confirm-choose').click(async () => {
 
     const data = {
         tableId: table.id,
-        menus: rows
+        menu: rows
     };
 
     try {

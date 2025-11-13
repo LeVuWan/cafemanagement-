@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.windy.cafemanagement.models.Menu;
+import com.windy.cafemanagement.models.MenuDetail;
 
 /**
  * MenuRepository interface
@@ -38,4 +39,14 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
             AND m.isDeleted = FALSE
             """)
     List<Menu> findAllMenu(@Param("keyword") String keyword);
+
+    @Query("""
+            SELECT md
+            FROM MenuDetail md
+            JOIN md.menu m
+            WHERE m.isDeleted = FALSE
+              AND md.isDeleted = FALSE
+              AND m.menuId = :menuId
+            """)
+    List<MenuDetail> findMenuDetailByMenu(@Param("menuId") Long menuId);
 }

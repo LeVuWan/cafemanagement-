@@ -96,6 +96,10 @@ public class TableController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                     "status", "error",
                     "message", "Không tìm thấy mục đặt bàn: " + ex.getMessage()));
+        } catch (SecurityException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "status", "error",
+                    "message", "Không tìm thấy nhân viên đang đăng nhập: " + ex.getMessage()));
         } catch (IllegalArgumentException | NullPointerException ex) {
             logger.error("Invalid order data: {}", ex.getMessage(), ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(

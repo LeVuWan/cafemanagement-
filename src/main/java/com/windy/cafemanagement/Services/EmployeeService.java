@@ -12,7 +12,9 @@ import com.windy.cafemanagement.dto.CreateEmployeeDto;
 import com.windy.cafemanagement.dto.EditEmployeeDto;
 import com.windy.cafemanagement.dto.UpdateProfileDto;
 import com.windy.cafemanagement.models.Employee;
+import com.windy.cafemanagement.models.Permission;
 import com.windy.cafemanagement.repositories.EmployeeRepository;
+import com.windy.cafemanagement.repositories.PermissionRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import javassist.NotFoundException;
@@ -35,15 +37,17 @@ import javassist.NotFoundException;
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final PermissionService permissionService;
+    private final PermissionRepository permissionRepository;
     private final PasswordEncoder passwordEncoder;
     private final UploadService uploadService;
 
     public EmployeeService(EmployeeRepository employeeService, PermissionService permissionService,
-            PasswordEncoder passwordEncoder, UploadService uploadService) {
+            PasswordEncoder passwordEncoder, UploadService uploadService, PermissionRepository permissionRepository) {
         this.employeeRepository = employeeService;
         this.permissionService = permissionService;
         this.passwordEncoder = passwordEncoder;
         this.uploadService = uploadService;
+        this.permissionRepository = permissionRepository;
     }
 
     /**
@@ -294,5 +298,44 @@ public class EmployeeService {
                         (Double) obj[3],
                         (String) obj[4]))
                 .toList();
+    }
+
+    public void initializeDataService() {
+        if (permissionRepository.count() > 0 || employeeRepository.count() > 0) {
+            return;
+        }
+
+        Permission management = new Permission();
+        management.setName("MANAGER");
+        management.setIsDeleted(false);
+        permissionRepository.save(management);
+
+        Permission employee = new Permission();
+        employee.setName("EMPLOYY_SERVICE");
+        employee.setIsDeleted(false);
+        permissionRepository.save(employee);
+
+        Employee emp1 = new Employee();
+        emp1.setUsername("manager01");
+        emp1.setFullname("Manager Name");
+        emp1.setAddress("HN");
+        emp1.setPhoneNumber("0123456789");
+        emp1.setPassword(passwordEncoder.encode("123456"));
+        emp1.setSalary(10000.0);
+        emp1.setIsDeleted(false);
+        emp1.setPermission(management);
+        employeeRepository.save(emp1);
+
+        Employee emp2 = new Employee();
+        emp2.setUsername("employee01");
+        emp2.setFullname("Employee Name");
+        emp2.setAddress("HCM");
+        emp2.setPhoneNumber("0987654321");
+        emp2.setPassword(passwordEncoder.encode("123456"));
+        emp2.setSalary(8000.0);
+        emp2.setIsDeleted(false);
+        emp2.setPermission(employee);
+        employeeRepository.save(emp2);
+
     }
 }

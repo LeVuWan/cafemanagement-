@@ -17,12 +17,12 @@ import jakarta.persistence.Table;
  *
  * Date: 10-11-2025
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 @Entity
 @Table(name = "permission")
@@ -34,16 +34,16 @@ public class Permission {
 
     private String name;
 
-    private Boolean isDeleted = false;
+    private Boolean isDeleted;
 
     @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL)
     private List<Employee> employees;
 
-    public Permission(Long permissionId, String name, List<Employee> employees) {
+    public Permission(Long permissionId, String name, List<Employee> employees, Boolean isDeleted) {
         this.permissionId = permissionId;
         this.name = name;
         this.employees = employees;
-        this.isDeleted = false;
+        this.isDeleted = isDeleted;
     }
 
     public Permission() {
@@ -71,6 +71,14 @@ public class Permission {
 
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
 }

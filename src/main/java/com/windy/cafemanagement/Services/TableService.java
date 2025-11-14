@@ -619,6 +619,65 @@ public class TableService {
                 bookingDetailFromExist.getCustomerPhone());
     }
 
+    /**
+     * process payment for a table's invoice
+     * 
+     * @param paymentDto
+     * @throws NullPointerException, RuntimeException
+     */
+    @Transactional
+    public void paymentService(PaymentDto paymentDto) {
+        if (paymentDto == null) {
+            throw new NullPointerException("paymentDto not found");
+        }
+
+        if (paymentDto.getTableId() == null) {
+            throw new NullPointerException("tableId not found in paymentDto");
+        }
+
+        TableEntity table = getTableEntityById(paymentDto.getTableId());
+
+        List<InvoiceStatus> unpaidStatuses = List.of(InvoiceStatus.UPDATED);
+
+        Invoice invoiceOfTable = getInvoiceByTableIdAndStatusInvoice(table.getTableId(), unpaidStatuses);
+
+        Double totalAmount = invoiceOfTable.getTotalAmount();
+
+        if (paymentDto.getVoucherId() != null) {
+            Voucher voucher = voucherRepository.findById(paymentDto.getVoucherId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy voucher."));
+
+            if (Boolean.TRUE.equals(voucher.getIsDeleted())) {
+                throw new RuntimeException("Voucher không hợp lệ hoặc đã được sử dụng.");
+            }
+            LocalDate now = LocalDate.now();
+            if (voucher.getStartDate().isAfter(now) || voucher.getEndDate().isBefore(now)) {
+                throw new RuntimeException("Voucher đã hết hạn sử dụng.");
+            }
+
+            Double discountRate = voucher.getDiscountValue() / 100;
+            Double totalAfterDiscount = totalAmount * (1 - discountRate);
+
+            totalAfterDiscount = Math.round(totalAfterDiscount * 100.0) / 100.0;
+
+            invoiceOfTable.setVoucher(voucher);
+            invoiceOfTable.setTotalAmount(totalAfterDiscount);
+
+            voucherRepository.save(voucher);
+        }
+
+        else {
+            invoiceOfTable.setTotalAmount(totalAmount);
+        }
+
+        invoiceOfTable.setStatus(InvoiceStatus.PAID);
+        invoiceOfTable.setTransactionDate(LocalDate.now());
+        invoiceRepository.save(invoiceOfTable);
+
+        table.setStatus(TableStatus.AVAILABLE);
+        tableRepository.save(table);
+    }
+
     private Invoice createInvoice() {
         Invoice invoice = new Invoice();
         invoice.setTotalAmount(0.0);
@@ -747,62 +806,4 @@ public class TableService {
 
     }
 
-    /**
-     * process payment for a table's invoice
-     * 
-     * @param paymentDto
-     * @throws NullPointerException, RuntimeException
-     */
-    @Transactional
-    public void paymentService(PaymentDto paymentDto) {
-        if (paymentDto == null) {
-            throw new NullPointerException("paymentDto not found");
-        }
-
-        if (paymentDto.getTableId() == null) {
-            throw new NullPointerException("tableId not found in paymentDto");
-        }
-
-        TableEntity table = getTableEntityById(paymentDto.getTableId());
-
-        List<InvoiceStatus> unpaidStatuses = List.of(InvoiceStatus.UPDATED);
-
-        Invoice invoiceOfTable = getInvoiceByTableIdAndStatusInvoice(table.getTableId(), unpaidStatuses);
-
-        Double totalAmount = invoiceOfTable.getTotalAmount();
-
-        if (paymentDto.getVoucherId() != null) {
-            Voucher voucher = voucherRepository.findById(paymentDto.getVoucherId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy voucher."));
-
-            if (Boolean.TRUE.equals(voucher.getIsDeleted())) {
-                throw new RuntimeException("Voucher không hợp lệ hoặc đã được sử dụng.");
-            }
-            LocalDate now = LocalDate.now();
-            if (voucher.getStartDate().isAfter(now) || voucher.getEndDate().isBefore(now)) {
-                throw new RuntimeException("Voucher đã hết hạn sử dụng.");
-            }
-
-            Double discountRate = voucher.getDiscountValue() / 100;
-            Double totalAfterDiscount = totalAmount * (1 - discountRate);
-
-            totalAfterDiscount = Math.round(totalAfterDiscount * 100.0) / 100.0;
-
-            invoiceOfTable.setVoucher(voucher);
-            invoiceOfTable.setTotalAmount(totalAfterDiscount);
-
-            voucherRepository.save(voucher);
-        }
-
-        else {
-            invoiceOfTable.setTotalAmount(totalAmount);
-        }
-
-        invoiceOfTable.setStatus(InvoiceStatus.PAID);
-        invoiceOfTable.setTransactionDate(LocalDate.now());
-        invoiceRepository.save(invoiceOfTable);
-
-        table.setStatus(TableStatus.AVAILABLE);
-        tableRepository.save(table);
-    }
 }

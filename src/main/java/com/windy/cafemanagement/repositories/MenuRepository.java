@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.windy.cafemanagement.Services.MenuForChooseMenuRes;
 import com.windy.cafemanagement.models.Menu;
 import com.windy.cafemanagement.models.MenuDetail;
 
@@ -26,27 +27,43 @@ import com.windy.cafemanagement.models.MenuDetail;
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long> {
 
-    /**
-     * get all menu by keyword search and isDeleted false
-     * 
-     * @param keyword
-     * @return List<Menu>
-     */
-    @Query("""
-            SELECT m
-            FROM Menu m
-            WHERE m.dishName LIKE CONCAT('%', :keyword, '%')
-            AND m.isDeleted = FALSE
-            """)
-    List<Menu> findAllMenu(@Param("keyword") String keyword);
+        /**
+         * get all menu by keyword search and isDeleted false
+         * 
+         * @param keyword
+         * @return List<Menu>
+         */
+        @Query("""
+                        SELECT m
+                        FROM Menu m
+                        WHERE m.dishName LIKE CONCAT('%', :keyword, '%')
+                        AND m.isDeleted = FALSE
+                        """)
+        List<Menu> findAllMenu(@Param("keyword") String keyword);
 
-    @Query("""
-            SELECT md
-            FROM MenuDetail md
-            JOIN md.menu m
-            WHERE m.isDeleted = FALSE
-              AND md.isDeleted = FALSE
-              AND m.menuId = :menuId
-            """)
-    List<MenuDetail> findMenuDetailByMenu(@Param("menuId") Long menuId);
+        @Query("""
+                        SELECT md
+                        FROM MenuDetail md
+                        JOIN md.menu m
+                        WHERE m.isDeleted = FALSE
+                          AND md.isDeleted = FALSE
+                          AND m.menuId = :menuId
+                        """)
+        List<MenuDetail> findMenuDetailByMenu(@Param("menuId") Long menuId);
+
+        /**
+         * get all menu for choose menu
+         * 
+         * @param keyword
+         * @return List<Menu>
+         */
+        @Query(value = """
+                        SELECT
+                            m.menu_id AS menuId,
+                            m.dish_name AS dishName
+                        FROM menu m
+                        WHERE m.is_deleted = false
+                        """, nativeQuery = true)
+        List<MenuForChooseMenuRes> getMenuForChoose();
+
 }

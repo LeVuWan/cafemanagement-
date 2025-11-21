@@ -40,20 +40,20 @@
                         <table class="table table-bordered table-sm align-middle" id="dataTable" width="100%">
                             <thead>
                                 <tr class="d-flex">
-                                    <th class="col-3">Tên hàng hóa</th>
-                                    <th class="col-2">Số lượng hiện tại</th>
-                                    <th class="col-2">Đơn giá</th>
-                                    <th class="col-2">Đơn vị</th>
-                                    <th class="col-3 text-center">Action</th>
+                                    <th class="col-2 text-truncate">Tên hàng hóa</th>
+                                    <th class="col-2 text-truncate">Số lượng hiện tại</th>
+                                    <th class="col-1 text-truncate">Đơn giá</th>
+                                    <th class="col-2 text-truncate">Đơn vị</th>
+                                    <th class="col-5 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="d-flex" th:each="product : ${products}">
-                                    <td class="col-3" th:text="${product.productName}"></td>
-                                    <td class="col-2" th:text="${product.quantity}"></td>
-                                    <td class="col-2" th:text="${product.unitPrice}"></td>
-                                    <td class="col-2" th:text="${product.unit.unitName}"></td>
-                                    <td class="col-3 text-center">
+                                    <td class="col-2 text-wrap" th:text="${product.productName}"></td>
+                                    <td class="col-2 text-wrap" th:text="${product.quantity}"></td>
+                                    <td class="col-1 text-wrap" th:text="${product.unitPrice}"></td>
+                                    <td class="col-2 text-wrap" th:text="${product.unit.unitName}"></td>
+                                    <td class="col-5 text-center">
                                         <div class="d-flex justify-content-center flex-wrap gap-1">
                                             <a th:href="@{/admin/product/edit/{id}(id=${product.productId})}"
                                                 class="btn btn-success btn-sm mb-1 mr-2">Cập nhật</a>

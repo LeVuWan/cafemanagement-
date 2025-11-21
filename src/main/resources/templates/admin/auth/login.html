@@ -60,12 +60,18 @@
                                         </div>
 
                                         <div th:if="${param.error}" class="alert alert-danger">
-                                            Email hoặc mật khẩu không đúng!
+                                            Username hoặc password không đúng!
                                         </div>
+
+                                        <div id="loginError" class="alert alert-danger d-none">
+                                            Username và Password không được để trống!
+                                        </div>
+
                                         <div th:if="${param.logout}" class="alert alert-success">
                                             Đăng xuất thành công
                                         </div>
-                                        <button class="btn btn-primary btn-user btn-block" type="submit">
+                                        <button class="btn btn-primary btn-user btn-block" type="submit"
+                                            id="btnComfirmLogin">
                                             Login
                                         </button>
                                     </form>
@@ -80,5 +86,7 @@
         </div>
 
     </div>
+    <script th:src="@{/assets/js/auth/login.js}"></script>
+</body>
 
 </html>

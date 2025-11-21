@@ -5,10 +5,24 @@
 <head>
     <title>Quản lý nhân viên</title>
 </head>
+<style>
+    .responsive-text {
+        font-size: 1rem;
+    }
+
+    @media (max-width: 575.98px) {
+
+        /* XS - Mobile */
+        .responsive-text {
+            font-size: 0.85rem;
+            /* nhỏ hơn trên điện thoại */
+        }
+    }
+</style>
 
 <body>
     <section layout:fragment="content">
-        <div class="container-fluid">
+        <div class="container-fluid ">
 
             <!-- Page Heading -->
             <h1 class="h3 mb-2 text-gray-800">Quản lý nhân viên</h1>
@@ -45,8 +59,8 @@
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table table-bordered table-sm align-middle" id="dataTable" width="100%"
-                            cellspacing="0">
+                        <table class="table table-striped table-bordered table-sm align-middle" id="dataTable"
+                            width="100%" cellspacing="0">
                             <thead>
                                 <tr>
                                     <th>Họ tên</th>
@@ -59,17 +73,16 @@
                             </thead>
                             <tbody>
                                 <tr th:each="employee : ${employeis}">
-                                    <td th:text="${employee.fullname}"></td>
-                                    <td th:text="${employee.permission.name}"></td>
-                                    <td th:text="${employee.salary}"></td>
+                                    <td class="responsive-text" th:text="${employee.fullname}"></td>
+                                    <td class="responsive-text" th:text="${employee.permission.name}"></td>
+                                    <td class="responsive-text" th:text="${employee.salary}"></td>
 
                                     <td class="text-center">
-                                        <div class="d-flex justify-content-center gap-1">
-
+                                        <div class="d-flex flex-wrap justify-content-center">
                                             <a th:href="@{/admin/employee/edit/{id}(id=${employee.employeeId})}"
-                                                href="#" class="btn btn-success btn-sm mr-2">Cập nhật</a>
+                                                href="#" class="btn btn-success btn-sm mr-2 my-1">Cập nhật</a>
 
-                                            <button class="btn btn-danger btn-sm" data-toggle="modal"
+                                            <button class="btn btn-danger btn-sm my-1" data-toggle="modal"
                                                 th:data-target="'#modalDelete_' + ${employee.employeeId}">Xóa</button>
 
                                             <div class="modal fade" th:id="'modalDelete_' + ${employee.employeeId}"

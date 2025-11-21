@@ -19,7 +19,7 @@ $('#btn-move-table').click(async () => {
 
         tables.forEach(tableItem => {
             if (tableItem.tableId !== table.id) {
-                const option = $('<option></option>')
+                const option = $('<option class=""></option>')
                     .val(tableItem.tableId)
                     .text(tableItem.tableName);
                 selectTable.append(option);

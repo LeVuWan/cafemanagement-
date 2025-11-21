@@ -105,6 +105,10 @@ public class MenuService {
         return menuRepository.findAllMenu(keyword.trim());
     }
 
+    public List<MenuForChooseMenuRes> getListMenusForChooseMenu() {
+        return menuRepository.getMenuForChoose();
+    }
+
     /**
      * get menu by id
      * 

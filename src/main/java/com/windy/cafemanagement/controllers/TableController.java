@@ -19,6 +19,7 @@ import jakarta.persistence.EntityNotFoundException;
 import com.windy.cafemanagement.Responses.InformationTableRes;
 import com.windy.cafemanagement.Responses.TableInforRes;
 import com.windy.cafemanagement.Responses.TableToMergeRes;
+import com.windy.cafemanagement.Services.MenuForChooseMenuRes;
 import com.windy.cafemanagement.Services.MenuService;
 import com.windy.cafemanagement.Services.TableService;
 import com.windy.cafemanagement.dto.ChooseMenuDto;
@@ -122,7 +123,8 @@ public class TableController {
     @GetMapping("get-menu")
     public ResponseEntity<?> getMenuAllMenu() {
         try {
-            List<Menu> menus = menuService.getAllMenuService("");
+            List<MenuForChooseMenuRes> menus = menuService.getListMenusForChooseMenu();
+
             return ResponseEntity.ok(Map.of(
                     "status", "success",
                     "data", menus,

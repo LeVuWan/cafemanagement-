@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.windy.cafemanagement.models.MenuDetail;
+import com.windy.cafemanagement.models.MenuDetailId;
 
 /**
  * MenuDetailRepository interface
@@ -21,7 +22,7 @@ import com.windy.cafemanagement.models.MenuDetail;
  * 11-10-2025 VuLQ Create
  */
 @Repository
-public interface MenuDetailRepository extends JpaRepository<MenuDetail, Long> {
+public interface MenuDetailRepository extends JpaRepository<MenuDetail, MenuDetailId> {
 
     /**
      * get menu details by menu id and isDeleted false

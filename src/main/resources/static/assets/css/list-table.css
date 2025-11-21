@@ -49,3 +49,11 @@
     max-height: 250px;
     overflow-y: auto;
 }
+
+.sidebar .nav-link:hover i {
+    color: white;
+}
+
+.sidebar .nav-link.active i {
+    color: white;
+}

@@ -13,6 +13,8 @@ $('#btn-choose-menu').click(async () => {
 
         const menuList = response.data;
 
+        console.log("Check menuList: " + JSON.stringify(menuList));
+
         const tbody = $('#chooseMenuModal tbody');
 
         tbody.empty();

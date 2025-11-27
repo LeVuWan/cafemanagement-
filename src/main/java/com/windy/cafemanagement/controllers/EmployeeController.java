@@ -1,5 +1,8 @@
 package com.windy.cafemanagement.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -8,7 +11,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,10 +19,9 @@ import com.windy.cafemanagement.Services.PermissionService;
 import com.windy.cafemanagement.Services.UploadService;
 import com.windy.cafemanagement.dto.CreateEmployeeDto;
 import com.windy.cafemanagement.dto.EditEmployeeDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.dao.DataAccessException;
+import jakarta.validation.Valid;
 
 /**
  * Employee Controller
@@ -123,6 +124,10 @@ public class EmployeeController {
             @RequestParam("file") MultipartFile file,
             Model model) {
         try {
+            if (employeeService.checkUsernameExist(createEmployeeDto.getUsername())) {
+                bindingResult.rejectValue("username", "error.username", "Username đã tồn tại");
+            }
+
             if (bindingResult.hasErrors()) {
                 model.addAttribute("permissions", permissionService.getAllPermissionsService());
                 return "/admin/employee/create-employee";

@@ -300,6 +300,10 @@ public class EmployeeService {
                 .toList();
     }
 
+    public Boolean checkUsernameExist(String username) {
+        return employeeRepository.findByUsername(username) != null ? true : false;
+    }
+
     public void initializeDataService() {
         if (permissionRepository.count() > 0 || employeeRepository.count() > 0) {
             return;

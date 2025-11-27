@@ -89,7 +89,7 @@
                         <div class="form-group">
                             <label class="form-label form-label-small" for="password">* Mật khẩu:</label>
                             <input type="password" class="form-control" id="password" th:field="*{password}"
-                                autocomplete="new-password" required minlength="3" maxlength="50">
+                                autocomplete="new-password" required minlength="3" maxlength="50" name="password">
                             <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
                                 class="text-danger small"></span>
                             <span class="form-message"></span>

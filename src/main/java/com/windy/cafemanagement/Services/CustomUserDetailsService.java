@@ -50,6 +50,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         return new CustomUserDetails(
+                employee.getEmployeeId(),
                 employee.getUsername(),
                 employee.getPassword(),
                 Collections.singletonList(

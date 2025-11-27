@@ -19,20 +19,23 @@
                 </div>
                 <div class="card-body">
                     <form th:action="@{/admin/employee/create}" th:object="${employee}" method="post"
-                        enctype="multipart/form-data" class="needs-validation" novalidate>
+                        enctype="multipart/form-data" class="needs-validation" novalidate id="createEmployyeeForm">
 
                         <!-- Họ và tên -->
                         <div class="form-group">
-                            <label for="fullname">* Họ và tên:</label>
-                            <input type="text" class="form-control" id="fullname" th:field="*{fullname}" required>
+                            <label class="form-label form-label-small" for="fullname">* Họ và tên:</label>
+                            <input type="text" class="form-control" id="fullname" th:field="*{fullname}" required
+                                minlength="3" maxlength="50">
+                            <span class="form-message"></span>
+
                             <span th:if="${#fields.hasErrors('fullname')}" th:errors="*{fullname}"
                                 class="text-danger small"></span>
                         </div>
 
                         <!-- Địa chỉ -->
                         <div class="form-group">
-                            <label for="address">Địa chỉ:</label>
-                            <input type="text" class="form-control" id="address" th:field="*{address}">
+                            <label class="form-label form-label-small" for="address">Địa chỉ:</label>
+                            <input type="text" class="form-control" th:field="*{address}" maxlength="255">
                             <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
                                 class="text-danger small"></span>
                         </div>
@@ -40,48 +43,56 @@
                         <!-- Chức vụ + Lương -->
                         <div class="d-flex gap-3 form-group">
                             <div class="flex-fill mr-2">
-                                <label for="permissionId">* Chức vụ:</label>
+                                <label class="form-label form-label-small" for="permissionId">* Chức vụ:</label>
                                 <select class="form-control" id="permissionId" th:field="*{permissionId}" required>
                                     <option value="">Chọn chức vụ</option>
                                     <option th:each="permission : ${permissions}" th:value="${permission.permissionId}"
                                         th:text="${permission.name}">
                                     </option>
                                 </select>
+                                <span class="form-message"></span>
                                 <span th:if="${#fields.hasErrors('permissionId')}" th:errors="*{permissionId}"
                                     class="text-danger small"></span>
                             </div>
 
                             <div class="flex-fill">
-                                <label for="salary">* Lương:</label>
-                                <input type="number" step="0.01" class="form-control" id="salary" th:field="*{salary}"
-                                    placeholder="Lương" required>
+                                <label class="form-label form-label-small" for="salary">* Lương:</label>
+                                <input type="number" step="1" class="form-control" id="salary" th:field="*{salary}"
+                                    required min="0" max="30000000" maxlength="9">
                                 <span th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
                         </div>
 
                         <!-- Số điện thoại -->
                         <div class="form-group">
-                            <label for="phoneNumber">* Số điện thoại:</label>
-                            <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" required>
+                            <label class="form-label form-label-small" for="phoneNumber">* Số điện thoại:</label>
+                            <input type="text" id="phone" maxlength="12" class="form-control" th:field="*{phoneNumber}"
+                                required minlength="9">
                             <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
 
                         <!-- Tên đăng nhập -->
                         <div class="form-group">
-                            <label for="username">Tên đăng nhập:</label>
-                            <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                            <label class="form-label form-label-small" for="username">* Tên đăng nhập:</label>
+                            <input type="text" class="form-control" id="username" th:field="*{username}"
+                                autocomplete="new-username" required minlength="3" maxlength="50">
                             <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
 
                         <!-- Mật khẩu -->
                         <div class="form-group">
-                            <label for="password">Mật khẩu:</label>
-                            <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                            <label class="form-label form-label-small" for="password">* Mật khẩu:</label>
+                            <input type="password" class="form-control" id="password" th:field="*{password}"
+                                autocomplete="new-password" required minlength="3" maxlength="50">
                             <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
 
                         <!-- Ảnh đại diện -->
@@ -96,12 +107,31 @@
                         </div>
 
                         <!-- Nút thao tác -->
-                        <button type="submit" class="btn btn-secondary mr-2">Thêm</button>
+                        <button type="submit" class="btn btn-success mr-2">Thêm</button>
                         <a th:href="@{/admin/employee}" class="btn btn-secondary">Trở về</a>
                     </form>
+
                 </div>
             </div>
         </div>
+
+
+        <script th:src="@{/assets/js/validations/validator.js}"></script>
+        <script>
+            Validator({
+                form: '#createEmployyeeForm',
+                errorSelector: '.form-message',
+                rules: [
+                    Validator.isRequired('#username'),
+                    Validator.isRequired('#password'),
+                    Validator.isRequired('#fullname'),
+                    Validator.isRequired('#salary'),
+                    Validator.isRequired('#phone'),
+                    Validator.isPhoneNumber('#phone'),
+                    Validator.isSelected('#permissionId')
+                ]
+            });
+        </script>
     </section>
 </body>
 

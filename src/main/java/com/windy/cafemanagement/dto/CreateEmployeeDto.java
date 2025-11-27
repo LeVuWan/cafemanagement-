@@ -12,39 +12,38 @@ import jakarta.validation.constraints.Size;
  *
  * Date: 10-11-2025
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 public class CreateEmployeeDto {
-    @NotBlank(message = "Đên đăng nhập không để trống")
+    @NotBlank(message = "Tên đăng nhập không được để trống")
     private String username;
 
-    @NotBlank(message = "Địa chỉ không để trgốn")
     private String address;
 
-    @NotBlank(message = "Số điện thoại không để trống")
+    @NotBlank(message = "Số điện thoại không được để trống")
     private String phoneNumber;
 
-    @NotBlank(message = "Mật khẫu không để trống")
+    @NotBlank(message = "Mật khẩu không được để trống")
     @Size(min = 3, max = 50, message = "Mật khẩu phải từ 3 đến 50 ký tự")
     private String password;
 
-    @NotBlank(message = "Họ tên không được để trống")
+    @NotBlank(message = "Họ và tên không được để trống")
     private String fullname;
 
-    @NotNull(message = "Bạn chưa chon permission")
+    @NotNull(message = "Bạn chưa chọn quyền truy cập")
     private Long permissionId;
 
     @NotNull(message = "Lương không được để trống")
-    @Positive(message = "Giá phải lớn hơn 0")
+    @Positive(message = "Lương phải lớn hơn 0")
     private Double salary;
 
     public CreateEmployeeDto(@NotBlank(message = "Đên đăng nhập không để trống") String username,
-            @NotBlank(message = "Địa chỉ không để trgốn") String address,
+            String address,
             @NotBlank(message = "Số điện thoại không để trống") String phoneNumber,
             @NotBlank(message = "Mật khẫu không để trống") @Size(min = 3, max = 50, message = "Mật khẩu phải từ 3 đến 50 ký tự") String password,
             @NotBlank(message = "Họ tên không được để trống") String fullname,

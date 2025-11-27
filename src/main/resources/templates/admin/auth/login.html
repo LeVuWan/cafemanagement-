@@ -18,7 +18,7 @@
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link th:href="@{/assets/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/assets/css/sb-admin-2.css}" rel="stylesheet">
 </head>
 
 <body class="bg-gradient-primary">
@@ -41,15 +41,19 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
-                                    <form class="user" th:action="@{/login}" method="post">
+                                    <form class="user" id="loginForm" th:action="@{/login}" method="post" novalidate>
                                         <div class="form-group">
+                                            <label for="username" class="form-label form-label-small">Username:</label>
                                             <input type="text" name="username" class="form-control form-control-user"
-                                                placeholder="Username" />
-
+                                                placeholder="Username" id="username" />
+                                            <span class="form-message"></span>
                                         </div>
                                         <div class="form-group">
+                                            <label for="password" class="form-label form-label-small">Password:</label>
                                             <input type="password" name="password"
-                                                class="form-control form-control-user" placeholder="Password" />
+                                                class="form-control form-control-user" placeholder="Password"
+                                                id="password" />
+                                            <span class="form-message"></span>
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
@@ -86,7 +90,17 @@
         </div>
 
     </div>
-    <script th:src="@{/assets/js/auth/login.js}"></script>
+    <script th:src="@{/assets/js/validations/validator.js}"></script>
+    <script>
+        Validator({
+            form: '#loginForm',
+            errorSelector: '.form-message',
+            rules: [
+                Validator.isRequired('#username'),
+                Validator.isRequired('#password')
+            ]
+        });
+    </script>
 </body>
 
 </html>

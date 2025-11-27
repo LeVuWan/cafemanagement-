@@ -75,8 +75,9 @@
                                 <tr th:each="employee : ${employeis}">
                                     <td class="responsive-text" th:text="${employee.fullname}"></td>
                                     <td class="responsive-text" th:text="${employee.permission.name}"></td>
-                                    <td class="responsive-text" th:text="${employee.salary}"></td>
-
+                                    <td class="responsive-text"
+                                        th:text="${#numbers.formatDecimal(employee.salary, 0, 'COMMA', 0, 'POINT')} + 'vn₫'">
+                                    </td>
                                     <td class="text-center">
                                         <div class="d-flex flex-wrap justify-content-center">
                                             <a th:href="@{/admin/employee/edit/{id}(id=${employee.employeeId})}"

@@ -57,7 +57,7 @@ public class EmployeeController {
      * 
      * @param model, keyword
      * @return String
-     * @throws 
+     * @throws
      */
     @GetMapping("")
     public String getTableUserController(Model model,
@@ -90,7 +90,7 @@ public class EmployeeController {
      * 
      * @param model
      * @return String
-     * @throws 
+     * @throws
      */
     @GetMapping("/create")
     public String getFormCreateController(Model model) {
@@ -114,7 +114,7 @@ public class EmployeeController {
      * 
      * @param createEmployeeDto, bindingResult, file, model
      * @return String
-     * @throws 
+     * @throws
      */
     @PostMapping("/create")
     public String createEmployeeController(
@@ -128,10 +128,14 @@ public class EmployeeController {
                 return "/admin/employee/create-employee";
             }
 
-            String imgUrl = uploadService.uploadImage(file, "avatar");
-            if (imgUrl == null) {
+            String imgUrl = null;
+
+            if (file == null || file.isEmpty()) {
                 imgUrl = "/assets/img/avatar/default.jpg";
+            } else {
+                imgUrl = uploadService.uploadImage(file, "avatar");
             }
+
             employeeService.createNewAEmployee(createEmployeeDto, imgUrl);
             return "redirect:/admin/employee";
         } catch (EntityNotFoundException e) {
@@ -158,7 +162,7 @@ public class EmployeeController {
      * 
      * @param model, id
      * @return String
-     * @throws 
+     * @throws
      */
     @GetMapping("/edit/{id}")
     public String getEditFormController(Model model, @PathVariable("id") Long id) {
@@ -186,7 +190,7 @@ public class EmployeeController {
      * 
      * @param editEmployeeDto, file, model
      * @return String
-     * @throws 
+     * @throws
      */
     @PostMapping("/edit")
     public String editEmployeeController(@ModelAttribute("employee") EditEmployeeDto editEmployeeDto,
@@ -219,7 +223,7 @@ public class EmployeeController {
      * 
      * @param id
      * @return String
-     * @throws 
+     * @throws
      */
     @GetMapping("/delete/{id}")
     public String deleteEmployeeController(@PathVariable("id") Long id, Model model) {

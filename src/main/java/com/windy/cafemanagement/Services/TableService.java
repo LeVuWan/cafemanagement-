@@ -816,11 +816,19 @@ public class TableService {
         List<TableEntity> tables = tableRepository.findExpiredBookings(LocalDateTime.now());
 
         for (TableEntity table : tables) {
+
             table.setStatus(TableStatus.AVAILABLE);
 
-            table.getTableBookingDetails().forEach(detail -> detail.setIsDeleted(true));
+            table.getTableBookingDetails().forEach(detail -> {
+                detail.setIsDeleted(true);
+
+                if (detail.getInvoice() != null) {
+                    detail.getInvoice().setIsDeleted(true);
+                }
+            });
 
             tableRepository.save(table);
         }
     }
+
 }

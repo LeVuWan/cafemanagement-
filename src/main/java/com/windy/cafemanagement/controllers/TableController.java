@@ -28,7 +28,6 @@ import com.windy.cafemanagement.dto.MergeTableDto;
 import com.windy.cafemanagement.dto.MoveTableDto;
 import com.windy.cafemanagement.dto.OrderTableDto;
 import com.windy.cafemanagement.dto.PaymentDto;
-import com.windy.cafemanagement.models.Menu;
 import com.windy.cafemanagement.models.TableEntity;
 
 @Controller

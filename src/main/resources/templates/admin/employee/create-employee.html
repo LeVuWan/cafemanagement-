@@ -9,9 +9,6 @@
 <body>
     <section layout:fragment="content">
         <div class="container-fluid">
-
-            <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Quản lý nhân viên</h1>
             <!-- DataTales Example -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -68,7 +65,7 @@
                         <!-- Số điện thoại -->
                         <div class="form-group">
                             <label class="form-label form-label-small" for="phoneNumber">* Số điện thoại:</label>
-                            <input type="text" id="phone" maxlength="12" class="form-control" th:field="*{phoneNumber}"
+                            <input type="number" id="phone" maxlength="12" class="form-control" th:field="*{phoneNumber}"
                                 required minlength="9">
                             <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
                                 class="text-danger small"></span>

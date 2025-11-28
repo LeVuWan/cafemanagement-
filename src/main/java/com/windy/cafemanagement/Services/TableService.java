@@ -134,7 +134,7 @@ public class TableService {
         tableBookingDetail.setInvoice(invoice);
         tableBookingDetail.setCustomerName(orderTableDto.getCustomerName());
         tableBookingDetail.setCustomerPhone(orderTableDto.getCustomerPhone());
-        tableBookingDetail.setBookingTime(LocalDateTime.of(orderTableDto.getDateOrder(), orderTableDto.getTimeOrder()));
+        tableBookingDetail.setBookingTime(orderTableDto.getDateOrder());
         tableBookingDetail.setIsDeleted(false);
         bookingDetailRepository.save(tableBookingDetail);
 
@@ -806,4 +806,21 @@ public class TableService {
 
     }
 
+    /**
+     * Change the status of the reserved table
+     * 
+     * @throws NullPointerException, RuntimeException
+     */
+    @Transactional
+    public void releaseExpiredBookings() {
+        List<TableEntity> tables = tableRepository.findExpiredBookings(LocalDateTime.now());
+
+        for (TableEntity table : tables) {
+            table.setStatus(TableStatus.AVAILABLE);
+
+            table.getTableBookingDetails().forEach(detail -> detail.setIsDeleted(true));
+
+            tableRepository.save(table);
+        }
+    }
 }

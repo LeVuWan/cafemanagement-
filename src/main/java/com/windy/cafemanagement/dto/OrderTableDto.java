@@ -1,6 +1,7 @@
 package com.windy.cafemanagement.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -10,29 +11,27 @@ import java.time.LocalTime;
  *
  * Date: 12-11-2013
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 12-11-2013         VuLQ            Create
+ * 12-11-2013 VuLQ Create
  */
 public class OrderTableDto {
     private Long tableId;
     private String customerName;
     private String customerPhone;
-    private LocalTime timeOrder;
-    private LocalDate dateOrder;
+    private LocalDateTime dateOrder;
 
     public OrderTableDto() {
     }
 
-    public OrderTableDto(Long tableId, String customerName, String customerPhone, LocalTime timeOrder,
-            LocalDate dateOrder) {
+    public OrderTableDto(Long tableId, String customerName, String customerPhone,
+            LocalDateTime dateOrder) {
         this.tableId = tableId;
         this.customerName = customerName;
         this.customerPhone = customerPhone;
-        this.timeOrder = timeOrder;
         this.dateOrder = dateOrder;
     }
 
@@ -60,19 +59,11 @@ public class OrderTableDto {
         this.customerPhone = customerPhone;
     }
 
-    public LocalTime getTimeOrder() {
-        return timeOrder;
-    }
-
-    public void setTimeOrder(LocalTime timeOrder) {
-        this.timeOrder = timeOrder;
-    }
-
-    public LocalDate getDateOrder() {
+    public LocalDateTime getDateOrder() {
         return dateOrder;
     }
 
-    public void setDateOrder(LocalDate dateOrder) {
+    public void setDateOrder(LocalDateTime dateOrder) {
         this.dateOrder = dateOrder;
     }
 

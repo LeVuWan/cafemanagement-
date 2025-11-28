@@ -10,13 +10,20 @@ $('#btn-confirm-order').on('click', async () => {
     btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Đang xử lý...');
 
     const table = JSON.parse(sessionStorage.getItem('selectedTable') || '{}');
+    
     const form = $('#orderTableForm')[0];
+
+    const durationMinutes = parseInt(form.durationMinutes.value, 10);
+    
+    const now = new Date();
+
+    const expiryTime = new Date(now.getTime() + durationMinutes * 60 * 1000);
+
     const data = {
         tableId: table.id,
         customerName: form.customerName.value.trim(),
         customerPhone: form.customerPhone.value.trim(),
-        dateOrder: form.dateOrder.value,
-        timeOrder: form.timeOrder.value
+        dateOrder: expiryTime.toISOString()
     };
 
     try {

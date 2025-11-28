@@ -1,5 +1,6 @@
 package com.windy.cafemanagement.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -58,4 +59,16 @@ public interface TableRepository extends JpaRepository<TableEntity, Long> {
             AND t.tableId <> :excludedTableId
       """)
   List<TableInforRes> findAllActiveExcept(@Param("excludedTableId") Long excludedTableId);
+
+  /**
+   * get the table is past the reservation time
+   * 
+   * @param currentTime
+   * @return List<TableEntity>
+   */
+  @Query("SELECT t FROM TableEntity t JOIN t.tableBookingDetails tbd " +
+      "WHERE t.status = 0 AND t.isDeleted = false " +
+      "AND tbd.bookingTime < :currentTime AND tbd.isDeleted = false")
+  List<TableEntity> findExpiredBookings(@Param("currentTime") LocalDateTime currentTime);
+
 }

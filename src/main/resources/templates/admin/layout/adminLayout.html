@@ -26,11 +26,13 @@
 
     <!-- Scripts -->
     <script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
-    <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>   
+    <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/assets/vendor/jquery-easing/jquery.easing.min.js}"></script>
     <script th:src="@{/assets/js/sb-admin-2.min.js}"></script>
     <script th:src="@{/assets/js/previewImage.js}"></script>
     <script th:src="@{/assets/js/active-sidenav.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <!-- handle menu -->
     <script th:src="@{/assets/js/menu/addProductToMenu.js}"></script>
@@ -38,6 +40,7 @@
     <script th:src="@{/assets/js/menu/editMenu.js}"></script>
 
     <!-- handle sale -->
+    <script th:src="@{/assets/js/sales-management/get-list-table.js}"></script>
     <script th:src="@{/assets/js/sales-management/sale-management.js}"></script>
     <script th:src="@{/assets/js/sales-management/order-table.js}"></script>
     <script th:src="@{/assets/js/sales-management/choose-menu.js}"></script>
@@ -56,6 +59,9 @@
 
     <!-- expense -->
     <script th:src="@{/assets/js/expense/expense.js}"></script>
+
+    <!-- until -->
+    <script th:src="@{/assets/js/utils/convertVNToEnf.js}"></script>
 </body>
 
 </html>

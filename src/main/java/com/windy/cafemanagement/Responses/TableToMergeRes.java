@@ -44,4 +44,9 @@ public class TableToMergeRes {
         this.tablesTo = tablesTo;
     }
 
+    @Override
+    public String toString() {
+        return "TableToMergeRes [tablesFrom=" + tablesFrom + ", tablesTo=" + tablesTo + "]";
+    }
+
 }

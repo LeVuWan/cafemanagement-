@@ -1,28 +1,33 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const tables = document.querySelectorAll(".table-item");
     const management = document.getElementById("management-functions");
-    tables.forEach(table => {
-        table.addEventListener("click", () => {
-            tables.forEach(item => {
-                item.classList.remove('table-selected');
-            });
 
-            table.classList.add('table-selected');
+    // ⭐ Event Delegation
+    document.querySelector("#list-table").addEventListener("click", function (e) {
+        const table = e.target.closest(".table-item");
+        if (!table) return;
 
-            const tableId = table.getAttribute("data-id");
-            const tableName = table.getAttribute("data-name");
-            const tableStatus = table.getAttribute("data-status");
+        // xử lý sự kiện click
+        document.querySelectorAll(".table-item").forEach(item => {
+            item.classList.remove("table-selected");
+        });
 
-            const selectedTable = {
-                id: tableId, name: tableName, status: tableStatus
-            };
+        table.classList.add("table-selected");
 
-            sessionStorage.setItem("selectedTable", JSON.stringify(selectedTable));
+        const tableId = table.dataset.id;
+        const tableName = table.dataset.name;
+        const tableStatus = table.dataset.status;
 
-            management.style.display = "block"
+        const selectedTable = {
+            id: tableId,
+            name: tableName,
+            status: tableStatus
+        };
 
-            toggleButtonsByStatus(selectedTable.status);
-        })
+        sessionStorage.setItem("selectedTable", JSON.stringify(selectedTable));
+
+        management.style.display = "block";
+
+        toggleButtonsByStatus(selectedTable.status);
     });
 
     const toggleButtonsByStatus = (status) => {
@@ -35,13 +40,14 @@ document.addEventListener("DOMContentLoaded", function () {
             datBan: document.getElementById("btn-dat-ban"),
             chonThucDon: document.getElementById("btn-choose-menu"),
             thanhToan: document.getElementById("btn-payment"),
-        }
+        };
 
         Object.values(buttons).forEach(btn => btn.style.display = "none");
 
         switch (status) {
             case "AVAILABLE":
                 buttons.datBan.style.display = "inline-block";
+                buttons.chonThucDon.style.display = "inline-block";
                 break;
             case "RESERVED":
                 buttons.huyBan.style.display = "inline-block";
@@ -57,5 +63,5 @@ document.addEventListener("DOMContentLoaded", function () {
                 buttons.chonThucDon.style.display = "inline-block";
                 break;
         }
-    }
+    };
 });

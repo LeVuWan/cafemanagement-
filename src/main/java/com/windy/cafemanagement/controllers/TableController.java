@@ -1,7 +1,10 @@
 package com.windy.cafemanagement.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 import com.windy.cafemanagement.Responses.InformationTableRes;
 import com.windy.cafemanagement.Responses.TableInforRes;
+import com.windy.cafemanagement.Responses.TableRes;
 import com.windy.cafemanagement.Responses.TableToMergeRes;
 import com.windy.cafemanagement.Services.MenuForChooseMenuRes;
 import com.windy.cafemanagement.Services.MenuService;
@@ -73,6 +77,37 @@ public class TableController {
             logger.error("Unexpected error while listing tables: {}", ex.getMessage(), ex);
             model.addAttribute("errorMessage", "Lấy danh sách bàn thất bại: " + ex.getMessage());
             return "admin/errors/500-error";
+        }
+    }
+
+    /**
+     * Get list after update
+     * 
+     * @return ResponseEntity<?>
+     * 
+     */
+    @GetMapping("get-list-table")
+    public ResponseEntity<?> getListTable() {
+        try {
+            List<TableEntity> tableEntities = tableService.getAllTableService();
+
+            List<TableRes> listTableRes = new ArrayList<>();
+
+            for (TableEntity tableEntity : tableEntities) {
+                TableRes tableRes = new TableRes(tableEntity.getTableId(), tableEntity.getStatus(),
+                        tableEntity.getTableName());
+                listTableRes.add(tableRes);
+            }
+
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "data", listTableRes,
+                    "message", "Load table thành công"));
+        } catch (Exception ex) {
+            logger.error("Unexpected error while ordering table: {}", ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "status", "error",
+                    "message", "Load table thất bại: " + ex.getMessage()));
         }
     }
 
@@ -214,6 +249,7 @@ public class TableController {
     public ResponseEntity<?> getTableToMove(@PathVariable("id") Long tableId) {
         try {
             List<TableInforRes> data = tableService.getTableToMoveService(tableId);
+            System.out.println("Check data: " + data.size());
             return ResponseEntity.ok(Map.of(
                     "status", "success",
                     "data", data,
@@ -276,7 +312,34 @@ public class TableController {
      * @return ResponseEntity with merge candidates
      * 
      */
-    @GetMapping("get-table-merge")
+    @GetMapping("get-table-cut/{id}")
+    public ResponseEntity<?> getTableToCut(@PathVariable("id") Long tableId) {
+        try {
+            List<TableInforRes> data = tableService.getTableToCutService(tableId);
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "data", data,
+                    "message", "Lấy thông tin bàn muốn tách thành công"));
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            logger.error("Invalid table id for move {}: {}", tableId, ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", "error",
+                    "message", "Id bàn không hợp lệ: " + ex.getMessage()));
+        } catch (Exception ex) {
+            logger.error("Unexpected error while getting tables to move for id {}: {}", tableId, ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "status", "error",
+                    "message", "Lấy thông tin bàn muốn tách thất bại: " + ex.getMessage()));
+        }
+    }
+
+    /**
+     * Get data needed to merge tables.
+     * 
+     * @return ResponseEntity with merge candidates
+     * 
+     */
+    @GetMapping("get-table-cu")
     public ResponseEntity<?> getTableToMerger() {
         try {
             TableToMergeRes data = tableService.getTableToMergeService();

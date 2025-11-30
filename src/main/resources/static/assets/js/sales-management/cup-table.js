@@ -3,7 +3,7 @@ const modalCutTable = $('#cupTableModal');
 
 const populateTableSelect = async (tableId) => {
     const response = await $.ajax({
-        url: '/admin/table/get-table-move/' + tableId,
+        url: '/admin/table/get-table-cut/' + tableId,
         method: 'GET',
         contentType: 'application/json'
     });
@@ -47,7 +47,7 @@ const populateMenuTable = async (tableId) => {
                             <input class="form-check-input checkBox" type="checkbox" value="${item.menuId}" />
                         </div>
                     </td>
-                    <td>${item.dishName}</td>
+                    <td class="dishName">${item.dishName}</td>
                     <td>
                         <div class="input-group input-group-sm">
                             <input type="number" class="form-control text-center cut-quantity" value="0" min="0" max="${item.quantity}">
@@ -136,71 +136,82 @@ $('#confirmMergeTable').click(async () => {
 
     button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Đang xử lý...');
 
-    if (!tableToId || tableToId === '') {
+    if (!tableToId) {
         showToast('Vui lòng chọn bàn đích', 'warning');
-        button.prop('disabled', false).text('Xác nhận');
+        resetButton();
         return;
     }
 
     let allChecked = true;
     let allQuantitiesEqual = true;
-    const totalRows = $('#menuTableForm tr').length;
-    let checkLimit = false;
-    $('#menuTableForm tr').each((index, element) => {
-        const checkbox = $(element).find('.checkBox');
+    let checkLimit = false;          // số lượng vượt quá
+    let missingQuantity = false;     // checkbox đã chọn nhưng không nhập số lượng
+
+    const rows = $('#menuTableForm tr');
+    const totalRows = rows.length;
+
+    rows.each((index, row) => {
+        const checkbox = $(row).find('.checkBox');
         const menuId = checkbox.val();
-        const cutQuantity = parseInt($(element).find('.cut-quantity').val()) || 0;
-        const currentQuantity = parseInt($(element).find('.currentQuantity strong').text());
+        const cutQuantity = parseInt($(row).find('.cut-quantity').val()) || 0;
+        const currentQuantity = parseInt($(row).find('.currentQuantity strong').text());
+        const menuName = $(row).find('.dishName').text().trim();
 
-
-        // Kiểm tra nếu checkbox được tích
         if (checkbox.is(':checked')) {
-            // Kiểm tra số lượng tách có lớn hơn số lượng hiện tại không
+
+            // ❌ Checkbox đã tích nhưng không nhập số lượng hợp lệ
+            if (cutQuantity <= 0) {
+                missingQuantity = true;
+                showToast(`Vui lòng nhập số lượng cho ${menuName}`, 'warning');
+                return false; // DỪNG VÒNG LẶP
+            }
+
+            // ❌ Số lượng tách lớn hơn số lượng hiện tại
             if (cutQuantity > currentQuantity) {
-                // Xóa danh sách để ngăn gửi dữ liệu
                 checkLimit = true;
-                return; // Thoát vòng lặp
+                return false;
             }
-            if (cutQuantity > 0) {
-                listMenuCut.push({ menuId, quantity: cutQuantity }); // Chỉ gửi menuId và cutQuantity
-            }
-            // Kiểm tra nếu số lượng tách bằng số lượng hiện tại
+
+            // Thêm vào danh sách gửi đi
+            listMenuCut.push({ menuId, quantity: cutQuantity });
+
+            // Kiểm tra tách toàn bộ
             if (cutQuantity !== currentQuantity) {
                 allQuantitiesEqual = false;
             }
+
         } else {
             allChecked = false;
         }
     });
 
-    if (checkLimit) {
-        showToast(`Số lượng tách của món vượt quá số lượng hiện tại`, 'warning');
-        listMenuCut.length = 0;
-        button.prop('disabled', false).text('Xác nhận');
+    // 👉 Sau vòng lặp, kiểm tra lỗi
+    if (missingQuantity) {
+        resetButton();
         return;
     }
 
-    // Kiểm tra nếu không có checkbox nào được tích hoặc không có món hợp lệ
+    if (checkLimit) {
+        showToast('Số lượng tách vượt quá số lượng hiện tại', 'warning');
+        resetButton();
+        return;
+    }
+
     if (listMenuCut.length === 0) {
         showToast('Vui lòng chọn ít nhất một món để tách', 'warning');
-        button.prop('disabled', false).text('Xác nhận');
+        resetButton();
         return;
     }
 
-    // Kiểm tra nếu tất cả checkbox được tích và số lượng tách bằng số lượng hiện tại
-    if (allChecked && listMenuCut.length === totalRows && allQuantitiesEqual) {
-        console.log('Tất cả checkbox được tích và số lượng tách bằng số lượng hiện tại cho tất cả món.');
-    }
+    // Dữ liệu gửi lên server
+    const data = {
+        fromTableId: tableFromId,
+        toTableId: tableToId,
+        menu: listMenuCut,
+        isCheckAll: allChecked && allQuantitiesEqual && listMenuCut.length === totalRows
+    };
 
-    // Gửi yêu cầu AJAX để tách bàn
     try {
-        const data = {
-            fromTableId: tableFromId,
-            toTableId: tableToId,
-            menu: listMenuCut,
-            isCheckAll: allChecked && listMenuCut.length === totalRows && allQuantitiesEqual
-        };
-
         const response = await $.ajax({
             url: '/admin/table/cut-table',
             method: 'POST',
@@ -211,14 +222,19 @@ $('#confirmMergeTable').click(async () => {
         showToast(response.message || 'Tách bàn thành công!', 'success');
         $('#cupTableModal').modal('hide');
         sessionStorage.removeItem('selectedTable');
-        setTimeout(() => location.reload(), 1000);
+        await getListTable();
     } catch (error) {
         const msg = error.responseJSON?.message || 'Tách bàn thất bại!';
-        console.log("Check msg: " + msg);
-
+        console.log("Error: " + msg);
         showToast(msg, 'danger');
     } finally {
+        resetButton();
+    }
+
+    // Đặt lại nút
+    function resetButton() {
         button.prop('disabled', false).text('Xác nhận');
     }
 });
+
 

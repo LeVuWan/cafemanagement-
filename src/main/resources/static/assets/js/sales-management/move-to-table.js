@@ -63,7 +63,7 @@ $('#comfirmMoveTabe').click(async () => {
         showToast(response.message, 'success');
         modalMoveToTable.modal('hide');
         sessionStorage.removeItem('selectedTable');
-        setTimeout(() => location.reload(), 1000);
+        await getListTable();
     } catch (error) {
         const msg = error.responseJSON?.message || 'Chuyển bàn thất bại!';
         showToast(msg, 'danger');

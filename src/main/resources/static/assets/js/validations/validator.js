@@ -2,6 +2,18 @@ const Validator = (options) => {
     const formElement = document.querySelector(options.form);
     var selectorRules = {};
 
+    formElement.validateForm = function () {
+        let isValid = true;
+        options.rules.forEach(function (rule) {
+            const inputElement = formElement.querySelector(rule.selector);
+            const valid = validate(inputElement, rule);
+            if (!valid) {
+                isValid = false;
+            }
+        });
+        return isValid;
+    };
+
     // Hàm validate chung
     function validate(inputElement, rule) {
         var errorMessage;
@@ -76,8 +88,6 @@ Validator.isRequired = function (selector) {
     return {
         selector: selector,
         test: function (value) {
-            console.log("Check value: " + value.trim());
-
             return value.trim() ? undefined : "Vui lòng nhập trường này";
         }
     };
@@ -102,4 +112,25 @@ Validator.isPhoneNumber = function (selector) {
     };
 };
 
-// Healper funtion
+Validator.checkTimeOrderTable = function (selector) {
+    return {
+        selector: selector,
+        test: function (value) {
+            return value <= 30 ? undefined : "Thời gian đặt trước không được quá 30 phút";
+        }
+    }
+}
+
+Validator.checkChangeAmount = (selector, getTotal) => {
+    return {
+        selector: selector,
+        test: function (value) {
+            const total = Number(getTotal());
+            const paid = Number(value);
+
+            return paid >= total
+                ? undefined
+                : "Tiền khách đưa chưa đủ";
+        }
+    };
+};

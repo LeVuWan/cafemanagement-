@@ -20,7 +20,7 @@ $('#btn-confirm-cancel').click(async () => {
         modalCancel.modal('hide');
         sessionStorage.removeItem('selectedTable');
 
-        setTimeout(() => location.reload(), 1000);
+        await getListTable();
     } catch (error) {
         const msg = error.responseJSON?.message || 'Thêm món thất bại!';
         showToast(msg, 'danger');

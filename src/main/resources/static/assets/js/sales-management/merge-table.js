@@ -2,6 +2,7 @@ const modalMergeTableModal = $('#mergeTableModal');
 
 $('#btn-merge-table').click(async () => {
     modalMergeTableModal.modal('show');
+    const tableId = JSON.parse(sessionStorage.getItem('selectedTable')).id;
     try {
         const response = await $.ajax({
             url: '/admin/table/get-table-merge',
@@ -10,19 +11,29 @@ $('#btn-merge-table').click(async () => {
         });
 
         const listTableFrom = $('#listTableForm');
+        listTableFrom.empty();
         const listTableFromRes = response.data.tablesTo;
 
+        console.log("Check: ", listTableFromRes);
+
         listTableFromRes.forEach(tableItem => {
+            const isSelected = tableItem.tableId == tableId;
+            console.log("Check current tableId: ", tableId);
+            console.log("Check tableId: ", tableItem.tableId);
+
             const formCheck = `
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value=${tableItem.tableId}>
-                <label class="form-check-label" for="sourceCheck1">${tableItem.tableName}</label>
-            </div>
-            `
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" 
+                        value="${tableItem.tableId}"  
+                        ${isSelected ? 'checked disabled' : ''}>
+                    <label class="form-check-label">${tableItem.tableName}</label>
+                </div>
+                            `;
             listTableFrom.append(formCheck);
         });
 
         const listTableTo = $('#listTableTo');
+        listTableTo.empty();
         const listTableToRes = response.data.tablesFrom;
 
         listTableToRes.forEach(tableItem => {
@@ -77,7 +88,7 @@ $(`#comfirmMergeTabel`).click(async () => {
 
         showToast(response.message, 'success');
         modalMergeTableModal.modal('hide');
-        setTimeout(() => location.reload(), 1000);
+        await getListTable();
     } catch (error) {
         console.log("Check error: " + error.responseJSON?.message);
 

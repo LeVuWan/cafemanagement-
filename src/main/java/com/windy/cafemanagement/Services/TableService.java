@@ -59,9 +59,6 @@ import com.windy.cafemanagement.repositories.VoucherRepository;
  */
 @Service
 public class TableService {
-    // private static final List<InvoiceStatus> UNPAID_STATUSES =
-    // List.of(InvoiceStatus.CREATED, InvoiceStatus.UPDATED);
-    private final Logger logger = LoggerFactory.getLogger(TableService.class);
     private final TableRepository tableRepository;
     private final EmployeeRepository employeeRepository;
     private final TableBookingDetailRepository bookingDetailRepository;
@@ -103,6 +100,10 @@ public class TableService {
         // Validate input
         if (orderTableDto == null) {
             throw new NullPointerException("orderTableDto not found");
+        }
+
+        if ((orderTableDto.getDateOrder().getMinute() - LocalDateTime.now().getMinute()) > 30) {
+            throw new IllegalArgumentException("Thời gian đặt trước không đọc quá 30 phút");
         }
 
         TableEntity table = tableRepository.findById(orderTableDto.getTableId())
@@ -159,16 +160,17 @@ public class TableService {
         TableEntity table = tableRepository.findById(chooseMenuDto.getTableId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn có ID: " + chooseMenuDto.getTableId()));
 
-        if (table.getStatus() == TableStatus.AVAILABLE) {
-            throw new RuntimeException("Vui lòng đặt bàn trước khi chọn món");
-        }
-
         table.setStatus(TableStatus.OCCUPIED);
+
         List<InvoiceStatus> UNPAID_STATUSES = List.of(InvoiceStatus.CREATED, InvoiceStatus.UPDATED);
+
         Invoice invoice = invoiceRepository
                 .findCurrentUnpaidInvoiceByTableId(chooseMenuDto.getTableId(), UNPAID_STATUSES)
-                .orElseThrow(() -> new RuntimeException(
-                        "Hóa đơn chưa thanh toán của bàn với id " + chooseMenuDto.getTableId() + " không tồn tại."));
+                .orElseGet(() -> {
+                    Invoice newInvoice = createInvoice();
+                    TableBookingDetail bookingDetail = createBookingDetail(table, newInvoice, "", "");
+                    return newInvoice;
+                });
 
         invoice.setStatus(InvoiceStatus.UPDATED);
 
@@ -256,8 +258,23 @@ public class TableService {
         if (tableId == null) {
             throw new NullPointerException("tableId not found");
         }
+        List<TableStatus> status = List.of(TableStatus.AVAILABLE);
+        return tableRepository.findAllActiveExcept(tableId, status);
+    }
 
-        return tableRepository.findAllActiveExcept(tableId);
+    /**
+     * get tables available to move to (excluding given table)
+     * 
+     * @param tableId
+     * @return List<TableInforRes>
+     * @throws NullPointerException
+     */
+    public List<TableInforRes> getTableToCutService(Long tableId) {
+        if (tableId == null) {
+            throw new NullPointerException("tableId not found");
+        }
+        List<TableStatus> status = List.of(TableStatus.AVAILABLE, TableStatus.OCCUPIED);
+        return tableRepository.findAllActiveExcept(tableId, status);
     }
 
     /**

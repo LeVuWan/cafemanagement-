@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.windy.cafemanagement.Responses.TableInforRes;
+import com.windy.cafemanagement.enums.InvoiceStatus;
+import com.windy.cafemanagement.enums.TableStatus;
 import com.windy.cafemanagement.models.TableEntity;
 
 /**
@@ -57,8 +59,11 @@ public interface TableRepository extends JpaRepository<TableEntity, Long> {
           FROM TableEntity t
           WHERE (t.isDeleted IS NULL OR t.isDeleted = false)
             AND t.tableId <> :excludedTableId
+            AND t.status IN (:statuses)
       """)
-  List<TableInforRes> findAllActiveExcept(@Param("excludedTableId") Long excludedTableId);
+  List<TableInforRes> findAllActiveExcept(
+      @Param("excludedTableId") Long excludedTableId,
+      @Param("statuses") List<TableStatus> statuses);
 
   /**
    * get the table is past the reservation time

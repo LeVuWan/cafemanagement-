@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="paymentModal">
     <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-        <div class="modal-dialog  modal-lg">
+        <div class="modal-dialog  ">
             <div class="modal-content payment-modal">
                 <div class="modal-header">
                     <h5 class="modal-title" id="paymentModalLabel">Thanh toán bàn </h5>
@@ -30,47 +30,67 @@
 
                     <div class="payment-total d-flex justify-content-center align-items-center my-3">
                         <span class="payment-total__label mr-2">Tổng:</span>
-                        <span id="totalPrice" class="payment-total__amount">66.000 đ</span>
+                        <span id="totalPrice" class="payment-total__amount"></span>
                     </div>
+                    <form action="" novalidate id="paymentForm">
 
-                    <div class="row align-items-center mb-3">
-                        <div class="col-md-6">
-                            <div class="form-group d-flex align-items-center mb-0">
-                                <label for="customer-paid" class="form-label mb-0 mr-2">Khách đưa:</label>
-                                <input type="number" class="form-control text-right" id="customer-paid">
-                            </div>
+                        <div class="form-group mb-3">
+                            <label for="customer-paid" class="form-label mb-1">Khách đưa:</label>
+
+                            <input type="number" class="form-control " id="customer-paid">
+
+                            <span class="form-message text-danger" style="font-size: 13px;"></span>
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="form-group d-flex align-items-center mb-0">
-                                <label class="form-label mb-0 mr-2">Thối lại:</label>
-                                <span id="change-amount"
-                                    class="change-amount flex-grow-1 text-right border p-2 rounded bg-light">0 đ</span>
-                            </div>
-                        </div>
-                    </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label mb-1">Thối lại:</label>
 
-                    <div class="row align-items-center mb-3">
-                        <div class="col-md-6">
-                            <div class="form-group d-flex align-items-center mb-0">
-                                <label for="chooseVoucher" class="form-label mb-0 mr-2">Chọn voucher:</label>
-                                <select class="custom-select" id="chooseVoucher">
-                                    <option selected>Chọn voucher</option>
-                                </select>
-                            </div>
+                            <span id="change-amount" class="change-amount form-control text-right bg-light">
+                                0 đ
+                            </span>
                         </div>
 
-                        <div class="col-md-6 mt-3 mt-md-0">
-                            <button class="btn btn-secondary w-100">In phiếu thanh toán...</button>
+                        <div class="form-group mb-3">
+                            <label for="chooseVoucher" class="form-label mb-1">Chọn voucher:</label>
+
+                            <select class="custom-select" id="chooseVoucher">
+                                <option selected>Chọn voucher</option>
+                            </select>
+
+                            <span class="form-message text-danger" style="font-size: 13px;"></span>
                         </div>
-                    </div>
+
+                        <div class="form-group mb-3">
+                            <button class="btn btn-secondary w-100" id="printBillBtn" type="button">
+                                In phiếu thanh toán...
+                            </button>
+                        </div>
+
+                    </form>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-primary" id="comfirmPayment">Thanh toán</button>
+                    <button type="button" class="btn btn-success" id="comfirmPayment">Thanh toán</button>
                 </div>
+
             </div>
         </div>
+        <script th:src="@{/assets/js/validations/validator.js}"></script>
+        <script>
+            Validator({
+                form: '#paymentForm',
+                errorSelector: '.form-message',
+                rules: [
+                    Validator.isRequired('#customer-paid'),
+                    Validator.checkChangeAmount('#customer-paid', () => {
+                        return Number(
+                            document.getElementById("totalPrice").textContent.replace(/\D/g, "")
+                        );
+                    })
+                ]
+            });
+        </script>
     </div>
 </div>
 

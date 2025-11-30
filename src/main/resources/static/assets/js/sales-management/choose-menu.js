@@ -13,8 +13,6 @@ $('#btn-choose-menu').click(async () => {
 
         const menuList = response.data;
 
-        console.log("Check menuList: " + JSON.stringify(menuList));
-
         const tbody = $('#chooseMenuModal tbody');
 
         tbody.empty();
@@ -23,8 +21,10 @@ $('#btn-choose-menu').click(async () => {
 
             const row = `
                 <tr>
-                    <td>${item.dishName}</td>
-                    <td><input type="number" class="form-control quantity-input" data-id="${item.menuId}"></td>
+                    <td class="menuName">${item.dishName}</td>
+                    <td>
+                     <input type="number" class="form-control quantity-input" data-id="${item.menuId}"> 
+                    </td>
                     <td class="text-center">
                         <input type="checkbox" class="form-check-input menu-checkbox" data-id="${item.menuId}">
                     </td>
@@ -45,27 +45,39 @@ $('#btn-confirm-choose').click(async () => {
     const btn = $('#btn-confirm-choose');
     const rows = [];
     const table = JSON.parse(sessionStorage.getItem('selectedTable') || '{}');
+    let hasError = false;
 
     btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Đang xử lý...');
 
     $('#chooseMenuModal tbody tr').each(function () {
-        const checkbox = $(this).find('.menu-checkbox');
-        if (checkbox.is(':checked')) {
-            const menuId = checkbox.data('id');
-            const quantity = parseInt($(this).find('.quantity-input').val()) || 0;
-            rows.push({ menuId, quantity });
+        const checkbox = $(this).find(".menu-checkbox");
+
+        if (checkbox.is(":checked")) {
+            const quantity = $(this).find(".quantity-input").val();
+            const menuId = checkbox.data("id");
+            const menuName = $(this).find(".menuName").text().trim();
+
+            if (!quantity || quantity <= 0) {
+                showToast("Vui lòng nhập số lượng của " + menuName, "warning",);
+                hasError = true;
+                return false;
+            }
+
+            rows.push({
+                menuId,
+                menuName,
+                quantity
+            });
         }
     });
 
-    if (rows.length === 0) {
-        showToast('Vui lòng chọn ít nhất 1 món!', 'warning');
+    if (hasError) {
         btn.prop('disabled', false).text('Xác nhận');
         return;
     }
 
-    const invalid = rows.some(item => item.quantity <= 0);
-    if (invalid) {
-        showToast('Vui lòng nhập số lượng hợp lệ cho mỗi món!', 'warning');
+    if (rows.length === 0) {
+        showToast('Vui lòng chọn ít nhất 1 món!', 'warning');
         btn.prop('disabled', false).text('Xác nhận');
         return;
     }
@@ -84,12 +96,9 @@ $('#btn-confirm-choose').click(async () => {
         });
 
         showToast(response.message || 'Thêm món thành công!', 'success');
-
         modalChooseMenu.modal('hide');
         sessionStorage.removeItem('selectedTable');
-
-        setTimeout(() => location.reload(), 1000);
-
+        await getListTable();
     } catch (xhr) {
         const msg = xhr.responseJSON?.message || 'Thêm món thất bại!';
         showToast(msg, 'danger');

@@ -10,11 +10,16 @@ $('#btn-confirm-order').on('click', async () => {
     btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Đang xử lý...');
 
     const table = JSON.parse(sessionStorage.getItem('selectedTable') || '{}');
-    
+
     const form = $('#orderTableForm')[0];
 
+    if (!form.validateForm()) {
+        btn.prop('disabled', false).text('Xác nhận đặt bàn');
+        return;
+    }
+
     const durationMinutes = parseInt(form.durationMinutes.value, 10);
-    
+
     const now = new Date();
 
     const expiryTime = new Date(now.getTime() + durationMinutes * 60 * 1000);
@@ -40,7 +45,7 @@ $('#btn-confirm-order').on('click', async () => {
         sessionStorage.removeItem('selectedTable');
 
         // Có thể chỉ reload phần danh sách bàn, không cần full page
-        setTimeout(() => location.reload(), 1000);
+        await getListTable();
     } catch (xhr) {
         const msg = xhr.responseJSON?.message || 'Đặt bàn thất bại!';
         showToast(msg, 'danger');

@@ -2,6 +2,8 @@ package com.windy.cafemanagement.models;
 
 import java.time.LocalDate;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,12 +16,12 @@ import jakarta.persistence.Id;
  *
  * Date: 12-11-2013
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 @Entity
 public class Equipment {
@@ -28,6 +30,7 @@ public class Equipment {
     private Long equipmentId;
     private String equipmentName;
     private Double quantity;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate purchaseDate;
     private Double unitPrice;
     private Boolean isDeleted = false;

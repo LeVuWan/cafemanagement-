@@ -16,47 +16,67 @@
                 </div>
                 <div class="card-body">
                     <form th:action="@{/admin/equipment/edit}" method="post" class="needs-validation"
-                        th:object="${equipment}">
+                        th:object="${equipment}" id="editEquipmentForm">
                         <div class="row">
                             <input type="text" class="form-control" name="equipmentId" th:field="*{equipmentId}"
                                 readonly style="display: none;">
                             <div class="form-group col-md-6">
-                                <label for="startDate">Tên thiết bị</label>
+                                <label for="startDate">*Tên thiết bị</label>
                                 <input type="text" class="form-control" name="equipmentName"
                                     th:field="*{equipmentName}">
                                 <span th:if="${#fields.hasErrors('equipmentName')}" th:errors="*{equipmentName}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="endDate">Số lượng</label>
-                                <input type="number" class="form-control" name="quantity" th:field="*{quantity}">
+                                <label for="endDate">*Số lượng</label>
+                                <input type="number" class="form-control" name="quantity" th:field="*{quantity}"
+                                    id="quantity">
                                 <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label for="startDate">Ngày mua</label>
+                                <label for="startDate">*Ngày mua</label>
                                 <input type="date" class="form-control" th:field="*{purchaseDate}" name="purchaseDate">
                                 <span th:if="${#fields.hasErrors('purchaseDate')}" th:errors="*{purchaseDate}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label>Đơn giá</label>
-                                <input type="number" class="form-control" id="endDate" th:field="*{unitPrice}"
-                                    name="unitPrice">
+                                <label>*Đơn giá</label>
+                                <input type="text" step="0.01" class="form-control" id="money" th:field="*{unitPrice}">
                                 <span th:if="${#fields.hasErrors('unitPrice')}" th:errors="*{unitPrice}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Lưu</button>
-                        <a th:href="@{/admin/equipment}" class="btn btn-success ml-2">Trở về</a>
+                        <button type="submit" class="btn btn-success">Lưu</button>
+                        <a th:href="@{/admin/equipment}" class="btn btn-secondary ml-2">Trở về</a>
                     </form>
                 </div>
             </div>
         </div>
+
+        <script th:src="@{/assets/js/validations/validator.js}"></script>
+        <script>
+            Validator({
+                form: '#editEquipmentForm',
+                errorSelector: '.form-message',
+                rules: [
+                    Validator.isRequired('#equipmentName'),
+                    Validator.isRequired('#quantity'),
+                    Validator.checkGreaterThanZero('#quantity', 'Số lượng phải lớn hơn không'),
+                    Validator.isRequired('#purchaseDate'),
+                    Validator.isRequired('#money'),
+                    Validator.checkGreaterThanZero('#money', 'Đơn giá phải lớn hơn không'),
+                ]
+            });
+        </script>
     </section>
 </body>
 

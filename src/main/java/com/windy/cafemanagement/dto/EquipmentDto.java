@@ -11,12 +11,12 @@ import jakarta.validation.constraints.NotNull;
  *
  * Date: 10-11-2025
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 public class EquipmentDto {
     private Long equipmentId;
@@ -27,12 +27,12 @@ public class EquipmentDto {
     @NotNull(message = "Ngày mua không được trống")
     private LocalDate purchaseDate;
     @NotNull(message = "Đơn giá không được trống")
-    private Double unitPrice;
+    private String unitPrice;
 
     public EquipmentDto(Long equipmentId, @NotBlank(message = "Tên thiết bị không được trống") String equipmentName,
             @NotNull(message = "Số lượng không được để trống") Double quantity, String note,
             @NotNull(message = "Ngày mua không được trống") LocalDate purchaseDate,
-            @NotNull(message = "Đơn giá không được trống") Double unitPrice) {
+            @NotNull(message = "Đơn giá không được trống") String unitPrice) {
         this.equipmentId = equipmentId;
         this.equipmentName = equipmentName;
         this.quantity = quantity;
@@ -75,11 +75,11 @@ public class EquipmentDto {
         this.purchaseDate = purchaseDate;
     }
 
-    public Double getUnitPrice() {
+    public String getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(Double unitPrice) {
+    public void setUnitPrice(String unitPrice) {
         this.unitPrice = unitPrice;
     }
 

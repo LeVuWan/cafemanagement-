@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
+import com.windy.cafemanagement.Utils.UtilConvert;
 import com.windy.cafemanagement.configs.SecurityUtil;
 import com.windy.cafemanagement.dto.EquipmentDto;
 import com.windy.cafemanagement.models.Employee;
@@ -81,8 +82,10 @@ public class EquipmentService {
         equipment.setEquipmentName(dto.getEquipmentName());
         equipment.setQuantity(dto.getQuantity());
         equipment.setPurchaseDate(dto.getPurchaseDate());
-        equipment.setUnitPrice(dto.getUnitPrice());
+        equipment.setUnitPrice(UtilConvert.convertStringMoneyToDouble(dto.getUnitPrice()));
         equipment.setIsDeleted(false);
+
+        System.out.println("Check unit price: " + equipment.getUnitPrice());
 
         Equipment savedEquipment = equipmentRepository.save(equipment);
         String username = SecurityUtil.getSessionUser();
@@ -101,7 +104,7 @@ public class EquipmentService {
         importOrder.setEquipment(savedEquipment);
         importOrder.setImportDate(dto.getPurchaseDate());
         importOrder.setQuantity(dto.getQuantity());
-        importOrder.setTotalAmount(dto.getQuantity() * dto.getUnitPrice());
+        importOrder.setTotalAmount(dto.getQuantity() * UtilConvert.convertStringMoneyToDouble(dto.getUnitPrice()));
         importOrder.setProduct(null);
         importOrder.setEmployee(user);
         importOrderRepository.save(importOrder);
@@ -130,7 +133,7 @@ public class EquipmentService {
         equipment.setEquipmentName(dto.getEquipmentName());
         equipment.setQuantity(dto.getQuantity());
         equipment.setPurchaseDate(dto.getPurchaseDate());
-        equipment.setUnitPrice(dto.getUnitPrice());
+        equipment.setUnitPrice(UtilConvert.convertStringMoneyToDouble(dto.getUnitPrice()));
 
         Equipment updatedEquipment = equipmentRepository.save(equipment);
 
@@ -142,7 +145,7 @@ public class EquipmentService {
         for (ImportOrder importOrder : importOrders) {
             importOrder.setImportDate(dto.getPurchaseDate());
             importOrder.setQuantity(dto.getQuantity());
-            importOrder.setTotalAmount(dto.getQuantity() * dto.getUnitPrice());
+            importOrder.setTotalAmount(dto.getQuantity() * UtilConvert.convertStringMoneyToDouble(dto.getUnitPrice()));
 
             importOrderRepository.save(importOrder);
         }
@@ -171,7 +174,7 @@ public class EquipmentService {
 
         List<ImportOrder> importOrders = importOrderRepository.findByEquipment(equipment);
 
-        if(importOrders.isEmpty()) {
+        if (importOrders.isEmpty()) {
             return;
         }
 

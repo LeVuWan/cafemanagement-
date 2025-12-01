@@ -54,7 +54,7 @@
 
                             <div class="flex-fill">
                                 <label class="form-label form-label-small" for="salary">* Lương:</label>
-                                <input type="text" step="0.01" class="form-control" id="salary" th:field="*{salary}"
+                                <input type="text" step="0.01" class="form-control" id="money" th:field="*{salary}"
                                     placeholder="Lương" required>
                                 <span th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}"
                                     class="text-danger small"></span>

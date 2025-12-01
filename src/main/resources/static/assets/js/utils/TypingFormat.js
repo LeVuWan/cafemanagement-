@@ -15,8 +15,8 @@ $(document).ready(function () {
 
     });
 
-    $('#salary').on("input", () => {
-        let value = $('#salary').val();
+    $('#money').on("input", () => {
+        let value = $('#money').val();
 
         value = value.replace(/\D/g, "");
 
@@ -26,6 +26,6 @@ $(document).ready(function () {
 
         value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-        $('#salary').val(value);
+        $('#money').val(value);
     });
 });

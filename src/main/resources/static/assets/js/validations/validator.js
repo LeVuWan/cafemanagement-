@@ -144,3 +144,12 @@ Validator.checkLength = function (selector, min = 6) {
         }
     };
 };
+
+Validator.isComfirmPassword = function (selector, getPasswordValue) {
+    return {
+        selector: selector,
+        test: function (value) {
+            return value === getPasswordValue() ? undefined : "Mật khẩu nhập lại không khớp";
+        }
+    };
+};

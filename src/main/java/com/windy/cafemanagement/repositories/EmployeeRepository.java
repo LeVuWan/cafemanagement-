@@ -72,7 +72,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Modifying
     @Transactional
     @Query("UPDATE Employee e SET e.isDeleted = true WHERE e.employeeId = :id")
-    public Employee softDeleteById(@Param("id") Long id);
+    public int softDeleteById(@Param("id") Long id);
 
     /**
      * get employee by username

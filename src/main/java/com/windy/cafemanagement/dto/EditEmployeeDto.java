@@ -29,7 +29,7 @@ public class EditEmployeeDto {
 
     private Long permissionId;
 
-    private Double salary;
+    private String salary;
 
     private String avatar;
 
@@ -39,7 +39,7 @@ public class EditEmployeeDto {
             String password,
             String fullname,
             Long permissionId,
-            Double salary,
+            String salary,
             String avatar) {
         this.employeeId = employeeId;
         this.username = username;
@@ -111,11 +111,11 @@ public class EditEmployeeDto {
         this.permissionId = permissionId;
     }
 
-    public Double getSalary() {
+    public String getSalary() {
         return salary;
     }
 
-    public void setSalary(Double salary) {
+    public void setSalary(String salary) {
         this.salary = salary;
     }
 

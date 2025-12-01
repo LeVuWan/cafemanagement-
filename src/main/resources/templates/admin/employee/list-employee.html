@@ -43,7 +43,7 @@
                                 <div class="input-group">
                                     <input type="text" name="keyword" th:value="${keyword}"
                                         class="form-control form-control-sm mr-2"
-                                        placeholder="Nhập từ khóa tìm kiếm...">
+                                        placeholder="Tìm kiếm theo họ tên, tên đang nhập, số điện thoại" maxlength="50">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary btn-sm rounded-sm" type="submit">
                                             <i class="fas fa-search"></i>
@@ -63,23 +63,41 @@
                                     <th>Họ tên</th>
                                     <th>Chức vụ</th>
                                     <th>Lương</th>
-
-                                    <th class="text-center" style="width: 150px;">
-                                        Action</th>
+                                    <th class="text-center" style="width: 150px;">Action</th>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 <tr th:each="employee : ${employeis}">
+
                                     <td class="responsive-text" th:text="${employee.fullname}"></td>
                                     <td class="responsive-text" th:text="${employee.permission.name}"></td>
-                                    <td class="responsive-text"
-                                        th:text="${#numbers.formatDecimal(employee.salary, 0, 'COMMA', 0, 'POINT')} + 'vn₫'">
-                                    </td>
+                                    <td class="responsive-text" th:text="${employee.salary} + 'vn₫'"></td>
+
                                     <td class="text-center">
                                         <div class="d-flex flex-wrap justify-content-center">
-                                            <a th:href="@{/admin/employee/edit/{id}(id=${employee.employeeId})}"
-                                                href="#" class="btn btn-success btn-sm mr-2 my-1">Cập nhật</a>
 
+                                            <!-- ========== CẬP NHẬT ========== -->
+
+                                            <!-- Nếu không phải chính mình → được cập nhật -->
+                                            <a th:if="${employee.employeeId} != ${#authentication.principal.employyeeId}"
+                                                th:href="@{/admin/employee/edit/{id}(id=${employee.employeeId})}"
+                                                class="btn btn-success btn-sm mr-2 my-1">
+                                                Cập nhật
+                                            </a>
+
+                                            <!-- Nếu là chính mình → mở modal thông báo -->
+                                            <button
+                                                th:if="${employee.employeeId} == ${#authentication.principal.employyeeId}"
+                                                class="btn btn-success btn-sm mr-2 my-1" data-toggle="modal"
+                                                data-target="#modalSelfUpdate">
+                                                Cập nhật
+                                            </button>
+
+
+                                            <!-- ========== XÓA ========== -->
+
+                                            <!-- Không phải chính mình → xóa bình thường -->
                                             <button class="btn btn-danger btn-sm my-1"
                                                 th:if="${employee.employeeId} != ${#authentication.principal.employyeeId}"
                                                 data-toggle="modal"
@@ -87,31 +105,38 @@
                                                 Xóa
                                             </button>
 
+                                            <!-- Là chính mình → modal không cho xóa -->
                                             <button class="btn btn-danger btn-sm my-1"
                                                 th:if="${employee.employeeId} == ${#authentication.principal.employyeeId}"
                                                 data-toggle="modal" data-target="#exampleModal">
                                                 Xóa
                                             </button>
 
+                                            <!-- Modal xác nhận xóa -->
                                             <div class="modal fade" th:id="'modalDelete_' + ${employee.employeeId}"
-                                                tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel_"
+                                                tabindex="-1" role="dialog"
                                                 th:aria-labelledby="'modalDeleteLabel_' + ${employee.employeeId}"
                                                 aria-hidden="true">
+
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
+
                                                         <div class="modal-header">
                                                             <h5 class="modal-title"
-                                                                th:id="'modalDeleteLabel_' + ${employee.employeeId}">Xác
-                                                                nhận Xóa nhân viên</h5>
+                                                                th:id="'modalDeleteLabel_' + ${employee.employeeId}">
+                                                                Xác nhận Xóa nhân viên
+                                                            </h5>
                                                             <button type="button" class="close" data-dismiss="modal"
                                                                 aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
+
                                                         <div class="modal-body">
-                                                            Bạn có chắc chắn muốn xóa nhân viên có tên <span
-                                                                th:text="${employee.fullname}"></span> không?
+                                                            Bạn có chắc chắn muốn xóa nhân viên:
+                                                            <strong th:text="${employee.fullname}"></strong> ?
                                                         </div>
+
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">Hủy</button>
@@ -119,27 +144,7 @@
                                                             <a th:href="@{/admin/employee/delete/{id}(id=${employee.employeeId})}"
                                                                 class="btn btn-danger">Xóa</a>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </div>
 
-                                            <div class="modal fade" id="exampleModal" tabindex="-1"
-                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            Bạn không được xóa chính mình
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">Close</button>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -150,6 +155,39 @@
                             </tbody>
                         </table>
 
+
+                        <!-- Modal: Không cho cập nhật chính mình -->
+                        <div class="modal fade" id="modalSelfUpdate" tabindex="-1"
+                            aria-labelledby="modalSelfUpdateLabel" aria-hidden="true">
+
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalSelfUpdateLabel">Thông báo</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        Bạn không thể cập nhật thông tin của chính mình tại đây.
+                                        <br>
+                                        Vui lòng cập nhật tại <strong>Trang cá nhân / Thay đổi Profile</strong>.
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <a th:href="@{/update-profile/{id}(id=${#authentication.principal.employyeeId})}"
+                                            class="btn btn-primary">
+                                            Đến trang Profile
+                                        </a>
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Đóng</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

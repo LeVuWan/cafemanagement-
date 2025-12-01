@@ -106,6 +106,7 @@ Validator.isPhoneNumber = function (selector) {
     return {
         selector: selector,
         test: function (value) {
+            value = value.replace(/\s/g, "");
             var regex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
             return regex.test(value) ? undefined : "Số điện thoại không hợp lệ";
         }
@@ -131,6 +132,15 @@ Validator.checkChangeAmount = (selector, getTotal) => {
             return paid >= total
                 ? undefined
                 : "Tiền khách đưa chưa đủ";
+        }
+    };
+};
+
+Validator.checkLength = function (selector, min = 6) {
+    return {
+        selector: selector,
+        test: function (value) {
+            return value.length >= min ? undefined : `Mật khẩu phải lớn hơn ${min} ký tự`;
         }
     };
 };

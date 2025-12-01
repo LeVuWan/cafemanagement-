@@ -39,8 +39,7 @@ public class CreateEmployeeDto {
     private Long permissionId;
 
     @NotNull(message = "Lương không được để trống")
-    @Positive(message = "Lương phải lớn hơn 0")
-    private Double salary;
+    private String salary;
 
     public CreateEmployeeDto(@NotBlank(message = "Đên đăng nhập không để trống") String username,
             String address,
@@ -48,7 +47,7 @@ public class CreateEmployeeDto {
             @NotBlank(message = "Mật khẫu không để trống") @Size(min = 3, max = 50, message = "Mật khẩu phải từ 3 đến 50 ký tự") String password,
             @NotBlank(message = "Họ tên không được để trống") String fullname,
             @NotBlank(message = "Bạn chưa chon permission") Long permissionId,
-            @NotNull(message = "Lương không được để trống") Double salary) {
+            @NotNull(message = "Lương không được để trống") String salary) {
         this.username = username;
         this.address = address;
         this.phoneNumber = phoneNumber;
@@ -109,11 +108,11 @@ public class CreateEmployeeDto {
         this.permissionId = permissionId;
     }
 
-    public Double getSalary() {
+    public String getSalary() {
         return salary;
     }
 
-    public void setSalary(Double salary) {
+    public void setSalary(String salary) {
         this.salary = salary;
     }
 

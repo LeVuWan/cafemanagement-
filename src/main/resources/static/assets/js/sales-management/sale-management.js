@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const management = document.getElementById("management-functions");
 
-    // ⭐ Event Delegation
     document.querySelector("#list-table").addEventListener("click", function (e) {
         const table = e.target.closest(".table-item");
         if (!table) return;

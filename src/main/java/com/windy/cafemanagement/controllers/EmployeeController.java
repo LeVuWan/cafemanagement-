@@ -202,6 +202,15 @@ public class EmployeeController {
             @RequestParam(value = "file", required = false) MultipartFile file,
             Model model) {
         try {
+            if (file != null && !file.isEmpty()) {
+                // Lưu file và set avatar
+                String imgUrl = uploadService.uploadImage(file, "avatar");
+                editEmployeeDto.setAvatar(imgUrl);
+            } else {
+                // Không thay đổi avatar
+                editEmployeeDto.setAvatar(null);
+            }
+
             employeeService.editEmployee(editEmployeeDto);
             return "redirect:/admin/employee";
         } catch (EntityNotFoundException e) {
@@ -233,6 +242,7 @@ public class EmployeeController {
     @GetMapping("/delete/{id}")
     public String deleteEmployeeController(@PathVariable("id") Long id, Model model) {
         try {
+            System.out.println("Check id: " + id);
             employeeService.deleteEmployeeService(id);
             return "redirect:/admin/employee";
         } catch (EntityNotFoundException e) {

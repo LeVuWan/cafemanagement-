@@ -131,8 +131,9 @@ public class EmployeeService {
             existingEmployee.setPermission(permissionService.findByPermissionById(editEmployeeDto.getPermissionId()));
         if (editEmployeeDto.getSalary() != null)
             existingEmployee.setSalary(editEmployeeDto.getSalary());
-        if (isNotBlank(editEmployeeDto.getAvatar()))
+        if (editEmployeeDto.getAvatar() != null && isNotBlank(editEmployeeDto.getAvatar())) {
             existingEmployee.setAvatar(editEmployeeDto.getAvatar());
+        }
         if (isNotBlank(editEmployeeDto.getPassword())) {
             existingEmployee.setPassword(passwordEncoder.encode(editEmployeeDto.getPassword()));
         }
@@ -148,12 +149,11 @@ public class EmployeeService {
      * @throws DataAccessException
      * @throws EntityNotFoundException
      */
-    public Employee deleteEmployeeService(Long id) throws DataAccessException, EntityNotFoundException {
-        Employee employee = employeeRepository.softDeleteById(id);
-        if (employee == null) {
+    public void deleteEmployeeService(Long id) throws DataAccessException, EntityNotFoundException {
+        int rowsAffected = employeeRepository.softDeleteById(id);
+        if (rowsAffected == 0) {
             throw new EntityNotFoundException("Không tìm thấy nhân viên có ID: " + id);
         }
-        return employee;
     }
 
     /**
@@ -325,7 +325,7 @@ public class EmployeeService {
         emp1.setAddress("HN");
         emp1.setPhoneNumber("0123456789");
         emp1.setPassword(passwordEncoder.encode("123456"));
-        emp1.setSalary(10000.0);
+        emp1.setSalary("0");
         emp1.setIsDeleted(false);
         emp1.setPermission(management);
         employeeRepository.save(emp1);
@@ -336,7 +336,7 @@ public class EmployeeService {
         emp2.setAddress("HCM");
         emp2.setPhoneNumber("0987654321");
         emp2.setPassword(passwordEncoder.encode("123456"));
-        emp2.setSalary(8000.0);
+        emp2.setSalary("0");
         emp2.setIsDeleted(false);
         emp2.setPermission(employee);
         employeeRepository.save(emp2);

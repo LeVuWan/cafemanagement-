@@ -19,7 +19,7 @@
                 </div>
                 <div class="card-body">
                     <form th:action="@{/admin/employee/edit}" th:object="${employee}" method="post"
-                        enctype="multipart/form-data" class="needs-validation" novalidate>
+                        enctype="multipart/form-data" class="needs-validation" id="editEmployyeeForm" novalidate>
                         <input type="text" class="form-control w-75" name="employeeId" th:field="*{employeeId}" readonly
                             style="display: none;">
                         <!-- Họ và tên -->
@@ -28,6 +28,7 @@
                             <input type="text" class="form-control" id="fullname" th:field="*{fullname}" required>
                             <span th:if="${#fields.hasErrors('fullname')}" th:errors="*{fullname}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
 
                         <!-- Địa chỉ -->
@@ -50,23 +51,27 @@
                                 </select>
                                 <span th:if="${#fields.hasErrors('permissionId')}" th:errors="*{permissionId}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
 
                             <div class="flex-fill">
                                 <label for="salary">* Lương:</label>
-                                <input type="number" step="0.01" class="form-control" id="salary" th:field="*{salary}"
+                                <input type="text" step="0.01" class="form-control" id="salary" th:field="*{salary}"
                                     placeholder="Lương" required>
                                 <span th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
                         </div>
 
                         <!-- Số điện thoại -->
                         <div class="form-group">
                             <label for="phoneNumber">* Số điện thoại:</label>
-                            <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" required>
+                            <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}"
+                                maxlength="13" required>
                             <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
 
                         <!-- Tên đăng nhập -->
@@ -75,6 +80,7 @@
                             <input type="text" class="form-control" id="username" th:field="*{username}" required>
                             <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
 
                         <!-- Mật khẩu -->
@@ -83,6 +89,18 @@
                             <input type="password" class="form-control" id="password" th:field="*{password}" required>
                             <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
+                        </div>
+
+                        <!-- Ảnh đại diện -->
+                        <div class="form-group">
+                            <label>Avatar:</label>
+                            <input type="file" class="form-control-file" id="imageFile" name="file" accept="image/*">
+                        </div>
+
+                        <!-- Xem trước ảnh -->
+                        <div class="mb-3">
+                            <img style="max-width: 250px; display: none;" alt="Ảnh xem trước" id="imagePriview">
                         </div>
 
                         <!-- Nút thao tác -->
@@ -92,6 +110,22 @@
                 </div>
             </div>
         </div>
+        <script th:src="@{/assets/js/validations/validator.js}"></script>
+        <script>
+            Validator({
+                form: '#editEmployyeeForm',
+                errorSelector: '.form-message',
+                rules: [
+                    Validator.isRequired('#username'),
+                    Validator.isRequired('#password'),
+                    Validator.checkLength('#password'),
+                    Validator.isRequired('#fullname'),
+                    Validator.isRequired('#salary'),
+                    Validator.isRequired('#phoneNumber'),
+                    Validator.isSelected('#permissionId')
+                ]
+            });
+        </script>
     </section>
 </body>
 

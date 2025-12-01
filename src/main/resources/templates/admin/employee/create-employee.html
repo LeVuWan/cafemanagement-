@@ -54,8 +54,8 @@
 
                             <div class="flex-fill">
                                 <label class="form-label form-label-small" for="salary">* Lương:</label>
-                                <input type="number" step="1" class="form-control" id="salary" th:field="*{salary}"
-                                    required min="0" max="30000000" maxlength="9">
+                                <input type="text" step="0.01" class="form-control" id="salary" th:field="*{salary}"
+                                    placeholder="Lương" required>
                                 <span th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}"
                                     class="text-danger small"></span>
                                 <span class="form-message"></span>
@@ -65,8 +65,8 @@
                         <!-- Số điện thoại -->
                         <div class="form-group">
                             <label class="form-label form-label-small" for="phoneNumber">* Số điện thoại:</label>
-                            <input type="number" id="phone" maxlength="12" class="form-control" th:field="*{phoneNumber}"
-                                required minlength="9">
+                            <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}"
+                                maxlength="13" required>
                             <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
                                 class="text-danger small"></span>
                             <span class="form-message"></span>
@@ -121,10 +121,11 @@
                 rules: [
                     Validator.isRequired('#username'),
                     Validator.isRequired('#password'),
+                    Validator.checkLength('#password'),
                     Validator.isRequired('#fullname'),
                     Validator.isRequired('#salary'),
-                    Validator.isRequired('#phone'),
-                    Validator.isPhoneNumber('#phone'),
+                    Validator.isRequired('#phoneNumber'),
+                    Validator.isPhoneNumber('#phoneNumber'),
                     Validator.isSelected('#permissionId')
                 ]
             });

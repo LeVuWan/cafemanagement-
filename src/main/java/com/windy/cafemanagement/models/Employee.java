@@ -48,7 +48,7 @@ public class Employee {
 
     private String password;
 
-    private Double salary;
+    private String salary;
 
     private String avatar;
 
@@ -62,7 +62,7 @@ public class Employee {
     private List<TableBookingDetail> tableBookingDetails = new ArrayList<>();
 
     public Employee(Long employeeId, String username, String address, String phoneNumber, String password,
-            Double salary, String avatar, Permission permission, String fullname) {
+            String salary, String avatar, Permission permission, String fullname) {
         this.employeeId = employeeId;
         this.username = username;
         this.address = address;
@@ -118,11 +118,11 @@ public class Employee {
         this.password = password;
     }
 
-    public Double getSalary() {
+    public String getSalary() {
         return salary;
     }
 
-    public void setSalary(Double salary) {
+    public void setSalary(String salary) {
         this.salary = salary;
     }
 

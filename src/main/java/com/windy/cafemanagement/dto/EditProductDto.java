@@ -10,12 +10,12 @@ import jakarta.validation.constraints.NotNull;
  *
  * Date: 10-11-2025
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 public class EditProductDto {
     private Long productId;
@@ -24,9 +24,9 @@ public class EditProductDto {
     @NotNull(message = "Đơn vị tính không được trống")
     private Long unitId;
     @NotNull(message = "Đơn giá không được trống")
-    private Double unitPrice;
+    private String unitPrice;
 
-    public EditProductDto(Long productId, String productName, Long unitId, Double unitPrice) {
+    public EditProductDto(Long productId, String productName, Long unitId, String unitPrice) {
         this.productId = productId;
         this.productName = productName;
         this.unitId = unitId;
@@ -60,11 +60,11 @@ public class EditProductDto {
         this.unitId = unitId;
     }
 
-    public Double getUnitPrice() {
+    public String getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(Double unitPrice) {
+    public void setUnitPrice(String unitPrice) {
         this.unitPrice = unitPrice;
     }
 

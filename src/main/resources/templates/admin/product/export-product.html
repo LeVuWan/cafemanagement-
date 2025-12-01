@@ -25,7 +25,7 @@
                     </div>
 
                     <form action="/admin/product/export" method="post" th:object="${exportProduct}"
-                        class="needs-validation">
+                        class="needs-validation" novalidate id="exportProductForm">
                         <input type="hidden" th:field="*{productId}" />
 
                         <div class="form-group col-md-6">
@@ -35,26 +35,41 @@
 
                         <div class="form-group col-md-6">
                             <label>Ngày xuất</label>
-                            <input type="date" class="form-control" th:field="*{exportDate}">
+                            <input type="date" class="form-control" th:field="*{exportDate}" id="purchaseDate">
                             <span th:if="${#fields.hasErrors('exportDate')}" th:errors="*{exportDate}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
 
                         <div class="form-group col-md-6">
                             <label>Số lượng</label>
-                            <input type="number" class="form-control" th:field="*{quantity}">
+                            <input type="number" class="form-control" th:field="*{quantity}" id="quantity">
                             <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Lưu</button>
-                        <a th:href="@{/admin/product}" class="btn btn-success ml-2">Trở về</a>
+                        <button type="submit" class="btn btn-success">Lưu</button>
+                        <a th:href="@{/admin/product}" class="btn btn-secondary ml-2">Trở về</a>
                     </form>
 
                 </div>
 
             </div>
         </div>
+
+        <script th:src="@{/assets/js/validations/validator.js}"></script>
+        <script>
+            Validator({
+                form: '#exportProductForm',
+                errorSelector: '.form-message',
+                rules: [
+                    Validator.isRequired('#quantity'),
+                    Validator.checkGreaterThanZero('#quantity', 'Số lượng phải lớn hơn không'),
+                    Validator.isRequired('#purchaseDate'),
+                ]
+            });
+        </script>
     </section>
 </body>
 

@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import com.windy.cafemanagement.Responses.ImportExportProduct;
+import com.windy.cafemanagement.Utils.UtilConvert;
 import com.windy.cafemanagement.configs.SecurityUtil;
 import com.windy.cafemanagement.dto.EditProductDto;
 import com.windy.cafemanagement.dto.ExportProductDto;
@@ -95,7 +96,7 @@ public class ProductService {
         Product product = new Product();
         product.setProductName(dto.getProductName());
         product.setQuantity(dto.getQuantity());
-        product.setUnitPrice(dto.getUnitPrice());
+        product.setUnitPrice(UtilConvert.convertStringMoneyToDouble(dto.getUnitPrice()));
         product.setUnit(unit);
         product.setIsDeleted(false);
 
@@ -118,7 +119,7 @@ public class ProductService {
         importOrder.setEquipment(null);
         importOrder.setImportDate(dto.getPurchaseDate());
         importOrder.setQuantity(dto.getQuantity());
-        importOrder.setTotalAmount(dto.getQuantity() * dto.getUnitPrice());
+        importOrder.setTotalAmount(dto.getQuantity() * UtilConvert.convertStringMoneyToDouble(dto.getUnitPrice()));
         importOrder.setEmployee(user);
         importOrder.setIsDeleted(false);
         importOrderRepository.save(importOrder);
@@ -235,7 +236,7 @@ public class ProductService {
                         () -> new EntityNotFoundException("Không tìm thấy hàng hóa với id: " + dto.getProductId()));
 
         product.setProductName(dto.getProductName());
-        product.setUnitPrice(dto.getUnitPrice());
+        product.setUnitPrice(UtilConvert.convertStringMoneyToDouble(dto.getUnitPrice()));
         product.setUnit(unitRepository.findById(dto.getUnitId())
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đơn vị tính!")));
 

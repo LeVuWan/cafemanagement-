@@ -142,8 +142,19 @@ public class ProductController {
             @Valid @ModelAttribute("exportProduct") ExportProductDto exportProductDto,
             BindingResult bindingResult) {
 
+        Product product = productService.getProductByIdService(exportProductDto.getProductId());
+
+        if (exportProductDto.getQuantity() != null &&
+                product.getQuantity() < exportProductDto.getQuantity()) {
+
+            bindingResult.rejectValue(
+                    "quantity",
+                    "error.quantity",
+                    "Số lượng xuất vượt quá số lượng tồn kho (" + product.getQuantity() + ")");
+        }
+
         if (bindingResult.hasErrors()) {
-            Product product = productService.getProductByIdService(exportProductDto.getProductId());
+            productService.getProductByIdService(exportProductDto.getProductId());
             model.addAttribute("product", product);
             model.addAttribute("exportProduct", exportProductDto);
             return "admin/product/export-product";
@@ -219,7 +230,7 @@ public class ProductController {
             EditProductDto dto = new EditProductDto();
             dto.setProductId(product.getProductId());
             dto.setProductName(product.getProductName());
-            dto.setUnitPrice(product.getUnitPrice());
+            dto.setUnitPrice(product.getUnitPrice() + "");
             dto.setUnitId(product.getUnit().getUnitId());
 
             model.addAttribute("product", dto);

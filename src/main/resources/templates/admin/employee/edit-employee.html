@@ -22,7 +22,6 @@
                         enctype="multipart/form-data" class="needs-validation" id="editEmployyeeForm" novalidate>
                         <input type="text" class="form-control w-75" name="employeeId" th:field="*{employeeId}" readonly
                             style="display: none;">
-                        <!-- Họ và tên -->
                         <div class="form-group">
                             <label for="fullname">* Họ và tên:</label>
                             <input type="text" class="form-control" id="fullname" th:field="*{fullname}" required>
@@ -31,7 +30,6 @@
                             <span class="form-message"></span>
                         </div>
 
-                        <!-- Địa chỉ -->
                         <div class="form-group">
                             <label for="address">Địa chỉ:</label>
                             <input type="text" class="form-control" id="address" th:field="*{address}">
@@ -39,7 +37,6 @@
                                 class="text-danger small"></span>
                         </div>
 
-                        <!-- Chức vụ + Lương -->
                         <div class="d-flex gap-3 form-group">
                             <div class="flex-fill mr-2">
                                 <label for="permissionId">* Chức vụ:</label>

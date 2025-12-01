@@ -13,7 +13,7 @@
             <div class="card shadow mb-4">
                 <div class="card-body">
                     <form th:action="@{/update-profile}" method="post" class="needs-validation" th:object="${employee}"
-                        enctype="multipart/form-data">
+                        id="updateProfileForm" enctype="multipart/form-data">
                         <input type="text" class="form-control w-75" name="employeeId" th:field="*{employeeId}" readonly
                             style="display: none;">
                         <div class="form-group">
@@ -21,24 +21,28 @@
                             <input type="text" class="form-control" th:field="*{username}">
                             <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
                         <div class="form-group">
                             <label>Họ và tên</label>
                             <input type="text" class="form-control" th:field="*{fullname}">
                             <span th:if="${#fields.hasErrors('fullname')}" th:errors="*{fullname}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
                         <div class="form-group">
                             <label>Địa chỉ</label>
                             <input type="text" class="form-control" th:field="*{address}">
                             <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
                         <div class="form-group">
                             <label>Số điện thoại</label>
                             <input type="text" class="form-control" th:field="*{phoneNumber}">
                             <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
                         <!-- Ảnh đại diện -->
                         <div class="form-group">
@@ -57,6 +61,20 @@
                 </div>
             </div>
         </div>
+
+        <script th:src="@{/assets/js/validations/validator.js}"></script>
+        <script>
+            Validator({
+                form: '#updateProfileForm',
+                errorSelector: '.form-message',
+                rules: [
+                    Validator.isRequired('#username'),
+                    Validator.isRequired('#fullname'),
+                    Validator.isRequired('#phoneNumber'),
+                    Validator.isPhoneNumber('#phoneNumber')
+                ]
+            });
+        </script>
     </section>
 </body>
 

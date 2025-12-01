@@ -9,12 +9,12 @@ import jakarta.validation.constraints.NotBlank;
  *
  * Date: 12-11-2013
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 12-11-2013         VuLQ            Create
+ * 12-11-2013 VuLQ Create
  */
 public class UpdateProfileDto {
     private Long employeeId;
@@ -26,18 +26,21 @@ public class UpdateProfileDto {
     private String phoneNumber;
     @NotBlank(message = "Địa chỉ không được để trống")
     private String address;
+    private String avatar;
 
     public UpdateProfileDto() {
     }
 
     public UpdateProfileDto(Long employeeId, @NotBlank(message = "Tên đăng nhập không để trống") String username,
             @NotBlank(message = "Họ và tên không để trông") String fullname,
-            @NotBlank(message = "Số điện thoại không được để trống") String phoneNumber, String address) {
+            @NotBlank(message = "Số điện thoại không được để trống") String phoneNumber, String address,
+            String avatar) {
         this.employeeId = employeeId;
         this.username = username;
         this.fullname = fullname;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.avatar = avatar;
     }
 
     public Long getEmployeeId() {
@@ -78,6 +81,14 @@ public class UpdateProfileDto {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
 }

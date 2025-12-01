@@ -3,6 +3,7 @@ package com.windy.cafemanagement.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +20,8 @@ import com.windy.cafemanagement.Services.PermissionService;
 import com.windy.cafemanagement.Services.UploadService;
 import com.windy.cafemanagement.dto.CreateEmployeeDto;
 import com.windy.cafemanagement.dto.EditEmployeeDto;
+import com.windy.cafemanagement.models.CustomUserDetails;
+import com.windy.cafemanagement.models.Employee;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -198,21 +201,36 @@ public class EmployeeController {
      * @throws
      */
     @PostMapping("/edit")
-    public String editEmployeeController(@ModelAttribute("employee") EditEmployeeDto editEmployeeDto,
+    public String editEmployeeController(@Valid @ModelAttribute("employee") EditEmployeeDto editEmployeeDto,
             @RequestParam(value = "file", required = false) MultipartFile file,
-            Model model) {
+            Model model, BindingResult bindingResult, Authentication authentication) {
         try {
+            EditEmployeeDto employeeBeingEdited = employeeService.getEmployeeById(editEmployeeDto.getEmployeeId());
+
+            boolean usernameExists = employeeService.checkUsernameExist(editEmployeeDto.getUsername());
+            boolean isSameAsOld = employeeBeingEdited.getUsername().equals(editEmployeeDto.getUsername());
+
+            if (usernameExists && !isSameAsOld) {
+                bindingResult.rejectValue("username", "error.username", "Username đã tồn tại");
+            }
+
+            if (bindingResult.hasErrors()) {
+                model.addAttribute("permissions", permissionService.getAllPermissionsService());
+                return "/admin/employee/edit-employee"; // ← sửa lại đúng view edit
+            }
+
+            // Xử lý upload avatar
             if (file != null && !file.isEmpty()) {
-                // Lưu file và set avatar
                 String imgUrl = uploadService.uploadImage(file, "avatar");
                 editEmployeeDto.setAvatar(imgUrl);
             } else {
-                // Không thay đổi avatar
-                editEmployeeDto.setAvatar(null);
+                editEmployeeDto.setAvatar(null); // Không cập nhật avatar nếu không chọn file
             }
 
             employeeService.editEmployee(editEmployeeDto);
+
             return "redirect:/admin/employee";
+
         } catch (EntityNotFoundException e) {
             logger.warn("Entity not found in editEmployeeController: {}", e.getMessage());
             model.addAttribute("errorMessage", e.getMessage());

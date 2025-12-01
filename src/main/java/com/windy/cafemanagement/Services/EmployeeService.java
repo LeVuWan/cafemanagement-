@@ -199,17 +199,15 @@ public class EmployeeService {
      * @throws EntityNotFoundException
      * @throws Exception
      */
-    public Employee updateProfileService(UpdateProfileDto updateProfileDto, MultipartFile file)
+    public Employee updateProfileService(UpdateProfileDto updateProfileDto)
             throws EntityNotFoundException, Exception {
 
         Employee existingEmployee = employeeRepository.findById(updateProfileDto.getEmployeeId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Không tìm thấy nhân viên với ID: " + updateProfileDto.getEmployeeId()));
 
-        String avatarUrl = null;
-
-        if (file != null && !file.isEmpty()) {
-            avatarUrl = uploadService.uploadImage(file, "avatar");
+        if (updateProfileDto.getAvatar() != null && isNotBlank(updateProfileDto.getAvatar())) {
+            existingEmployee.setAvatar(updateProfileDto.getAvatar());
         }
 
         if (isNotBlank(updateProfileDto.getUsername())) {
@@ -224,10 +222,6 @@ public class EmployeeService {
         if (isNotBlank(updateProfileDto.getPhoneNumber())) {
             existingEmployee.setPhoneNumber(updateProfileDto.getPhoneNumber());
         }
-        if (isNotBlank(avatarUrl)) {
-            existingEmployee.setAvatar(avatarUrl);
-        }
-
         employeeRepository.save(existingEmployee);
 
         return existingEmployee;

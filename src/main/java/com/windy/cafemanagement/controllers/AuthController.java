@@ -23,9 +23,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.windy.cafemanagement.Services.CustomUserDetailsService;
 import com.windy.cafemanagement.Services.EmployeeService;
+import com.windy.cafemanagement.Services.UploadService;
 import com.windy.cafemanagement.dto.ChangePasswordDto;
 import com.windy.cafemanagement.dto.EditEmployeeDto;
 import com.windy.cafemanagement.dto.UpdateProfileDto;
+import com.windy.cafemanagement.models.CustomUserDetails;
 import com.windy.cafemanagement.models.Employee;
 
 /**
@@ -48,12 +50,14 @@ public class AuthController {
     private final EmployeeService employeeService;
     private final CustomUserDetailsService customUserDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final UploadService uploadService;
 
     public AuthController(EmployeeService employeeService, CustomUserDetailsService customUserDetailsService,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder, UploadService uploadService) {
         this.employeeService = employeeService;
         this.customUserDetailsService = customUserDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.uploadService = uploadService;
     }
 
     /**
@@ -117,7 +121,7 @@ public class AuthController {
         try {
             EditEmployeeDto employee = employeeService.getEmployeeById(id);
             UpdateProfileDto updateProfileDto = new UpdateProfileDto(id, employee.getUsername(), employee.getFullname(),
-                    employee.getPhoneNumber(), employee.getAddress());
+                    employee.getPhoneNumber(), employee.getAddress(), "");
             model.addAttribute("employee", updateProfileDto);
             return "/admin/auth/update-profile";
         } catch (EntityNotFoundException e) {
@@ -147,19 +151,45 @@ public class AuthController {
             BindingResult bindingResult,
             @RequestParam("file") MultipartFile file) {
         try {
+
+            EditEmployeeDto employeeBeingEdited = employeeService.getEmployeeById(updateProfileDto.getEmployeeId());
+
+            // Check username
+            boolean usernameExists = employeeService.checkUsernameExist(updateProfileDto.getUsername());
+            boolean isSameAsOld = employeeBeingEdited.getUsername().equals(updateProfileDto.getUsername());
+
+            if (usernameExists && !isSameAsOld) {
+                bindingResult.rejectValue("username", "error.username", "Username đã tồn tại");
+            }
+
             if (bindingResult.hasErrors()) {
                 return "/admin/auth/update-profile";
             }
 
-            Employee updatedEmployee = employeeService.updateProfileService(updateProfileDto, file);
+            // Xử lý avatar
+            if (file != null && !file.isEmpty()) {
+                String imgUrl = uploadService.uploadImage(file, "avatar");
+                updateProfileDto.setAvatar(imgUrl);
+            } else {
+                updateProfileDto.setAvatar(employeeBeingEdited.getAvatar());
+            }
 
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(updatedEmployee.getUsername());
+            // Lưu DB
+            Employee updatedEmployee = employeeService.updateProfileService(updateProfileDto);
 
-            UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(userDetails, null,
+            // Load lại userDetails từ DB (avatar mới)
+            CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService
+                    .loadUserByUsername(updatedEmployee.getUsername());
+
+            // Cập nhật lại Authentication
+            UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
                     userDetails.getAuthorities());
+
             SecurityContextHolder.getContext().setAuthentication(newAuth);
 
-            return "redirect:/get-profile";
+            return "redirect:/admin";
         } catch (EntityNotFoundException e) {
             logger.warn("Entity not found in UpdateProfile: {}", e.getMessage());
             model.addAttribute("errorMessage", e.getMessage());

@@ -15,7 +15,8 @@
                     <h6 class="m-0 font-weight-bold text-primary">Chỉnh sửa hàng hóa</h6>
                 </div>
                 <div class="card-body">
-                    <form action="/admin/product/edit" method="post" class="needs-validation" th:object="${product}">
+                    <form action="/admin/product/edit" method="post" class="needs-validation" th:object="${product}"
+                        novalidate id="editProductForm">
                         <input type="hidden" name="productId" th:field="*{productId}">
 
                         <div class="row">
@@ -25,16 +26,18 @@
                                     th:field="*{productName}">
                                 <span th:if="${#fields.hasErrors('productName')}" th:errors="*{productName}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="unitPrice">Đơn giá</label>
-                                <input type="number" class="form-control" id="unitPrice" th:field="*{unitPrice}"
-                                    name="unitPrice" step="0.01">
+                                <input type="text" step="0.01" class="form-control" id="money" th:field="*{unitPrice}"
+                                    name="unitPrice">
                                 <span th:if="${#fields.hasErrors('unitPrice')}" th:errors="*{unitPrice}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
                         </div>
                         <div class="row">
@@ -48,6 +51,7 @@
                                 </select>
                                 <span th:if="${#fields.hasErrors('unitId')}" th:errors="*{unitId}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
                         </div>
 
@@ -57,6 +61,22 @@
                 </div>
             </div>
         </div>
+
+        <script th:src="@{/assets/js/validations/validator.js}"></script>
+        <script>
+            Validator({
+                form: '#editProductForm',
+                errorSelector: '.form-message',
+                rules: [
+                    Validator.isRequired('#productName'),
+                    Validator.isRequired('#money'),
+                    Validator.checkGreaterThanZero('#money', 'Đơn giá phải lớn hơn không'),
+                    Validator.isRequired('#quantity'),
+                    Validator.checkGreaterThanZero('#quantity', 'Số lượng phải lớn hơn không'),
+                    Validator.isSelected('#unitId')
+                ]
+            });
+        </script>
     </section>
 </body>
 

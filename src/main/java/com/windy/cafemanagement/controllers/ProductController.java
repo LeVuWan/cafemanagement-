@@ -3,7 +3,6 @@ package com.windy.cafemanagement.controllers;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,7 +21,6 @@ import com.windy.cafemanagement.dto.ExportProductDto;
 import com.windy.cafemanagement.dto.ImportProductDto;
 import com.windy.cafemanagement.models.Product;
 import com.windy.cafemanagement.models.Unit;
-import com.windy.cafemanagement.repositories.ProductRepository;
 import jakarta.validation.Valid;
 
 @Controller

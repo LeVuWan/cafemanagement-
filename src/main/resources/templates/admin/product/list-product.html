@@ -10,8 +10,6 @@
     <section layout:fragment="content">
         <div class="container-fluid">
 
-            <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Quản lý Hàng hóa</h1>
             <!-- DataTales Example -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -51,7 +49,9 @@
                                 <tr class="d-flex" th:each="product : ${products}">
                                     <td class="col-2 text-wrap" th:text="${product.productName}"></td>
                                     <td class="col-2 text-wrap" th:text="${product.quantity}"></td>
-                                    <td class="col-1 text-wrap" th:text="${product.unitPrice}"></td>
+                                    <td class="col-1 text-wrap"
+                                        th:text="${#numbers.formatDecimal(product.unitPrice, 0, 'POINT', 0, 'NONE')} + ' ₫'">
+                                    </td>></td>
                                     <td class="col-2 text-wrap" th:text="${product.unit.unitName}"></td>
                                     <td class="col-5 text-center">
                                         <div class="d-flex justify-content-center flex-wrap gap-1">

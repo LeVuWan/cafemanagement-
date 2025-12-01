@@ -9,63 +9,89 @@
 <body>
     <section layout:fragment="content">
         <div class="container-fluid">
-            <h1 class="h3 mb-2 text-gray-800">Quản lý kho hàng</h1>
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Thêm mới hàng hóa</h6>
                 </div>
                 <div class="card-body">
                     <form action="/admin/product/import" method="post" class="needs-validation"
-                        th:object="${importProduct}">
+                        th:object="${importProduct}" id="importProductForm">
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="startDate">Tên hàng hóa</label>
-                                <input type="text" class="form-control" name="productName" th:field="*{productName}">
+                                <input type="text" class="form-control" name="productName" th:field="*{productName}"
+                                    id="productName">
                                 <span th:if="${#fields.hasErrors('productName')}" th:errors="*{productName}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label for="endDate">Số lượng</label>
-                                <input type="number" class="form-control" name="quantity" th:field="*{quantity}">
+                                <input type="number" class="form-control" name="quantity" th:field="*{quantity}"
+                                    id="quantity">
                                 <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="startDate">Ngày mua</label>
-                                <input type="date" class="form-control" th:field="*{purchaseDate}" name="purchaseDate">
+                                <input type="date" class="form-control" th:field="*{purchaseDate}" name="purchaseDate"
+                                    id="purchaseDate">
                                 <span th:if="${#fields.hasErrors('purchaseDate')}" th:errors="*{purchaseDate}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label>Đơn giá</label>
-                                <input type="number" class="form-control" id="endDate" th:field="*{unitPrice}"
+                                <input type="text" step="0.01" class="form-control" id="money" th:field="*{unitPrice}"
                                     name="unitPrice">
                                 <span th:if="${#fields.hasErrors('unitPrice')}" th:errors="*{unitPrice}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label>Đơn vị</label>
-                                <select class="form-control" id="unitId" th:field="*{unitId}" required>
+                                <select class="form-control" id="unitId" th:field="*{unitId}">
                                     <option value="">Chọn đơn vị</option>
-                                    <option th:each="unit : ${units}" th:value="${unit.unitId}" th:text="${unit.unitName}">
+                                    <option th:each="unit : ${units}" th:value="${unit.unitId}"
+                                        th:text="${unit.unitName}">
                                     </option>
                                 </select>
                                 <span th:if="${#fields.hasErrors('unitId')}" th:errors="*{unitId}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Lưu</button>
-                        <a th:href="@{/admin/product}" class="btn btn-success ml-2">Trở về</a>
+                        <button type="submit" class="btn btn-success">Lưu</button>
+                        <a th:href="@{/admin/product}" class="btn btn-secondary ml-2">Trở về</a>
                     </form>
                 </div>
             </div>
         </div>
+
+        <script th:src="@{/assets/js/validations/validator.js}"></script>
+        <script>
+            Validator({
+                form: '#importProductForm',
+                errorSelector: '.form-message',
+                rules: [
+                    Validator.isRequired('#productName'),
+                    Validator.isRequired('#quantity'),
+                    Validator.checkGreaterThanZero('#quantity', 'Số lượng phải lớn hơn không'),
+                    Validator.isRequired('#purchaseDate'),
+                    Validator.isRequired('#money'),
+                    Validator.checkGreaterThanZero('#money', 'Đơn giá phải lớn hơn không'),
+                    Validator.isSelected('#unitId')
+                ]
+            });
+        </script>
+
     </section>
 </body>
 

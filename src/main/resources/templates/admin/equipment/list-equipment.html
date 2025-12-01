@@ -48,8 +48,12 @@
                                     <td th:text="${equipment.equipmentName}"></td>
                                     <td th:text="${equipment.purchaseDate}"></td>
                                     <td th:text="${equipment.quantity}"></td>
-                                    <td th:text="${equipment.unitPrice}"></td>
-                                    <td th:text="${equipment.unitPrice * equipment.quantity}"></td>
+                                    <td
+                                        th:text="${#numbers.formatDecimal(equipment.unitPrice, 0, 'POINT', 0, 'NONE')} + ' ₫'">
+                                    </td>
+                                    <td
+                                        th:text="${#numbers.formatDecimal(equipment.unitPrice * equipment.quantity, 0, 'POINT', 0, 'NONE')} + ' ₫'">
+                                    </td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-1">
 

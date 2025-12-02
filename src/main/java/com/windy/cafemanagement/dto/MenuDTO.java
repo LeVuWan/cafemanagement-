@@ -23,13 +23,13 @@ public class MenuDTO {
     @NotBlank(message = "Tên thực đơn không để trống")
     private String name;
     @NotNull(message = "Giá không được để trống")
-    private Double price;
+    private String price;
     private List<MenuIngredientDTO> ingredients;
 
     public MenuDTO() {
     }
 
-    public MenuDTO(String name, Double price, List<MenuIngredientDTO> ingredients, Long menuId) {
+    public MenuDTO(String name, String price, List<MenuIngredientDTO> ingredients, Long menuId) {
         this.name = name;
         this.price = price;
         this.ingredients = ingredients;
@@ -44,11 +44,11 @@ public class MenuDTO {
         this.name = name;
     }
 
-    public Double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

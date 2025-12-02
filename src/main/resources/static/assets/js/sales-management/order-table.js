@@ -55,7 +55,7 @@ $('#btn-confirm-order').on('click', async () => {
 });
 
 
-const showToast = (message, type = 'success') => {
+const showToast = (message, type = 'success') => {    
     const toastEl = document.getElementById('liveToast');
     const toastBody = document.getElementById('toast-message');
 

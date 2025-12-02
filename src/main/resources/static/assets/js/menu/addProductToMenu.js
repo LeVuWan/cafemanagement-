@@ -1,82 +1,87 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const addButton = document.querySelector("#exampleModal .btn-primary"); // nút "Thêm" trong modal
-    const tableBody = document.querySelector("table.table-sm tbody"); // tbody bảng ngoài
-    const toastElement = document.getElementById('liveToast');
-    const toast = new bootstrap.Toast(toastElement);
+$('#comfirmAddProduct').click(function () {
+    let isChooseProduct;
+    let listProduct = [];
+    let hasEmptyQuantity = false;
 
-    addButton.addEventListener("click", function () {
-        const rows = document.querySelectorAll("#exampleModal tbody tr");
-        let hasEmptyQuantity = false;
-        let hasDuplicate = false;
+    $('#addProductModal tbody tr').each(function () {
+        isChooseProduct = $(this).find('.isChooseProduct').is(':checked');
+        let quantity = $(this).find('.quantity').val();
+        let productName = $(this).find('.productName').text().trim();
+        let unitName = $(this).find('.unitName').text().trim();
+        let productId = $(this).find('.productId').text().trim();
+        let unitId = $(this).find('.unitId').text().trim();
 
-        rows.forEach(row => {
-            const checkbox = row.querySelector('input[type="checkbox"]');
-            const quantityInput = row.querySelector('input[type="number"]');
-
-            if (checkbox.checked) {
-                const productName = row.querySelector('td:nth-child(1)').textContent.trim();
-                const unitName = row.querySelector('td:nth-child(2)').textContent.trim();
-                const quantity = quantityInput.value.trim();
-                const productId = row.querySelector('td:nth-child(4)').textContent.trim();
-                const unitId = row.querySelector('td:nth-child(5)').textContent.trim();
-
-                if (quantity === "") {
-                    hasEmptyQuantity = true;
-                    return;
-                }
-
-                const existingRows = tableBody.querySelectorAll("tr");
-                let isDuplicate = false;
-
-                existingRows.forEach(existingRow => {
-                    const existingProductId = existingRow.querySelector("td:nth-child(4)")?.textContent.trim();
-                    if (existingProductId === productId) {
-                        isDuplicate = true;
-                    }
-                });
-
-                if (isDuplicate) {
-                    hasDuplicate = true;
-                    return;
-                }
-
-                const newRow = document.createElement("tr");
-                newRow.innerHTML = `
-                    <td>${productName}</td>
-                    <td>${quantity}</td>
-                    <td>${unitName}</td>
-                    <td style="display:none;">${productId}</td>
-                    <td style="display:none;">${unitId}</td>
-                    <td class="text-center"><button type="button" class="btn btn-danger delete-btn">Delete</button></td>
-                `;
-
-                tableBody.appendChild(newRow);
-
-                checkbox.checked = false;
-                quantityInput.value = "";
+        if (isChooseProduct) {
+            if (quantity > 0) {
+                listProduct.push({
+                    productId: productId,
+                    productName: productName,
+                    quantity: quantity,
+                    unitId: unitId,
+                    unitName: unitName,
+                })
+            } else {
+                showToast(`Vui lòng nhập số lượng của ${productName}`, "warning");
+                hasEmptyQuantity = true;
+                return false;
             }
+        }
+    })
+
+    if (hasEmptyQuantity) {
+        return;
+    }
+
+    if (listProduct.length < 1) {
+        showToast(`Vui lòng chọn thành phần cho menu`, "warning");
+        return;
+    }
+
+    resetAddProductModalTable();
+    populateIngredientTableWithMerge(listProduct);
+    $('#addProductModal').modal('hide');
+    return;
+})
+
+function resetAddProductModalTable() {
+    let table = $('#addProductModal tbody');
+
+    table.find('input[type="number"]').val('');
+
+    table.find('input[type="checkbox"]').prop('checked', false);
+}
+
+function populateIngredientTableWithMerge(products) {
+    let tbody = $('#ingredientTable');
+
+    products.forEach((item) => {
+        let existingRow = tbody.find('tr').filter(function () {
+            return $(this).find('td:first').text().trim() === item.productName;
         });
 
+        if (existingRow.length > 0) {
+            let qtyTd = existingRow.find('td:nth-child(2)');
+            let currentQty = parseFloat(qtyTd.text()) || 0;
+            let newQty = currentQty + parseFloat(item.quantity);
+            qtyTd.text(newQty);
+        } else {
+            let tr = $('<tr></tr>');
+            tr.append(`<td class="text-center">${item.productName}</td>`);
+            tr.append(`<td class="text-center">${item.quantity}</td>`);
+            tr.append(`<td class="text-center">${item.unitName}</td>`);
+            tr.append(`<td style="display:none;">${item.productId}</td>`);
+            tr.append(`<td style="display:none;">${item.unitId}</td>`);
+            tr.append(`
+                <td class="text-center">
+                    <button type="button" class="btn btn-danger btn-sm remove-row">Xóa</button>
+                </td>
+            `);
 
-        if (hasEmptyQuantity) {
-            toastElement.querySelector('.toast-body').textContent = "Vui lòng nhập khối lượng cho tất cả thành phần đã chọn.";
-            toast.show();
-            return;
-        }
+            tbody.append(tr);
 
-        if (hasDuplicate) {
-            toastElement.querySelector('.toast-body').textContent = "Một số thành phần đã tồn tại trong danh sách.";
-            toast.show();
-            return;
+            tr.find('.remove-row').click(function () {
+                $(this).closest('tr').remove();
+            });
         }
     });
-
-    tableBody.addEventListener("click", function (event) {
-        if (event.target.classList.contains("delete-btn")) {
-            const row = event.target.closest("tr");
-            if (row) row.remove();
-        }
-    });
-
-
-});
+}

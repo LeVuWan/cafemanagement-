@@ -29,8 +29,7 @@
                             <form th:action="@{/admin/menu}" method="get">
                                 <div class="input-group">
                                     <input type="text" name="keyword" th:value="${keyword}"
-                                        class="form-control form-control-sm mr-2"
-                                        placeholder="Nhập từ khóa tìm kiếm...">
+                                        class="form-control form-control-sm mr-2" placeholder="Tìm kiếm theo tên món">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary btn-sm rounded-sm" type="submit">
                                             <i class="fas fa-search"></i>
@@ -53,10 +52,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="menu : ${menus}">
-                                    <td>1</td>
+                                <tr th:each="menu, stat : ${menus}">
+                                    <td th:text="${stat.index + 1}"></td>
                                     <td th:text="${menu.dishName}"></td>
-                                    <td th:text="${menu.currentPrice}"></td>
+                                    <td
+                                        th:text="${#numbers.formatDecimal(menu.currentPrice, 0, 'POINT', 0, 'NONE')} + ' ₫'">
+                                    </td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-1">
                                             <a th:href="@{/admin/menu/edit/{id}(id=${menu.menuId})}"

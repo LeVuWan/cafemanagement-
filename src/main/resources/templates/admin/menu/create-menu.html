@@ -9,30 +9,29 @@
 <body>
     <section layout:fragment="content">
         <div class="container-fluid">
-
-            <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Quản lý thực đơn</h1>
-            <!-- DataTales Example -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Danh sách thực đơn</h6>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label>Tên món:</label>
-                            <input type="text" class="form-control" id="name" name="name">
-                            <span th:if="${errorEmptyName}" th:text="${errorEmptyName}"
-                                class="text-danger small"></span>
-                        </div>
+                    <form action="" id="createMenuForm" novalidate>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label>Tên món:</label>
+                                <input type="text" class="form-control" id="name" name="name">
+                                <span th:if="${errorEmptyName}" th:text="${errorEmptyName}"
+                                    class="text-danger small"></span>
+                            </div>
 
-                        <div class="form-group col-md-6">
-                            <label>Giá tiền:</label>
-                            <input type="number" class="form-control" id="price" name="price">
-                            <span th:if="${errorEmptyName}" th:text="${errorEmptyName}"
-                                class="text-danger small"></span>
+                            <div class="form-group col-md-6">
+                                <label>Giá tiền:</label>
+                                <input type="number" class="form-control" id="money" name="price">
+                                <span th:if="${errorEmptyName}" th:text="${errorEmptyName}"
+                                    class="text-danger small"></span>
+                            </div>
                         </div>
-                    </div>
+                    </form>
+
                     <label>Thành phần: </label>
                     <table class="table table-bordered table-sm align-middle">
                         <thead>
@@ -47,10 +46,11 @@
 
                         </tbody>
                     </table>
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">Thêm
+                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                        data-target="#addProductModal">Thêm
                         thành phần</button>
 
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -74,13 +74,15 @@
                                         </thead>
                                         <tbody>
                                             <tr th:each="product : ${products}">
-                                                <td th:text="${product.productName}"></td>
-                                                <td th:text="${product.unit.unitName}"></td>
-                                                <td><input type="number" class="form-control"></td>
-                                                <td th:text="${product.productId}" style="display: none;"></td>
-                                                <td th:text="${product.unit.unitId}" style="display: none;"></td>
+                                                <td class="productName" th:text="${product.productName}"></td>
+                                                <td class="unitName" th:text="${product.unit.unitName}"></td>
+                                                <td><input type="number" class="form-control quantity"></td>
+                                                <td class="productId" th:text="${product.productId}"
+                                                    style="display: none;"></td>
+                                                <td class="unitId" th:text="${product.unit.unitId}"
+                                                    style="display: none;"></td>
                                                 <td class="text-center">
-                                                    <input type="checkbox" class="form-check-input">
+                                                    <input type="checkbox" class="form-check-input isChooseProduct">
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -88,27 +90,16 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Thêm</button>
+                                    <button type="button" class="btn btn-success" id="comfirmAddProduct">Thêm</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <br>
-                    <button class="btn btn-primary mt-3" id="saveButton">Lưu</button>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="position-fixed bottom-0 right-0 p-3" style="z-index: 999; right: 0; top: 0;">
-            <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true"
-                data-delay="2000">
-                <div class="toast-header">
-                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="toast-body">
+                    <div class="d-flex bd-highlight mt-2">
+                        <button class="btn btn-success mr-2" id="saveButton">Lưu</button>
+                        <a th:href="@{/admin/menu}" class="btn btn-secondary">Trở lên</a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.windy.cafemanagement.Utils.UtilConvert;
 import com.windy.cafemanagement.dto.MenuDTO;
 import com.windy.cafemanagement.dto.MenuIngredientDTO;
 import com.windy.cafemanagement.models.Menu;
@@ -64,7 +65,7 @@ public class MenuService {
 
         Menu menu = new Menu();
         menu.setDishName(menuDTO.getName());
-        menu.setCurrentPrice(menuDTO.getPrice());
+        menu.setCurrentPrice(UtilConvert.convertStringMoneyToDouble(menuDTO.getPrice()));
         menu.setIsDeleted(false);
         Menu savedMenu = menuRepository.save(menu);
 
@@ -146,7 +147,7 @@ public class MenuService {
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy menu với id: " + menuDTO.getMenuId()));
 
         updateMenu.setDishName(menuDTO.getName());
-        updateMenu.setCurrentPrice(menuDTO.getPrice());
+        updateMenu.setCurrentPrice(UtilConvert.convertStringMoneyToDouble(menuDTO.getPrice()));
 
         List<MenuDetail> menuDetails = getListMenuDetailByMenu(menuDTO.getMenuId());
 

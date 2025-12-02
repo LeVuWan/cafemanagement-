@@ -57,7 +57,9 @@
                                     <td th:text="${history.exportDate}"></td>
                                     <td th:text="${history.quantity}"></td>
                                     <td th:text="${history.unit}"></td>
-                                    <td th:text="${history.toltalPrice}"></td>
+                                    <td
+                                        th:text="${#numbers.formatDecimal(history.toltalPrice, 0, 'POINT', 0, 'NONE')} + ' ₫'">
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

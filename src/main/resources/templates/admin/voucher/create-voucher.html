@@ -15,34 +15,39 @@
                     <h6 class="m-0 font-weight-bold text-primary">Thêm mới voucher</h6>
                 </div>
                 <div class="card-body">
-                    <form action="/admin/voucher/create" method="post" class="needs-validation" th:object="${voucher}">
+                    <form action="/admin/voucher/create" method="post" class="needs-validation" th:object="${voucher}"
+                        id="createVoucherForm">
                         <div class="form-group">
                             <label>Tên khuyến mãi</label>
-                            <input type="text" class="form-control" th:field="*{voucherName}">
+                            <input type="text" class="form-control" th:field="*{voucherName}" id="voucherName">
                             <span th:if="${#fields.hasErrors('voucherName')}" th:errors="*{voucherName}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="startDate">Ngày bắt đầu</label>
-                                <input type="date" class="form-control" id="startDate" th:field="*{startDate}">
+                                <input type="date" class="form-control" th:field="*{startDate}" id="startDate">
                                 <span th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"
                                     class="text-danger small"></span>
                                 <span th:if="${errorDate}" th:text="${errorDate}" class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label for="endDate">Ngày kết thúc</label>
                                 <input type="date" class="form-control" id="endDate" th:field="*{endDate}">
-                                <span th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"
+                                <span th:if=" ${#fields.hasErrors('endDate')}" th:errors="*{endDate}"
                                     class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="formGroupExampleInput2">% giảm giá</label>
-                            <input type="number" class="form-control" th:field="*{discountValue}">
+                            <input type="text" class="form-control" th:field="*{discountValue}" id="discountValue">
                             <span th:if="${#fields.hasErrors('discountValue')}" th:errors="*{discountValue}"
                                 class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
                         <button type="submit" class="btn btn-primary">Lưu</button>
                         <a th:href="@{/admin/voucher}" class="btn btn-success ml-2">Trở về</a>
@@ -50,6 +55,24 @@
                 </div>
             </div>
         </div>
+
+        <script th:src="@{/assets/js/validations/validator.js}"></script>
+        <script>
+            Validator({
+                form: '#createVoucherForm',
+                errorSelector: '.form-message',
+                rules: [
+                    Validator.isRequired('#voucherName'),
+                    Validator.isRequired('#startDate'),
+                    Validator.isRequired('#endDate'),
+                    Validator.isRequired('#discountValue'),
+                    Validator.isDiscountValue('#discountValue'),
+                    Validator.isComfirStartAndEndDate('#endDate', function () {
+                        return document.querySelector('#createVoucherForm #startDate').value;
+                    })
+                ]
+            });
+        </script>
     </section>
 </body>
 

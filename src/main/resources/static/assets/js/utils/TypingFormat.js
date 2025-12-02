@@ -28,4 +28,16 @@ $(document).ready(function () {
 
         $('#money').val(value);
     });
+
+    $('#discountValue').on("input", () => {
+        let value = $('#discountValue').val();
+
+        value = value.replace(/[^0-9]/g, "");
+
+        if (value.length > 9) {
+            value = value.substring(0, 9);
+        }
+
+        $('#discountValue').val(value);
+    });
 });

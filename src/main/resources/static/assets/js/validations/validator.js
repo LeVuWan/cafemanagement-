@@ -162,3 +162,35 @@ Validator.checkGreaterThanZero = function (selector, message) {
         }
     }
 }
+
+Validator.isDiscountValue = function (selector) {
+    return {
+        selector: selector,
+        test: function (value) {
+            value = value.trim();
+
+            var regex = /^[0-9]+$/;
+
+            if (!regex.test(value)) {
+                return "Giá trị không hợp lệ! Chỉ được nhập số từ 0 đến 9.";
+            }
+
+            var num = Number(value);
+
+            if (num > 100) {
+                return "Giá trị không được lớn hơn 100.";
+            }
+
+            return undefined;
+        }
+    }
+}
+
+Validator.isComfirStartAndEndDate = function (selector, getStartDate) {
+    return {
+        selector: selector,
+        test: function (value) {
+            return value > getStartDate() ? undefined : "Ngày kết thúc phải sau ngày bắt đầu";
+        }
+    }
+}

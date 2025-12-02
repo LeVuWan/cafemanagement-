@@ -16,35 +16,64 @@
                 </div>
                 <div class="card-body">
                     <form th:action="@{/admin/voucher/update/{id}(id=${voucher.voucherId})}" method="post"
-                        th:object="${voucher}" class="needs-validation">
+                        th:object="${voucher}" class="needs-validation" id="editVoucherForm">
                         <div class="form-group">
                             <label>Tên khuyến mãi</label>
-                            <input type="text" class="form-control" th:field="*{voucherName}">
+                            <input type="text" class="form-control" th:field="*{voucherName}" id="voucherName">
+                            <span th:if="${#fields.hasErrors('voucherName')}" th:errors="*{voucherName}"
+                                class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
-
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label>Ngày bắt đầu</label>
-                                <input type="date" class="form-control" th:field="*{startDate}">
+                                <label for="startDate">Ngày bắt đầu</label>
+                                <input type="date" class="form-control" th:field="*{startDate}" id="startDate">
+                                <span th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"
+                                    class="text-danger small"></span>
+                                <span th:if="${errorDate}" th:text="${errorDate}" class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
+
                             <div class="form-group col-md-6">
-                                <label>Ngày kết thúc</label>
-                                <input type="date" class="form-control" th:field="*{endDate}">
+                                <label for="endDate">Ngày kết thúc</label>
+                                <input type="date" class="form-control" id="endDate" th:field="*{endDate}">
+                                <span th:if=" ${#fields.hasErrors('endDate')}" th:errors="*{endDate}"
+                                    class="text-danger small"></span>
+                                <span class="form-message"></span>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label>% giảm giá</label>
-                            <input type="number" class="form-control" th:field="*{discountValue}">
+                            <label for="formGroupExampleInput2">% giảm giá</label>
+                            <input type="text" class="form-control" th:field="*{discountValue}" id="discountValue">
+                            <span th:if="${#fields.hasErrors('discountValue')}" th:errors="*{discountValue}"
+                                class="text-danger small"></span>
+                            <span class="form-message"></span>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Lưu</button>
-                        <a th:href="@{/admin/voucher}" class="btn btn-success ml-2">Trở về</a>
+                        <button type="submit" class="btn btn-success">Lưu</button>
+                        <a th:href="@{/admin/voucher}" class="btn btn-secondary ml-2">Trở về</a>
                     </form>
 
                 </div>
             </div>
         </div>
+        <script th:src="@{/assets/js/validations/validator.js}"></script>
+        <script>
+            Validator({
+                form: '#editVoucherForm',
+                errorSelector: '.form-message',
+                rules: [
+                    Validator.isRequired('#voucherName'),
+                    Validator.isRequired('#startDate'),
+                    Validator.isRequired('#endDate'),
+                    Validator.isRequired('#discountValue'),
+                    Validator.isDiscountValue('#discountValue'),
+                    Validator.isComfirStartAndEndDate('#endDate', function () {
+                        return document.querySelector('#editVoucherForm #startDate').value;
+                    })
+                ]
+            });
+        </script>
     </section>
 </body>
 

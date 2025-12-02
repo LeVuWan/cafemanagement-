@@ -169,7 +169,7 @@ Validator.isDiscountValue = function (selector) {
         test: function (value) {
             value = value.trim();
 
-            var regex = /^[0-9]+$/;
+            var regex = /^[0-9]*\.?[0-9]*$/;
 
             if (!regex.test(value)) {
                 return "Giá trị không hợp lệ! Chỉ được nhập số từ 0 đến 9.";

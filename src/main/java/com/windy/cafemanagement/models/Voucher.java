@@ -1,6 +1,9 @@
 package com.windy.cafemanagement.models;
 
 import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,12 +21,12 @@ import com.windy.cafemanagement.enums.VoucherStatus;
  *
  * Date: 10-11-2025
  *
- * Copyright 
+ * Copyright
  *
  * Modification Logs:
- * DATE                 AUTHOR          DESCRIPTION
+ * DATE AUTHOR DESCRIPTION
  * -----------------------------------------------------------------------
- * 10-11-2025         VuLQ            Create
+ * 10-11-2025 VuLQ Create
  */
 @Entity
 public class Voucher {
@@ -31,7 +34,9 @@ public class Voucher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long voucherId;
     private String voucherName;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
     private Double discountValue;
     @Enumerated(EnumType.STRING)

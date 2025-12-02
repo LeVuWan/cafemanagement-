@@ -142,7 +142,6 @@ public class MenuService {
      * @throws DataAccessException, EntityNotFoundException
      */
     public void updateMenuService(MenuDTO menuDTO) {
-        System.out.println("Check menuDTO: " + menuDTO.getIngredients().size());
         Menu updateMenu = menuRepository.findById(menuDTO.getMenuId())
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy menu với id: " + menuDTO.getMenuId()));
 

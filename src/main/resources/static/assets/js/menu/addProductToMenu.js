@@ -72,16 +72,17 @@ function populateIngredientTableWithMerge(products) {
             tr.append(`<td style="display:none;">${item.productId}</td>`);
             tr.append(`<td style="display:none;">${item.unitId}</td>`);
             tr.append(`
-                <td class="text-center">
-                    <button type="button" class="btn btn-danger btn-sm remove-row">Xóa</button>
+               <td class="text-center">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this)">Xóa</button>
                 </td>
             `);
 
             tbody.append(tr);
 
-            tr.find('.remove-row').click(function () {
-                $(this).closest('tr').remove();
-            });
         }
     });
+}
+
+function deleteRow(button) {
+    $(button).closest('tr').remove();
 }

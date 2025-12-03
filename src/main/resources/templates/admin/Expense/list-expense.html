@@ -36,7 +36,9 @@
                             </thead>
                             <tbody>
                                 <tr th:each="expense : ${expenses}">
-                                    <td th:text="${expense.amount}"></td>
+                                    <td
+                                        th:text="${#numbers.formatDecimal(expense.amount, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                                    </td>
                                     <td th:text="${expense.expenseName}"></td>
                                     <td th:text="${expense.expenseDate}"></td>
                                 </tr>
@@ -57,27 +59,47 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label for="expenseDate">Ngày</label>
-                            <input type="date" class="form-control" id="expenseDate">
-                        </div>
-                        <div class="form-group">
-                            <label for="expenseName">Khoản chi</label>
-                            <input type="text" class="form-control" id="expenseName">
-                        </div>
-                        <div class="form-group">
-                            <label for="amount">Số tiền</label>
-                            <input type="number" class="form-control" id="amount">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="comfirmAddNewExpense">Save</button>
+                        <form action="" id="addNewExpenseForm" novalidate>
+                            <div class="form-group">
+                                <label for="expenseDate">Ngày</label>
+                                <input type="date" class="form-control" id="expenseDate">
+                                <span class="form-message"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="expenseName">Khoản chi</label>
+                                <input type="text" class="form-control" id="expenseName">
+                                <span class="form-message"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="money">Số tiền</label>
+                                <input type="text" class="form-control" id="money">
+                                <span class="form-message"></span>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                <button type="button" class="btn btn-primary" id="comfirmAddNewExpense">Lưu</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
+        <script th:src="@{/assets/js/validations/validator.js}"></script>
+        <script>
+            Validator({
+                form: '#addNewExpenseForm',
+                errorSelector: '.form-message',
+                rules: [
+                    Validator.isRequired('#expenseDate'),
+                    Validator.isRequired('#expenseName'),
+                    Validator.isRequired('#money'),
+                    Validator.checkGreaterThanZero('#money', "Số tiền phải lớn hơn 0")
+                ]
+            });
+        </script>
     </section>
 </body>
 

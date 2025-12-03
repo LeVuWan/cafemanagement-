@@ -44,8 +44,12 @@
                             <tbody>
                                 <tr th:each="report : ${reports}">
                                     <td th:text="${report.date}"></td>
-                                    <td th:text="${report.income}"></td>
-                                    <td th:text="${report.expense}"></td>
+                                    <td
+                                        th:text="${#numbers.formatDecimal(report.income, 0, 'POINT', 0, 'NONE')} + ' ₫'">
+                                    </td>
+                                    <td
+                                        th:text="${#numbers.formatDecimal(report.expense, 0, 'POINT', 0, 'NONE')} + ' ₫'">
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

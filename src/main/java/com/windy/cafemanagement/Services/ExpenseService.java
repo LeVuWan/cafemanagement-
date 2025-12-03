@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.windy.cafemanagement.Utils.UtilConvert;
 import com.windy.cafemanagement.configs.SecurityUtil;
 import com.windy.cafemanagement.dto.ExpenseDTO;
 import com.windy.cafemanagement.models.Employee;
@@ -63,14 +64,14 @@ public class ExpenseService {
     }
 
     /**
-     * Convert ExpenseDTO to Expense 
+     * Convert ExpenseDTO to Expense
      * 
      * @param expenseDTO
      * @return Expense
      */
     private Expense expenseDTOToExpense(ExpenseDTO expenseDTO) {
         Expense expense = new Expense();
-        expense.setAmount(expenseDTO.getAmount());
+        expense.setAmount(UtilConvert.convertStringMoneyToDouble(expenseDTO.getAmount()));
         expense.setExpenseName(expenseDTO.getExpenseName());
         expense.setExpenseDate(expenseDTO.getExpenseDate());
         expense.setIsDelete(false);
@@ -88,7 +89,7 @@ public class ExpenseService {
      */
     private ExpenseDTO expenseToExpenseDTO(Expense expense) {
         ExpenseDTO expenseDTO = new ExpenseDTO();
-        expenseDTO.setAmount(expense.getAmount());
+        expenseDTO.setAmount(expense.getAmount() + "");
         expenseDTO.setExpenseName(expense.getExpenseName());
         expenseDTO.setExpenseDate(expense.getExpenseDate());
         return expenseDTO;

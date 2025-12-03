@@ -1,11 +1,18 @@
 $('#comfirmAddNewExpense').on('click', async () => {
     const btn = $('#comfirmAddNewExpense');
     btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Đang xử lý...');
+    const form = $('#addNewExpenseForm')[0];;
+
+    if (!form.validateForm()) {
+        btn.prop('disabled', false).text('Lưu');
+        return;
+    }
+
     try {
         const data = {
             expenseDate: $('#expenseDate').val(),
             expenseName: $('#expenseName').val(),
-            amount: $('#amount').val(),
+            amount: $('#money').val(),
         }
 
         const response = await $.ajax({
@@ -14,11 +21,8 @@ $('#comfirmAddNewExpense').on('click', async () => {
             data: JSON.stringify(data),
             contentType: 'application/json',
         });
-
-        console.log("Check response: " + JSON.stringify(response.data));
-
-        modalAddNewExpense.modal('hide');
-
+        clearModalAddNewExpense();
+        $('#addNewExpense').modal('hide');
         showToast(response.message, 'success');
 
         await fetchExpenses();
@@ -27,9 +31,15 @@ $('#comfirmAddNewExpense').on('click', async () => {
         const msg = error.responseJSON?.message || 'Thêm mới chi tiêu thất bại!';
         showToast(msg, 'danger');
     } finally {
-        btn.prop('disabled', false).html('Save');
+        btn.prop('disabled', false).html('Lưu');
     }
 });
+
+const clearModalAddNewExpense = () => {
+    $('#expenseDate').val('');
+    $('#expenseName').val('');
+    $('#money').val('');
+};
 
 const fetchExpenses = async () => {
     const response = await $.ajax({

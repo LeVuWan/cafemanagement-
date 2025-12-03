@@ -22,7 +22,7 @@ import jakarta.validation.constraints.Positive;
 public class ExpenseDTO {
     @NotNull(message = "Số tiền không được để trống")
     @Positive(message = "Số tiền phải lớn hơn 0")
-    private Double amount;
+    private String amount;
 
     @NotBlank(message = "Tên chi tiêu không được để trống")
     private String expenseName;
@@ -33,17 +33,17 @@ public class ExpenseDTO {
     public ExpenseDTO() {
     }
 
-    public ExpenseDTO(Double amount, String expenseName, LocalDate expenseDate) {
+    public ExpenseDTO(String amount, String expenseName, LocalDate expenseDate) {
         this.amount = amount;
         this.expenseName = expenseName;
         this.expenseDate = expenseDate;
     }
 
-    public Double getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 

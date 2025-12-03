@@ -1,3 +1,11 @@
+// Helper function to format currency
+const formatCurrency = (amount) => {
+    return amount.toLocaleString('vi-VN', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }) + ' ₫';
+};
+
 $('#send-report').click(async () => {
     const category = $('input[name="category"]:checked').val();
     const from = $('#date-from').val();
@@ -81,8 +89,8 @@ const reportAll = async (from, to) => {
             tbody += `
                 <tr>
                     <td>${r.date}</td>
-                    <td>${r.income.toLocaleString('vi-VN')}</td>
-                    <td>${r.expense.toLocaleString('vi-VN')}</td>
+                    <td>${formatCurrency(r.income)}</td>
+                    <td>${formatCurrency(r.expense)}</td>
                 </tr>
             `;
         });
@@ -90,8 +98,8 @@ const reportAll = async (from, to) => {
         tbody += `
             <tr class="fw-bold text-end">
                 <td>Tổng cộng</td>
-                <td>${totalIncomeAll.toLocaleString('vi-VN')}</td>
-                <td>${totalExpenseAll.toLocaleString('vi-VN')}</td>
+                <td>${formatCurrency(totalIncomeAll)}</td>
+                <td>${formatCurrency(totalExpenseAll)}</td>
             </tr>
         `;
         tbody += '</tbody>';
@@ -147,8 +155,8 @@ const reportInputOutput = async (from, to) => {
             tbody += `
                 <tr>
                     <td>${r.date}</td>
-                    <td>${r.importAmount.toLocaleString('vi-VN')}</td>
-                    <td>${r.exportAmount.toLocaleString('vi-VN')}</td>
+                    <td>${formatCurrency(r.importAmount)}</td>
+                    <td>${formatCurrency(r.exportAmount)}</td>
                 </tr>
             `;
         });
@@ -156,8 +164,8 @@ const reportInputOutput = async (from, to) => {
         tbody += `
             <tr class="fw-bold text-end">
                 <td>Tổng cộng</td>
-                <td>${totalImportAmount.toLocaleString('vi-VN')}</td>
-                <td>${totalExportAmount.toLocaleString('vi-VN')}</td>
+                <td>${formatCurrency(totalImportAmount)}</td>
+                <td>${formatCurrency(totalExportAmount)}</td>
             </tr>
         `;
         tbody += '</tbody>';
@@ -211,7 +219,7 @@ const reportInput = async (from, to) => {
             tbody += `
                 <tr>
                     <td>${r.importDate}</td>
-                    <td>${amount.toLocaleString('vi-VN')}</td>
+                    <td>${formatCurrency(amount)}</td>
                 </tr>
             `;
         });
@@ -219,7 +227,7 @@ const reportInput = async (from, to) => {
         tbody += `
             <tr class="fw-bold text-end">
                 <td>Tổng cộng</td>
-                <td>${totalImport.toLocaleString('vi-VN')}</td>
+                <td>${formatCurrency(totalImport)}</td>
             </tr>
         `;
 
@@ -273,7 +281,7 @@ const reportExport = async (from, to) => {
             tbody += `
                 <tr>
                     <td>${r.importDate}</td>
-                    <td>${amount.toLocaleString('vi-VN')}</td>
+                    <td>${formatCurrency(amount)}</td>
                 </tr>
             `;
         });
@@ -281,7 +289,7 @@ const reportExport = async (from, to) => {
         tbody += `
             <tr class="fw-bold text-end">
                 <td>Tổng cộng</td>
-                <td>${totalExport.toLocaleString('vi-VN')}</td>
+                <td>${formatCurrency(totalExport)}</td>
             </tr>
         `;
 
@@ -312,11 +320,11 @@ const reportSell = async (from, to) => {
 
         const data = response.data || [];
 
+        console.log("Check data: ", data);
+
+
         // Xóa nội dung cũ
         table.empty();
-
-        console.log("Check data: " + JSON.stringify(data));
-
 
         // Render header
         let thead = `
@@ -333,8 +341,8 @@ const reportSell = async (from, to) => {
         data.forEach(item => {
             tbody += `
                 <tr>
-                    <td>${item.date}</td>
-                    <td>${item.totalIncome.toLocaleString('vi-VN')}₫</td>
+                    <td>${item.importDate}</td>
+                    <td>${formatCurrency(item.totalAmount)}</td>
                 </tr>
             `;
         });
@@ -344,7 +352,7 @@ const reportSell = async (from, to) => {
         tbody += `
             <tr class="font-weight-bold bg-light">
                 <td>Tổng</td>
-                <td>${totalIncome.toLocaleString('vi-VN')}₫</td>
+                <td>${formatCurrency(totalIncome)}</td>
             </tr>
         `;
         tbody += '</tbody>';
@@ -401,7 +409,7 @@ const reportEmployeeInformation = async () => {
                     <td>${emp.fullname}</td>
                     <td>${emp.phoneNumber}</td>
                     <td>${emp.address}</td>
-                    <td>${emp.salary.toLocaleString('vi-VN')}₫</td>
+                    <td>${formatCurrency(emp.salary)}</td>
                     <td>${emp.permissionName || 'Không có'}</td>
                 </tr>
             `;
@@ -431,7 +439,7 @@ const expenseReport = async (from, to) => {
 
         const data = response.data || [];
 
-        console.log("Check data: " + JSON.stringify(data));        
+        console.log("Check data: " + JSON.stringify(data));
 
         // Xóa nội dung cũ
         table.empty();
@@ -452,7 +460,7 @@ const expenseReport = async (from, to) => {
             tbody += `
                 <tr>
                     <td>${item.importDate}</td>
-                    <td>${item.totalAmount.toLocaleString('vi-VN')}₫</td>
+                    <td>${formatCurrency(item.totalAmount)}</td>
                 </tr>
             `;
         });
@@ -462,7 +470,7 @@ const expenseReport = async (from, to) => {
         tbody += `
             <tr class="font-weight-bold bg-light">
                 <td>Tổng</td>
-                <td>${totalIncome.toLocaleString('vi-VN')}₫</td>
+                <td>${formatCurrency(totalIncome)}</td>
             </tr>
         `;
         tbody += '</tbody>';

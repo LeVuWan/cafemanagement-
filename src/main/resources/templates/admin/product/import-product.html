@@ -20,7 +20,7 @@
                             <div class="form-group col-md-6">
                                 <label for="startDate">Tên hàng hóa</label>
                                 <input type="text" class="form-control" name="productName" th:field="*{productName}"
-                                    id="productName">
+                                    id="productName" maxlength="55">
                                 <span th:if="${#fields.hasErrors('productName')}" th:errors="*{productName}"
                                     class="text-danger small"></span>
                                 <span class="form-message"></span>
@@ -28,8 +28,8 @@
 
                             <div class="form-group col-md-6">
                                 <label for="endDate">Số lượng</label>
-                                <input type="number" class="form-control" name="quantity" th:field="*{quantity}"
-                                    id="quantity">
+                                <input type="text" class="form-control" name="quantity" th:field="*{quantity}"
+                                    id="quantity" pattern="\d*" maxlength="5">
                                 <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"
                                     class="text-danger small"></span>
                                 <span class="form-message"></span>
@@ -68,8 +68,8 @@
                                 <span class="form-message"></span>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-success">Lưu</button>
                         <a th:href="@{/admin/product}" class="btn btn-secondary ml-2">Trở về</a>
+                        <button type="submit" class="btn btn-success">Lưu</button>
                     </form>
                 </div>
             </div>

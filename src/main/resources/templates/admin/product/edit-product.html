@@ -22,7 +22,7 @@
                             <div class="form-group col-md-6">
                                 <label for="productName">Tên hàng hóa</label>
                                 <input type="text" class="form-control" id="productName" name="productName"
-                                    th:field="*{productName}">
+                                    th:field="*{productName}" pattern="\d*" maxlength="55">
                                 <span th:if="${#fields.hasErrors('productName')}" th:errors="*{productName}"
                                     class="text-danger small"></span>
                                 <span class="form-message"></span>
@@ -54,8 +54,9 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-success">Lưu</button>
-                        <a th:href="@{/admin/equipment}" class="btn btn-secondary ml-2">Trở về</a>
+
+                        <a th:href="@{/admin/product}" class="btn btn-secondary ">Trở về</a>
+                        <button type="submit" class="btn btn-success mr-2">Lưu</button>
                     </form>
                 </div>
             </div>

@@ -39,21 +39,22 @@
                             <thead>
                                 <tr class="d-flex">
                                     <th class="col-2 text-truncate">Tên hàng hóa</th>
-                                    <th class="col-2 text-truncate">Số lượng hiện tại</th>
-                                    <th class="col-1 text-truncate">Đơn giá</th>
-                                    <th class="col-2 text-truncate">Đơn vị</th>
-                                    <th class="col-5 text-center">Action</th>
+                                    <th class="col-1 text-right">Số lượng</th>
+                                    <th class="col-3 text-right">Đơn giá</th>
+                                    <th class="col-2 text-center">Đơn vị</th>
+                                    <th class="col-4 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="d-flex" th:each="product : ${products}">
                                     <td class="col-2 text-wrap" th:text="${product.productName}"></td>
-                                    <td class="col-2 text-wrap" th:text="${product.quantity}"></td>
-                                    <td class="col-1 text-wrap"
+                                    <td class="col-1 text-right"
+                                        th:text="${#numbers.formatDecimal(product.quantity, 1, 0)}"></td>
+                                    <td class="col-3 text-right"
                                         th:text="${#numbers.formatDecimal(product.unitPrice, 0, 'POINT', 0, 'NONE')} + ' ₫'">
                                     </td>></td>
-                                    <td class="col-2 text-wrap" th:text="${product.unit.unitName}"></td>
-                                    <td class="col-5 text-center">
+                                    <td class="col-2 text-center" th:text="${product.unit.unitName}"></td>
+                                    <td class="col-4 text-center">
                                         <div class="d-flex justify-content-center flex-wrap gap-1">
                                             <a th:href="@{/admin/product/edit/{id}(id=${product.productId})}"
                                                 class="btn btn-success btn-sm mb-1 mr-2">Cập nhật</a>

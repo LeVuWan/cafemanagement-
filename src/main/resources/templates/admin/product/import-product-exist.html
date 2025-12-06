@@ -43,14 +43,15 @@
 
                         <div class="form-group col-md-6">
                             <label>Số lượng</label>
-                            <input type="number" class="form-control" th:field="*{quantity}" id="quantity">
+                            <input type="text" class="form-control" th:field="*{quantity}" id="quantity" pattern="\d*"
+                                maxlength="5">
                             <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"
                                 class="text-danger small"></span>
                             <span class="form-message"></span>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Lưu</button>
-                        <a th:href="@{/admin/product}" class="btn btn-success ml-2">Trở về</a>
+                        <a th:href="@{/admin/product}" class="btn btn-secondary ml-2">Trở về</a>
+                        <button type="submit" class="btn btn-success mr-2">Lưu</button>
                     </form>
 
                 </div>

@@ -9,7 +9,6 @@
 <body>
     <section layout:fragment="content">
         <div class="container-fluid">
-            <h1 class="h3 mb-2 text-gray-800">Quản lý kho hàng</h1>
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Xuất hàng hóa</h6>
@@ -43,14 +42,15 @@
 
                         <div class="form-group col-md-6">
                             <label>Số lượng</label>
-                            <input type="number" class="form-control" th:field="*{quantity}" id="quantity">
+                            <input type="text" class="form-control integer" th:field="*{quantity}" id="quantity"
+                                pattern="\d*" maxlength="5">
                             <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"
                                 class="text-danger small"></span>
                             <span class="form-message"></span>
                         </div>
 
-                        <button type="submit" class="btn btn-success">Lưu</button>
-                        <a th:href="@{/admin/product}" class="btn btn-secondary ml-2">Trở về</a>
+                        <a th:href="@{/admin/product}" class="btn btn-secondary">Trở về</a>
+                        <button type="submit" class="btn btn-success mr-2">Lưu</button>
                     </form>
 
                 </div>

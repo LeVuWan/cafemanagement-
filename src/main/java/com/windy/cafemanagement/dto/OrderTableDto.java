@@ -1,9 +1,5 @@
 package com.windy.cafemanagement.dto;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 /**
  * Order Table Dto class
  *
@@ -22,17 +18,17 @@ public class OrderTableDto {
     private Long tableId;
     private String customerName;
     private String customerPhone;
-    private LocalDateTime dateOrder;
+    private Integer durationMinutes;
 
     public OrderTableDto() {
     }
 
     public OrderTableDto(Long tableId, String customerName, String customerPhone,
-            LocalDateTime dateOrder) {
+            Integer durationMinutes) {
         this.tableId = tableId;
         this.customerName = customerName;
         this.customerPhone = customerPhone;
-        this.dateOrder = dateOrder;
+        this.durationMinutes = durationMinutes;
     }
 
     public Long getTableId() {
@@ -59,12 +55,12 @@ public class OrderTableDto {
         this.customerPhone = customerPhone;
     }
 
-    public LocalDateTime getDateOrder() {
-        return dateOrder;
+    public Integer getDurationMinutes() {
+        return durationMinutes;
     }
 
-    public void setDateOrder(LocalDateTime dateOrder) {
-        this.dateOrder = dateOrder;
+    public void setDurationMinutes(Integer durationMinutes) {
+        this.durationMinutes = durationMinutes;
     }
 
 }

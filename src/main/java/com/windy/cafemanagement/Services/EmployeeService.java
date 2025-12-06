@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.windy.cafemanagement.Responses.EmployeeInfoRes;
+import com.windy.cafemanagement.Utils.UtilConvert;
 import com.windy.cafemanagement.dto.CreateEmployeeDto;
 import com.windy.cafemanagement.dto.EditEmployeeDto;
 import com.windy.cafemanagement.dto.UpdateProfileDto;
@@ -289,7 +290,7 @@ public class EmployeeService {
                         (String) obj[0],
                         (String) obj[1],
                         (String) obj[2],
-                        (Double) obj[3],
+                        (Double) UtilConvert.convertStringMoneyToDouble(obj[3] + ""),
                         (String) obj[4]))
                 .toList();
     }

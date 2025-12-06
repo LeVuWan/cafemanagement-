@@ -102,4 +102,10 @@ public class InvoiceDetail {
         this.isDeleted = isDeleted;
     }
 
+    @Override
+    public String toString() {
+        return "InvoiceDetail [id=" + id + ", menu=" + menu + ", invoice=" + invoice + ", quantity=" + quantity
+                + ", totalPrice=" + totalPrice + ", isDeleted=" + isDeleted + "]";
+    }
+
 }

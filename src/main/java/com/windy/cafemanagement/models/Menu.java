@@ -85,4 +85,10 @@ public class Menu {
         this.menuDetails = menuDetails;
     }
 
+    @Override
+    public String toString() {
+        return "Menu [menuId=" + menuId + ", dishName=" + dishName + ", currentPrice=" + currentPrice + ", isDeleted="
+                + isDeleted + "]";
+    }
+
 }

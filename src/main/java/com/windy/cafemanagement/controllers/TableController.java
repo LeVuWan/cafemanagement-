@@ -339,7 +339,7 @@ public class TableController {
      * @return ResponseEntity with merge candidates
      * 
      */
-    @GetMapping("get-table-cu")
+    @GetMapping("get-table-merge")
     public ResponseEntity<?> getTableToMerger() {
         try {
             TableToMergeRes data = tableService.getTableToMergeService();

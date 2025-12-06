@@ -1,6 +1,8 @@
 const modalMergeTableModal = $('#mergeTableModal');
 
 $('#btn-merge-table').click(async () => {
+    console.log("Run here");
+    
     modalMergeTableModal.modal('show');
     const tableId = JSON.parse(sessionStorage.getItem('selectedTable')).id;
     try {
@@ -13,8 +15,6 @@ $('#btn-merge-table').click(async () => {
         const listTableFrom = $('#listTableForm');
         listTableFrom.empty();
         const listTableFromRes = response.data.tablesTo;
-
-        console.log("Check: ", listTableFromRes);
 
         listTableFromRes.forEach(tableItem => {
             const isSelected = tableItem.tableId == tableId;
@@ -46,6 +46,7 @@ $('#btn-merge-table').click(async () => {
             listTableTo.append(formRadio);
         });
 
+        resetManagementButtons();
 
     } catch (error) {
         const msg = error.responseJSON?.message || 'Không thể tải danh sách bàn!';

@@ -59,6 +59,7 @@ import com.windy.cafemanagement.repositories.VoucherRepository;
  */
 @Service
 public class TableService {
+    private static final Logger logger = LoggerFactory.getLogger(TableService.class);
     private final TableRepository tableRepository;
     private final EmployeeRepository employeeRepository;
     private final TableBookingDetailRepository bookingDetailRepository;
@@ -102,7 +103,7 @@ public class TableService {
             throw new NullPointerException("orderTableDto not found");
         }
 
-        if ((orderTableDto.getDateOrder().getMinute() - LocalDateTime.now().getMinute()) > 30) {
+        if (orderTableDto.getDurationMinutes() > 30) {
             throw new IllegalArgumentException("Thời gian đặt trước không đọc quá 30 phút");
         }
 
@@ -135,8 +136,9 @@ public class TableService {
         tableBookingDetail.setInvoice(invoice);
         tableBookingDetail.setCustomerName(orderTableDto.getCustomerName());
         tableBookingDetail.setCustomerPhone(orderTableDto.getCustomerPhone());
-        tableBookingDetail.setBookingTime(orderTableDto.getDateOrder());
+        tableBookingDetail.setBookingTime(LocalDateTime.now().plusMinutes(orderTableDto.getDurationMinutes()));
         tableBookingDetail.setIsDeleted(false);
+        System.out.println("Check time after convert: " + tableBookingDetail.getBookingTime());
         bookingDetailRepository.save(tableBookingDetail);
 
         table.setStatus(TableStatus.RESERVED);
@@ -244,7 +246,7 @@ public class TableService {
 
         return new InformationTableRes(tableBookingDetail.getCustomerName(),
                 tableBookingDetail.getBookingTime().toLocalTime(), tableBookingDetail.getBookingTime().toLocalDate(),
-                invoiceDetails);
+                invoiceDetails, tableBookingDetail.getCustomerPhone());
     }
 
     /**
@@ -523,7 +525,7 @@ public class TableService {
         }
 
         if (cutTableDto.getFromTableId().equals(cutTableDto.getToTableId())) {
-            throw new IllegalArgumentException("From table and To table must be different");
+            throw new IllegalArgumentException("From table and To table must bedifferent");
         }
 
         // Lấy bàn nguồn
@@ -537,10 +539,12 @@ public class TableService {
         TableEntity tableTo = getTableEntityById(cutTableDto.getToTableId());
 
         // reuse UNPAID_STATUSES
-        List<InvoiceStatus> UNPAID_STATUSES = List.of(InvoiceStatus.CREATED, InvoiceStatus.UPDATED);
+        List<InvoiceStatus> UNPAID_STATUSES = List.of(InvoiceStatus.CREATED,
+                InvoiceStatus.UPDATED);
 
         // Lấy hóa đơn bàn nguồn
-        Invoice fromInvoice = getInvoiceByTableIdAndStatusInvoice(cutTableDto.getFromTableId(), UNPAID_STATUSES);
+        Invoice fromInvoice = getInvoiceByTableIdAndStatusInvoice(cutTableDto.getFromTableId(),
+                UNPAID_STATUSES);
 
         // Lấy thông tin đặt bàn nguồn
         TableBookingDetail bookingDetailFromExist = getBookingDetailByTableIdAndStatusInvoice(
@@ -553,6 +557,8 @@ public class TableService {
                 .findCurrentUnpaidInvoiceByTableId(tableTo.getTableId(), UNPAID_STATUSES)
                 .orElseGet(this::createInvoice);
 
+        Double totalAmountInvoiceTo = 0.0;
+
         // Nếu hóa đơn bàn đích chưa được cập nhật món (mới tạo)
         if (toInvoice.getStatus() == InvoiceStatus.CREATED) {
             for (Menu menu : cutTableDto.getMenu()) {
@@ -560,24 +566,21 @@ public class TableService {
                         .orElseThrow(() -> new EntityNotFoundException(
                                 "Không tìm thấy thực đơn với id: " + menu.getMenuId()));
                 InvoiceDetail invoiceDetail = new InvoiceDetail();
-                InvoiceDetailId id = new InvoiceDetailId(toInvoice.getInvoiceId(), menu.getMenuId());
+                InvoiceDetailId id = new InvoiceDetailId(toInvoice.getInvoiceId(),
+                        menu.getMenuId());
                 invoiceDetail.setId(id);
                 invoiceDetail.setMenu(menuExist);
                 invoiceDetail.setInvoice(toInvoice);
                 invoiceDetail.setQuantity(menu.getQuantity());
-                invoiceDetail.setTotalPrice(menu.getQuantity() * menuExist.getCurrentPrice());
+                totalAmountInvoiceTo += menu.getQuantity() *
+                        menuExist.getCurrentPrice();
+                invoiceDetail.setTotalPrice(menu.getQuantity() *
+                        menuExist.getCurrentPrice());
                 invoiceDetail.setIsDeleted(false);
                 invoiceDetailRepository.save(invoiceDetail);
             }
 
-            // Tính lại tổng tiền bàn đích
-            List<InvoiceDetail> invoiceDetailOfInvoiceTo = invoiceDetailRepository
-                    .findAllByInvoice_InvoiceIdAndIsDeletedFalse(toInvoice.getInvoiceId());
-
-            double totalAmount = invoiceDetailOfInvoiceTo.stream()
-                    .mapToDouble(InvoiceDetail::getTotalPrice)
-                    .sum();
-            toInvoice.setTotalAmount(totalAmount);
+            toInvoice.setTotalAmount(totalAmountInvoiceTo);
             toInvoice.setStatus(InvoiceStatus.UPDATED);
             invoiceRepository.save(toInvoice);
 
@@ -586,24 +589,26 @@ public class TableService {
             tableRepository.save(tableTo);
         } else {
             // Nếu hóa đơn bàn đích đã có → cộng dồn món
-            List<InvoiceDetail> invoiceDetailOfInvoiceTo = toInvoice.getInvoiceDetails();
+            List<InvoiceDetail> invoiceDetailOfInvoiceTo = invoiceDetailRepository
+                    .findAllByInvoice_InvoiceIdAndIsDeletedFalse(toInvoice.getInvoiceId());
+            totalAmountInvoiceTo = updateInvoiceDetails(invoiceDetailOfInvoiceTo, cutTableDto.getMenu(),
+                    toInvoice);
 
-            updateInvoiceDetails(invoiceDetailOfInvoiceTo, cutTableDto.getMenu(), toInvoice);
+            toInvoice.setTotalAmount(totalAmountInvoiceTo);
 
-            double totalAmount = invoiceDetailOfInvoiceTo.stream()
-                    .mapToDouble(InvoiceDetail::getTotalPrice)
-                    .sum();
-            toInvoice.setTotalAmount(totalAmount);
             toInvoice.setStatus(InvoiceStatus.UPDATED);
+
             invoiceRepository.save(toInvoice);
 
             invoiceDetailRepository.saveAll(invoiceDetailOfInvoiceTo);
+
         }
 
         // Trừ món bên bàn nguồn
         List<InvoiceDetail> invoiceDetailOfInvoiceFrom = fromInvoice.getInvoiceDetails();
 
-        boolean allZero = subtractInvoiceDetails(invoiceDetailOfInvoiceFrom, cutTableDto.getMenu());
+        boolean allZero = subtractInvoiceDetails(invoiceDetailOfInvoiceFrom,
+                cutTableDto.getMenu());
 
         // Tính lại tổng tiền bàn nguồn
         double totalAmountFrom = invoiceDetailOfInvoiceFrom.stream()
@@ -632,7 +637,8 @@ public class TableService {
             }
         }
         invoiceDetailRepository.saveAll(invoiceDetailOfInvoiceFrom);
-        createBookingDetail(tableTo, toInvoice, bookingDetailFromExist.getCustomerName(),
+        createBookingDetail(tableTo, toInvoice,
+                bookingDetailFromExist.getCustomerName(),
                 bookingDetailFromExist.getCustomerPhone());
     }
 
@@ -724,20 +730,26 @@ public class TableService {
         return bookingDetailRepository.save(tableBookingDetail);
     };
 
-    private void updateInvoiceDetails(List<InvoiceDetail> invoiceDetails,
+    private Double updateInvoiceDetails(List<InvoiceDetail> invoiceDetails,
             List<Menu> menus,
             Invoice invoice) {
 
+        Double totalAmount = 0.0;
+
         for (Menu menu : menus) {
             boolean found = false;
+
             for (InvoiceDetail detail : invoiceDetails) {
+                // CHỈ kiểm tra món cùng ID và chưa bị xóa
                 if (detail.getMenu().getMenuId().equals(menu.getMenuId())) {
+
                     found = true;
 
                     int newQuantity = detail.getQuantity() + menu.getQuantity();
                     detail.setQuantity(newQuantity);
 
                     double unitPrice = detail.getMenu().getCurrentPrice();
+                    totalAmount += unitPrice * newQuantity;
                     detail.setTotalPrice(unitPrice * newQuantity);
 
                     break;
@@ -758,11 +770,15 @@ public class TableService {
                 newDetail.setIsDeleted(false);
 
                 double totalPrice = menuExist.getCurrentPrice() * menu.getQuantity();
+                totalAmount += totalPrice;
                 newDetail.setTotalPrice(totalPrice);
 
+                invoiceDetailRepository.save(newDetail);
                 invoiceDetails.add(newDetail);
             }
         }
+
+        return totalAmount;
     }
 
     private boolean subtractInvoiceDetails(List<InvoiceDetail> invoiceDetails, List<Menu> menus) {
@@ -826,25 +842,56 @@ public class TableService {
     /**
      * Change the status of the reserved table
      * 
+     * Only release reservations that:
+     * 1. Have passed their booking time
+     * 2. Have no active invoice or invoice is already deleted
+     * 
      * @throws NullPointerException, RuntimeException
      */
     @Transactional
     public void releaseExpiredBookings() {
-        List<TableEntity> tables = tableRepository.findExpiredBookings(LocalDateTime.now());
+        try {
+            System.out.println("Run here");
+            LocalDateTime currentTime = LocalDateTime.now();
+            List<TableEntity> tables = tableRepository.findExpiredBookings(currentTime);
 
-        for (TableEntity table : tables) {
+            if (tables.isEmpty()) {
+                logger.info("No expired bookings found at {}", currentTime);
+                return;
+            }
 
-            table.setStatus(TableStatus.AVAILABLE);
+            logger.info("Found {} expired bookings to release", tables.size());
 
-            table.getTableBookingDetails().forEach(detail -> {
-                detail.setIsDeleted(true);
+            for (TableEntity table : tables) {
+                logger.debug("Processing expired booking for table ID: {}", table.getTableId());
 
-                if (detail.getInvoice() != null) {
-                    detail.getInvoice().setIsDeleted(true);
-                }
-            });
+                table.setStatus(TableStatus.AVAILABLE);
 
-            tableRepository.save(table);
+                table.getTableBookingDetails().stream()
+                        .filter(detail -> !detail.getIsDeleted())
+                        .forEach(detail -> {
+                            detail.setIsDeleted(true);
+                            logger.debug("Marked booking detail as deleted for table ID: {}, invoice ID: {}",
+                                    table.getTableId(),
+                                    detail.getInvoice() != null ? detail.getInvoice().getInvoiceId() : "N/A");
+
+                            if (detail.getInvoice() != null && !detail.getInvoice().getIsDeleted()) {
+                                detail.getInvoice().setIsDeleted(true);
+                                invoiceRepository.save(detail.getInvoice());
+                                logger.debug("Marked invoice as deleted for invoice ID: {}",
+                                        detail.getInvoice().getInvoiceId());
+                            }
+                        });
+
+                tableRepository.save(table);
+                logger.info("Released expired booking for table ID: {}, status changed to AVAILABLE",
+                        table.getTableId());
+            }
+
+            logger.info("Successfully released {} expired bookings", tables.size());
+        } catch (Exception e) {
+            logger.error("Error occurred while releasing expired bookings", e);
+            throw new RuntimeException("Failed to release expired bookings: " + e.getMessage(), e);
         }
     }
 

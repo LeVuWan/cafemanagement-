@@ -1,8 +1,8 @@
-
 const modalChooseMenu = $('#chooseMenuModal');
 $('#btn-choose-menu').click(async () => {
     const table = JSON.parse(sessionStorage.getItem('selectedTable'));
-    modalChooseMenu.modal('show'); // hiển thị modal
+    $('#chooseMenuModalLabel').text(`Chọn món cho bàn ${table.name}`);
+    modalChooseMenu.modal('show');
 
     try {
         const response = await $.ajax({
@@ -23,7 +23,7 @@ $('#btn-choose-menu').click(async () => {
                 <tr>
                     <td class="menuName">${item.dishName}</td>
                     <td>
-                     <input type="number" class="form-control quantity-input" data-id="${item.menuId}"> 
+                     <input id="${item.menuId}" type="text" class="form-control quantity-input integer" data-id="${item.menuId}" pattern="\d*" maxlength="3"> 
                     </td>
                     <td class="text-center">
                         <input type="checkbox" class="form-check-input menu-checkbox" data-id="${item.menuId}">
@@ -32,7 +32,7 @@ $('#btn-choose-menu').click(async () => {
             `;
             tbody.append(row);
         });
-
+        resetManagementButtons();
     } catch (xhr) {
         console.log("check: " + xhr.responseJSON.message);
 

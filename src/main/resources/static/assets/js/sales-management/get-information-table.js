@@ -3,6 +3,7 @@ const modalInfomationTable = $('#infomationTableModal');
 $('#btn-infor-table').click(async () => {
     const table = JSON.parse(sessionStorage.getItem('selectedTable'));
     modalInfomationTable.modal('show');
+    $("#infomationTableModalLabel").text(`Thông tin bàn ${table.name}`);
 
     try {
         const response = await $.ajax({
@@ -10,13 +11,15 @@ $('#btn-infor-table').click(async () => {
             method: 'GET',
             contentType: 'application/json'
         });
+
         const tbody = $('#infomationTableModal tbody');
         tbody.empty();
 
         const inforTable = response.data;
 
-        const customerName = inforTable.nameCustomer;
-        $('#customerName').text(customerName);
+        const customerName = inforTable.nameCustomer ? inforTable.nameCustomer : 'Khách vảng lai';
+
+        $('#customerNameModalInforTable').text(customerName);
 
         const orderTime = inforTable.orderTime.substring(0, 5);
         const orderDate = new Date(inforTable.orderDate);
@@ -30,12 +33,13 @@ $('#btn-infor-table').click(async () => {
 
             const row = `
                 <tr>
-                    <td>${item.dishName}</td>
-                    <td>${item.quantity}</td>
+                    <td class="text-center">${item.dishName}</td>
+                    <td class="text-right">${item.quantity}</td>
                 </tr>
             `;
             tbody.append(row);
         });
+        resetManagementButtons();
     } catch (xhr) {
         console.log("check: " + xhr.responseJSON.message);
 

@@ -20,15 +20,11 @@ $('#btn-confirm-order').on('click', async () => {
 
     const durationMinutes = parseInt(form.durationMinutes.value, 10);
 
-    const now = new Date();
-
-    const expiryTime = new Date(now.getTime() + durationMinutes * 60 * 1000);
-
     const data = {
         tableId: table.id,
-        customerName: form.customerName.value.trim(),
-        customerPhone: form.customerPhone.value.trim(),
-        dateOrder: expiryTime.toISOString()
+        customerName: document.getElementById('customerName').value.trim(),
+        customerPhone: document.getElementById('phoneNumber').value.trim(),
+        durationMinutes: durationMinutes
     };
 
     try {
@@ -55,7 +51,7 @@ $('#btn-confirm-order').on('click', async () => {
 });
 
 
-const showToast = (message, type = 'success') => {    
+const showToast = (message, type = 'success') => {
     const toastEl = document.getElementById('liveToast');
     const toastBody = document.getElementById('toast-message');
 

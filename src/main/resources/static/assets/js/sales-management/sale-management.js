@@ -64,3 +64,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 });
+
+const resetManagementButtons = () => {
+    const listFuntions = document.getElementById("management-functions");
+    listFuntions.style.display = "none";
+
+    const tableId = JSON.parse(sessionStorage.getItem('selectedTable')).id;
+
+    const selector = `#list-table .table-item[data-id="${tableId}"]`;
+    let tableElem = document.querySelector(selector);
+
+    if (tableElem) {
+        tableElem.classList.remove("table-selected");
+    }
+};

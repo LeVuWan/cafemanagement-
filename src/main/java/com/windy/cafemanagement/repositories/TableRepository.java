@@ -66,14 +66,22 @@ public interface TableRepository extends JpaRepository<TableEntity, Long> {
       @Param("statuses") List<TableStatus> statuses);
 
   /**
-   * get the table is past the reservation time
+   * get the table is past the reservation time (only tables with no active
+   * invoices)
    * 
    * @param currentTime
    * @return List<TableEntity>
    */
-  @Query("SELECT t FROM TableEntity t JOIN t.tableBookingDetails tbd " +
-      "WHERE t.status = 0 AND t.isDeleted = false " +
-      "AND tbd.bookingTime < :currentTime AND tbd.isDeleted = false")
+  @Query("""
+          SELECT t FROM TableEntity t
+          JOIN t.tableBookingDetails tbd
+          WHERE t.status = com.windy.cafemanagement.enums.TableStatus.RESERVED
+            AND t.isDeleted = false
+            AND tbd.isDeleted = false
+            AND tbd.bookingTime < :currentTime
+            AND tbd.invoice IS NOT NULL
+            AND tbd.invoice.isDeleted = false
+      """)
   List<TableEntity> findExpiredBookings(@Param("currentTime") LocalDateTime currentTime);
 
 }

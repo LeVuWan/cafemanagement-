@@ -3,6 +3,7 @@ const modalMoveToTable = $('#moveToTableModal');
 $('#btn-move-table').click(async () => {
     const table = JSON.parse(sessionStorage.getItem('selectedTable'));
     modalMoveToTable.modal('show');
+    $('#moveTableModalLabel').text(`Chuyển bàn từ ${table.name}`);
 
     try {
         const response = await $.ajax({
@@ -29,6 +30,7 @@ $('#btn-move-table').click(async () => {
         if (selectTable.children().length === 0) {
             selectTable.append('<option value="">Không có bàn khả dụng</option>');
         }
+        resetManagementButtons();
     } catch (xhr) {
         console.log("Error: " + xhr.responseJSON.message);
         const msg = xhr.responseJSON?.message || 'Không thể tải danh sách bàn!';
@@ -64,6 +66,7 @@ $('#comfirmMoveTabe').click(async () => {
         modalMoveToTable.modal('hide');
         sessionStorage.removeItem('selectedTable');
         await getListTable();
+
     } catch (error) {
         const msg = error.responseJSON?.message || 'Chuyển bàn thất bại!';
         showToast(msg, 'danger');

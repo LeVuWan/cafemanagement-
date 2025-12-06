@@ -2,7 +2,8 @@ const modalCancel = $('#cancelTableModal');
 
 $('#btn-cancel-table').click(async () => {
     const table = JSON.parse(sessionStorage.getItem('selectedTable'));
-    $('#cancelTableModalLabel').text('Bạn muốn xóa ' + table.name);
+    $('#cancelTableModalLabel').text('Bạn muốn hủy ' + table.name + ' ?');
+    resetManagementButtons();
 })
 
 $('#btn-confirm-cancel').click(async () => {

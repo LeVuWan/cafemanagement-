@@ -129,4 +129,11 @@ public class Invoice {
         this.tableBookingDetails = tableBookingDetails;
     }
 
+    @Override
+    public String toString() {
+        return "Invoice [invoiceId=" + invoiceId + ", totalAmount=" + totalAmount + ", transactionDate="
+                + transactionDate + ", status=" + status + ", isDeleted=" + isDeleted + ", voucher=" + voucher
+                + ", invoiceDetails=" + invoiceDetails + ", tableBookingDetails=" + tableBookingDetails + "]";
+    }
+
 }

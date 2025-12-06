@@ -50,7 +50,7 @@ const populateMenuTable = async (tableId) => {
                     <td class="dishName">${item.dishName}</td>
                     <td>
                         <div class="input-group input-group-sm">
-                            <input type="number" class="form-control text-center cut-quantity" value="0" min="0" max="${item.quantity}">
+                            <input id="${item.menuId}" type="text" class="form-control text-center cut-quantity integer" value="0" min="0" pattern="\d*" maxlength="3"/>
                         </div>
                     </td>
                     <td class="text-center currentQuantity"><strong>${item.quantity}</strong></td>
@@ -63,10 +63,12 @@ const populateMenuTable = async (tableId) => {
 
 $('#btn-cup-table').click(async () => {
     const table = JSON.parse(sessionStorage.getItem('selectedTable'));
+    $('#cupTableModalLabel').text(`Tách ${table.name}`);
     const tableId = table.id;
 
     try {
         await Promise.all([populateTableSelect(tableId), populateMenuTable(tableId, table.name)]);
+        resetManagementButtons();
     } catch (error) {
         const msg = error.responseJSON?.message || 'Đã xảy ra lỗi';
         showToast(msg, 'danger');
@@ -117,7 +119,7 @@ $('#destinationTableSelect').on('change', async function () {
         if (error.responseJSON?.data == null) {
             tbody.append(`
                 <tr>
-                    <td colspan="3" class="text-center text-muted">Chưa có món nào 1.</td>
+                    <td colspan="3" class="text-center text-muted">Chưa có món nào.</td>
                 </tr>
             `);
             return;
@@ -223,6 +225,7 @@ $('#confirmMergeTable').click(async () => {
         $('#cupTableModal').modal('hide');
         sessionStorage.removeItem('selectedTable');
         await getListTable();
+
     } catch (error) {
         const msg = error.responseJSON?.message || 'Tách bàn thất bại!';
         console.log("Error: " + msg);
@@ -237,4 +240,8 @@ $('#confirmMergeTable').click(async () => {
     }
 });
 
-
+$('#cupTableModal').on('hidden.bs.modal', () => {
+    sessionStorage.removeItem('selectedTable');
+    $('#menuTableTo').empty();
+    $('#destinationTableSelect').val('');
+});

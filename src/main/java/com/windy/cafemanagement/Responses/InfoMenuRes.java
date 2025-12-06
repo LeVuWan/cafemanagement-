@@ -19,15 +19,17 @@ public class InfoMenuRes {
     private Integer quantity;
     private Long menuId;
     private Double totalPrice;
+    private Double unitPrice;
 
     public InfoMenuRes() {
     }
 
-    public InfoMenuRes(Long menuId, String dishName, Integer quantity, Double totalPrice) {
+    public InfoMenuRes(Long menuId, String dishName, Integer quantity, Double totalPrice, Double unitPrice) {
         this.menuId = menuId;
         this.dishName = dishName;
         this.quantity = quantity;
         this.totalPrice = totalPrice;
+        this.unitPrice = unitPrice;
     }
 
     public String getDishName() {
@@ -60,6 +62,14 @@ public class InfoMenuRes {
 
     public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public Double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(Double unitPrice) {
+        this.unitPrice = unitPrice;
     }
 
 }

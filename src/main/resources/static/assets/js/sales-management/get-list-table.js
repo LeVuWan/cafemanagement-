@@ -4,9 +4,6 @@ const getListTable = async () => {
         method: 'GET',
         contentType: 'application/json'
     });
-
-
-    console.log("Check data: ", res);
     renderTables(res.data);
 }
 

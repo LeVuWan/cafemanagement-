@@ -20,16 +20,18 @@ import java.util.List;
  */
 public class InformationTableRes {
     private String nameCustomer;
+    private String customerPhone;
     private LocalTime orderTime;
     private LocalDate orderDate;
     private List<InfoMenuRes> infoMenuRes;
 
     public InformationTableRes(String nameCustomer, LocalTime orderTime, LocalDate orderDate,
-            List<InfoMenuRes> infoMenuRes) {
+            List<InfoMenuRes> infoMenuRes, String customerPhone) {
         this.nameCustomer = nameCustomer;
         this.orderTime = orderTime;
         this.orderDate = orderDate;
         this.infoMenuRes = infoMenuRes;
+        this.customerPhone = customerPhone;
     }
 
     public InformationTableRes() {
@@ -71,6 +73,14 @@ public class InformationTableRes {
     public String toString() {
         return "InformationTableRes [nameCustomer=" + nameCustomer + ", orderTime=" + orderTime + ", orderDate="
                 + orderDate + ", infoMenuRes=" + infoMenuRes + "]";
+    }
+
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
     }
 
 }

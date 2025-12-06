@@ -41,7 +41,7 @@ public interface InvoiceDetailRepository extends JpaRepository<InvoiceDetail, In
    * @return List<InfoMenuRes>
    */
   @Query("""
-          SELECT new com.windy.cafemanagement.Responses.InfoMenuRes(m.menuId, m.dishName, id.quantity, id.totalPrice)
+          SELECT new com.windy.cafemanagement.Responses.InfoMenuRes(m.menuId, m.dishName, id.quantity, id.totalPrice, m.currentPrice)
           FROM InvoiceDetail id
           JOIN id.menu m
           JOIN id.invoice i

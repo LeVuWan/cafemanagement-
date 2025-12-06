@@ -15,18 +15,21 @@ $(document).ready(function () {
 
     });
 
-    $('#money').on("input", () => {
-        let value = $('#money').val();
+    $('#money, #customer-paid').on("input", function () {
+        let value = $(this).val();
 
+        // Xóa mọi ký tự không phải số
         value = value.replace(/\D/g, "");
 
+        // Giới hạn tối đa 9 chữ số
         if (value.length > 9) {
             value = value.substring(0, 9);
         }
 
+        // Thêm dấu chấm phân tách hàng nghìn
         value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-        $('#money').val(value);
+        $(this).val(value);
     });
 
     $('#discountValue').on("input", () => {
@@ -40,4 +43,9 @@ $(document).ready(function () {
 
         $('#discountValue').val(value);
     });
+
+    $(document).on('input', '.integer, #integer', function () {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
 });

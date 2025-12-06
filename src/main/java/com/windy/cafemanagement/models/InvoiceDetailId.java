@@ -67,4 +67,9 @@ public class InvoiceDetailId implements Serializable {
         return Objects.hash(invoiceId, menuId);
     }
 
+    @Override
+    public String toString() {
+        return "InvoiceDetailId [invoiceId=" + invoiceId + ", menuId=" + menuId + "]";
+    }
+
 }

@@ -117,7 +117,9 @@ Validator.checkTimeOrderTable = function (selector) {
     return {
         selector: selector,
         test: function (value) {
-            return value <= 30 ? undefined : "Thời gian đặt trước không được quá 30 phút";
+            return (value >= 1 && value <= 30)
+                ? undefined
+                : "Thời gian đặt trước phải từ 1 đến 30 phút";
         }
     }
 }
@@ -127,7 +129,7 @@ Validator.checkChangeAmount = (selector, getTotal) => {
         selector: selector,
         test: function (value) {
             const total = Number(getTotal());
-            const paid = Number(value);
+            const paid = Number(value.replace(/\D/g, ''));
 
             return paid >= total
                 ? undefined

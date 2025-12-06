@@ -29,7 +29,7 @@ public class Equipment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long equipmentId;
     private String equipmentName;
-    private Double quantity;
+    private Integer quantity;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate purchaseDate;
     private Double unitPrice;
@@ -38,7 +38,7 @@ public class Equipment {
     public Equipment() {
     }
 
-    public Equipment(Long equipmentId, String equipmentName, Double quantity, LocalDate purchaseDate,
+    public Equipment(Long equipmentId, String equipmentName, Integer quantity, LocalDate purchaseDate,
             Double unitPrice, Boolean isDeleted) {
         this.equipmentId = equipmentId;
         this.equipmentName = equipmentName;
@@ -64,11 +64,11 @@ public class Equipment {
         this.equipmentName = equipmentName;
     }
 
-    public Double getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Double quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 

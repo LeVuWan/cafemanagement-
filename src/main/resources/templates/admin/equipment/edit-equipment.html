@@ -9,7 +9,6 @@
 <body>
     <section layout:fragment="content">
         <div class="container-fluid">
-            <h1 class="h3 mb-2 text-gray-800">Quản lý thiết bị</h1>
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Thêm mới thiết bị</h6>
@@ -22,8 +21,8 @@
                                 readonly style="display: none;">
                             <div class="form-group col-md-6">
                                 <label for="startDate">*Tên thiết bị</label>
-                                <input type="text" class="form-control" name="equipmentName"
-                                    th:field="*{equipmentName}">
+                                <input type="text" class="form-control" name="equipmentName" th:field="*{equipmentName}"
+                                    maxlength="55">
                                 <span th:if="${#fields.hasErrors('equipmentName')}" th:errors="*{equipmentName}"
                                     class="text-danger small"></span>
                                 <span class="form-message"></span>
@@ -31,8 +30,8 @@
 
                             <div class="form-group col-md-6">
                                 <label for="endDate">*Số lượng</label>
-                                <input type="number" class="form-control" name="quantity" th:field="*{quantity}"
-                                    id="quantity">
+                                <input type="text" class="form-control integer" name="quantity" th:field="*{quantity}"
+                                    id="quantity" pattern="\d*" maxlength="4">
                                 <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"
                                     class="text-danger small"></span>
                                 <span class="form-message"></span>

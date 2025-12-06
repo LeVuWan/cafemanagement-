@@ -23,14 +23,14 @@ public class EquipmentDto {
     @NotBlank(message = "Tên thiết bị không được trống")
     private String equipmentName;
     @NotNull(message = "Số lượng không được để trống")
-    private Double quantity;
+    private Integer quantity;
     @NotNull(message = "Ngày mua không được trống")
     private LocalDate purchaseDate;
     @NotNull(message = "Đơn giá không được trống")
     private String unitPrice;
 
     public EquipmentDto(Long equipmentId, @NotBlank(message = "Tên thiết bị không được trống") String equipmentName,
-            @NotNull(message = "Số lượng không được để trống") Double quantity, String note,
+            @NotNull(message = "Số lượng không được để trống") Integer quantity, String note,
             @NotNull(message = "Ngày mua không được trống") LocalDate purchaseDate,
             @NotNull(message = "Đơn giá không được trống") String unitPrice) {
         this.equipmentId = equipmentId;
@@ -59,11 +59,11 @@ public class EquipmentDto {
         this.equipmentName = equipmentName;
     }
 
-    public Double getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Double quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 

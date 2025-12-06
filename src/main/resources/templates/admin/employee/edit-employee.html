@@ -101,8 +101,8 @@
                         </div>
 
                         <!-- Nút thao tác -->
-                        <button type="submit" class="btn btn-secondary mr-2">Lưu</button>
                         <a th:href="@{/admin/employee}" class="btn btn-secondary">Trở về</a>
+                        <button type="submit" class="btn btn-success mr-2">Lưu</button>
                     </form>
                 </div>
             </div>
@@ -117,7 +117,7 @@
                     Validator.isRequired('#password'),
                     Validator.checkLength('#password'),
                     Validator.isRequired('#fullname'),
-                    Validator.isRequired('#salary'),
+                    Validator.isRequired('#money'),
                     Validator.isRequired('#phoneNumber'),
                     Validator.isSelected('#permissionId')
                 ]

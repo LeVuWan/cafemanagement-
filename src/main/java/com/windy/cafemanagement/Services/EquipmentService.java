@@ -103,7 +103,7 @@ public class EquipmentService {
         ImportOrder importOrder = new ImportOrder();
         importOrder.setEquipment(savedEquipment);
         importOrder.setImportDate(dto.getPurchaseDate());
-        importOrder.setQuantity(dto.getQuantity());
+        importOrder.setQuantity(Double.parseDouble(dto.getQuantity() + ""));
         importOrder.setTotalAmount(dto.getQuantity() * UtilConvert.convertStringMoneyToDouble(dto.getUnitPrice()));
         importOrder.setProduct(null);
         importOrder.setEmployee(user);
@@ -144,7 +144,7 @@ public class EquipmentService {
         }
         for (ImportOrder importOrder : importOrders) {
             importOrder.setImportDate(dto.getPurchaseDate());
-            importOrder.setQuantity(dto.getQuantity());
+            importOrder.setQuantity(Double.parseDouble(dto.getQuantity() + ""));
             importOrder.setTotalAmount(dto.getQuantity() * UtilConvert.convertStringMoneyToDouble(dto.getUnitPrice()));
 
             importOrderRepository.save(importOrder);

@@ -10,8 +10,6 @@
     <section layout:fragment="content">
         <div class="container-fluid">
 
-            <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Quản lý thiết bị</h1>
             <!-- DataTales Example -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -35,9 +33,9 @@
                                 <tr>
                                     <th>Tên thiết bị</th>
                                     <th>Ngày mua</th>
-                                    <th>Số lượng</th>
-                                    <th>Đơn giá</th>
-                                    <th>Tổng giá</th>
+                                    <th class="text-right">Số lượng</th>
+                                    <th class="text-right">Đơn giá</th>
+                                    <th class="text-right">Tổng giá</th>
 
                                     <th class="text-center" style="width: 150px;">
                                         Action</th>
@@ -47,11 +45,11 @@
                                 <tr th:each="equipment : ${equipments}">
                                     <td th:text="${equipment.equipmentName}"></td>
                                     <td th:text="${equipment.purchaseDate}"></td>
-                                    <td th:text="${equipment.quantity}"></td>
-                                    <td
+                                    <td th:text="${equipment.quantity}" class="text-right"></td>
+                                    <td class="text-right"
                                         th:text="${#numbers.formatDecimal(equipment.unitPrice, 0, 'POINT', 0, 'NONE')} + ' ₫'">
                                     </td>
-                                    <td
+                                    <td class="text-right"
                                         th:text="${#numbers.formatDecimal(equipment.unitPrice * equipment.quantity, 0, 'POINT', 0, 'NONE')} + ' ₫'">
                                     </td>
                                     <td class="text-center">

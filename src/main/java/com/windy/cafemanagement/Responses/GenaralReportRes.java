@@ -1,5 +1,7 @@
 package com.windy.cafemanagement.Responses;
 
+import java.time.LocalDate;
+
 /**
  * GenaralReportRes class
  *
@@ -15,24 +17,30 @@ package com.windy.cafemanagement.Responses;
  * 11-10-2025 VuLQ Create
  */
 public class GenaralReportRes {
-    private String date;
+    private LocalDate date;
     private Double income;
     private Double expense;
 
     public GenaralReportRes() {
     }
 
-    public GenaralReportRes(String date, Double income, Double expense) {
+    public GenaralReportRes(LocalDate date, Double income, Double expense) {
         this.date = date;
         this.income = income;
         this.expense = expense;
     }
 
-    public String getDate() {
+    public GenaralReportRes(String date, Double income, Double expense) {
+        this.date = LocalDate.parse(date);
+        this.income = income;
+        this.expense = expense;
+    }
+
+    public LocalDate  getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate  date) {
         this.date = date;
     }
 

@@ -12630,3 +12630,20 @@ body.sidebar-toggled footer.sticky-footer {
   margin-top: 4px;
   display: block;
 }
+
+.table-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-container thead th {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 2;
+}

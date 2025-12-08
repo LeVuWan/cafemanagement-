@@ -26,126 +26,141 @@ import com.windy.cafemanagement.models.Invoice;
  */
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
-  /**
-   * get current unpaid invoice by table id
-   * 
-   * @param tableId
-   * @param statuses
-   * @return Optional<Invoice>
-   */
-  @Query("""
-            SELECT tbd.invoice
-      FROM TableBookingDetail tbd
-      WHERE tbd.table.tableId = :tableId
-        AND tbd.isDeleted = false
-        AND tbd.invoice.isDeleted = false
-        AND tbd.invoice.status IN (:statuses)
-      ORDER BY tbd.bookingTime DESC
-        """)
-  Optional<Invoice> findCurrentUnpaidInvoiceByTableId(
-      @Param("tableId") Long tableId,
-      @Param("statuses") List<InvoiceStatus> statuses);
+        /**
+         * get current unpaid invoice by table id
+         * 
+         * @param tableId
+         * @param statuses
+         * @return Optional<Invoice>
+         */
+        @Query("""
+                              SELECT tbd.invoice
+                        FROM TableBookingDetail tbd
+                        WHERE tbd.table.tableId = :tableId
+                          AND tbd.isDeleted = false
+                          AND tbd.invoice.isDeleted = false
+                          AND tbd.invoice.status IN (:statuses)
+                        ORDER BY tbd.bookingTime DESC
+                          """)
+        Optional<Invoice> findCurrentUnpaidInvoiceByTableId(
+                        @Param("tableId") Long tableId,
+                        @Param("statuses") List<InvoiceStatus> statuses);
 
-  /**
-   * get daily income and expense between start date and end date
-   * 
-   * @param startDate
-   * @param endDate
-   * @return List<Object[]>
-   */
-  @Query(value = "SELECT\r\n" +
-      "  d.date AS date,\r\n" +
-      "  COALESCE(b.totalIncome, 0) AS totalIncome,\r\n" +
-      "  (COALESCE(i.totalImportCost, 0) + COALESCE(e.totalExpense, 0)) AS totalExpense\r\n" +
-      "FROM (\r\n" +
-      "  SELECT DATE(transaction_date) AS date FROM invoice\r\n" +
-      "  UNION\r\n" +
-      "  SELECT DATE(import_date) FROM import_order\r\n" +
-      "  UNION\r\n" +
-      "  SELECT DATE(expense_date) FROM expense\r\n" +
-      ") d\r\n" +
-      "LEFT JOIN (\r\n" +
-      "  SELECT DATE(transaction_date) AS date, SUM(total_amount) AS totalIncome\r\n" +
-      "  FROM invoice\r\n" +
-      "  WHERE status = 3\r\n" +
-      "  GROUP BY DATE(transaction_date)\r\n" +
-      ") b ON d.date = b.date\r\n" +
-      "LEFT JOIN (\r\n" +
-      "  SELECT DATE(import_date) AS date, SUM(total_amount) AS totalImportCost\r\n" +
-      "  FROM import_order\r\n" +
-      "  GROUP BY DATE(import_date)\r\n" +
-      ") i ON d.date = i.date\r\n" +
-      "LEFT JOIN (\r\n" +
-      "  SELECT DATE(expense_date) AS date, SUM(amount) AS totalExpense\r\n" +
-      "  FROM expense\r\n" +
-      "  GROUP BY DATE(expense_date)\r\n" +
-      ") e ON d.date = e.date\r\n" +
-      "WHERE\r\n" +
-      "  (:startDate IS NULL OR d.date >= :startDate)\r\n" +
-      "  AND (:endDate IS NULL OR d.date <= :endDate)\r\n" +
-      "  AND (COALESCE(b.totalIncome, 0) > 0 OR COALESCE(i.totalImportCost, 0) > 0 OR COALESCE(e.totalExpense, 0) > 0)\r\n"
-      +
-      "ORDER BY d.date", nativeQuery = true)
-  List<Object[]> getDailyIncomeExpense(
-      @Param("startDate") LocalDate startDate,
-      @Param("endDate") LocalDate endDate);
+        /**
+         * get daily income and expense between start date and end date
+         * 
+         * @param startDate
+         * @param endDate
+         * @return List<Object[]>
+         */
+        @Query(value = "SELECT " +
+                        "   t.date AS date, " +
+                        "   SUM(t.thu) AS totalIncome, " +
+                        "   SUM(t.chi) AS totalExpense " +
+                        "FROM ( " +
+                        "   SELECT " +
+                        "       i.transaction_date AS date, " +
+                        "       SUM(i.total_amount) AS thu, " +
+                        "       0 AS chi " +
+                        "   FROM invoice i " +
+                        "   WHERE i.is_deleted = 0 " +
+                        "     AND i.status = 3 " +
+                        "     AND (:startDate IS NULL OR i.transaction_date >= :startDate) " +
+                        "     AND (:endDate IS NULL OR i.transaction_date <= :endDate) " +
+                        "   GROUP BY i.transaction_date " +
 
-  /**
-   * get daily income and expense
-   * * @return List<Object[]>
-   */
-  @Query(value = "SELECT\r\n" +
-      "  d.date AS date,\r\n" +
-      "  COALESCE(b.totalIncome, 0) AS totalIncome,\r\n" +
-      "  (COALESCE(i.totalImportCost, 0) + COALESCE(e.totalExpense, 0)) AS totalExpense\r\n" +
-      "FROM (\r\n" +
-      "  SELECT DATE(transaction_date) AS date FROM invoice\r\n" +
-      "  UNION\r\n" +
-      "  SELECT DATE(import_date) FROM import_order\r\n" +
-      "  UNION\r\n" +
-      "  SELECT DATE(expense_date) FROM expense\r\n" +
-      ") d\r\n" +
-      "LEFT JOIN (\r\n" +
-      "  SELECT DATE(transaction_date) AS date, SUM(total_amount) AS totalIncome\r\n" +
-      "  FROM invoice\r\n" +
-      "  WHERE status = 3\r\n" +
-      "  GROUP BY DATE(transaction_date)\r\n" +
-      ") b ON d.date = b.date\r\n" +
-      "LEFT JOIN (\r\n" +
-      "  SELECT DATE(import_date) AS date, SUM(total_amount) AS totalImportCost\r\n" +
-      "  FROM import_order\r\n" +
-      "  GROUP BY DATE(import_date)\r\n" +
-      ") i ON d.date = i.date\r\n" +
-      "LEFT JOIN (\r\n" +
-      "  SELECT DATE(expense_date) AS date, SUM(amount) AS totalExpense\r\n" +
-      "  FROM expense\r\n" +
-      "  GROUP BY DATE(expense_date)\r\n" +
-      ") e ON d.date = e.date\r\n" +
-      "WHERE\r\n" +
-      "  (COALESCE(b.totalIncome, 0) > 0 OR COALESCE(i.totalImportCost, 0) > 0 OR COALESCE(e.totalExpense, 0) > 0)\r\n"
-      +
-      "ORDER BY d.date", nativeQuery = true)
-  List<Object[]> getDailyIncomeExpense();
+                        "   UNION ALL " +
 
-  /**
-   * get invoice totals by date between start date and end date
-   * 
-   * @param startDate
-   * @param endDate
-   * @return List<Object[]>
-   */
-  @Query(value = """
-      SELECT
-          transaction_date AS date,
-          SUM(total_amount) AS totalAmount
-      FROM invoice
-      WHERE is_deleted = 0
-        AND status = 3
-        AND transaction_date BETWEEN :startDate AND :endDate
-      GROUP BY transaction_date
-      ORDER BY transaction_date ASC
-      """, nativeQuery = true)
-  List<Object[]> getInvoiceTotalsByDate(
-      @Param("startDate") LocalDate startDate,
-      @Param("endDate") LocalDate endDate);
+                        "   SELECT " +
+                        "       io.import_date AS date, " +
+                        "       0 AS thu, " +
+                        "       SUM(io.total_amount) AS chi " +
+                        "   FROM import_order io " +
+                        "   WHERE io.is_deleted = 0 " +
+                        "     AND (:startDate IS NULL OR io.import_date >= :startDate) " +
+                        "     AND (:endDate IS NULL OR io.import_date <= :endDate) " +
+                        "   GROUP BY io.import_date " +
+
+                        "   UNION ALL " +
+
+                        "   SELECT " +
+                        "       e.expense_date AS date, " +
+                        "       0 AS thu, " +
+                        "       SUM(e.amount) AS chi " +
+                        "   FROM expense e " +
+                        "   WHERE e.is_delete = 0 " +
+                        "     AND (:startDate IS NULL OR e.expense_date >= :startDate) " +
+                        "     AND (:endDate IS NULL OR e.expense_date <= :endDate) " +
+                        "   GROUP BY e.expense_date " +
+                        ") t " +
+                        "GROUP BY t.date " +
+                        "ORDER BY t.date", nativeQuery = true)
+        List<Object[]> getDailyIncomeExpenseByDate(
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
+
+        /**
+         * get invoice totals by date between start date and end date
+         * 
+         * @param startDate
+         * @param endDate
+         * @return List<Object[]>
+         */
+        @Query(value = """
+                        SELECT
+                            transaction_date AS date,
+                            SUM(total_amount) AS totalAmount
+                        FROM invoice
+                        WHERE is_deleted = 0
+                          AND status = 3
+                          AND transaction_date BETWEEN :startDate AND :endDate
+                        GROUP BY transaction_date
+                        ORDER BY transaction_date ASC
+                        """, nativeQuery = true)
+        List<Object[]> getInvoiceTotalsByDate(
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
+
+        /**
+         * get daily income and expense without date filter
+         * 
+         * @return List<Object[]>
+         */
+        @Query(value = "SELECT " +
+                        "   t.date AS date, " +
+                        "   SUM(t.thu) AS totalIncome, " +
+                        "   SUM(t.chi) AS totalExpense " +
+                        "FROM ( " +
+                        "   SELECT " +
+                        "       i.transaction_date AS date, " +
+                        "       SUM(i.total_amount) AS thu, " +
+                        "       0 AS chi " +
+                        "   FROM invoice i " +
+                        "   WHERE i.is_deleted = 0 " +
+                        "     AND i.status = 3 " +
+                        "   GROUP BY i.transaction_date " +
+
+                        "   UNION ALL " +
+
+                        "   SELECT " +
+                        "       io.import_date AS date, " +
+                        "       0 AS thu, " +
+                        "       SUM(io.total_amount) AS chi " +
+                        "   FROM import_order io " +
+                        "   WHERE io.is_deleted = 0 " +
+                        "   GROUP BY io.import_date " +
+
+                        "   UNION ALL " +
+
+                        "   SELECT " +
+                        "       e.expense_date AS date, " +
+                        "       0 AS thu, " +
+                        "       SUM(e.amount) AS chi " +
+                        "   FROM expense e " +
+                        "   WHERE e.is_delete = 0 " +
+                        "   GROUP BY e.expense_date " +
+                        ") t " +
+                        "GROUP BY t.date " +
+                        "ORDER BY t.date", nativeQuery = true)
+        List<Object[]> getDailyIncomeExpense();
 }

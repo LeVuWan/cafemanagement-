@@ -10,8 +10,6 @@
     <section layout:fragment="content">
         <div class="container-fluid">
 
-            <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Quản lý thực đơn</h1>
             <!-- DataTales Example -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -47,7 +45,7 @@
                                 <tr>
                                     <th>Số thứ tự</th>
                                     <th>Tên món</th>
-                                    <th>Giá tiền</th>
+                                    <th class="text-right">Giá tiền</th>
                                     <th class="text-center" style="width: 150px;">Action</th>
                                 </tr>
                             </thead>
@@ -55,8 +53,8 @@
                                 <tr th:each="menu, stat : ${menus}">
                                     <td th:text="${stat.index + 1}"></td>
                                     <td th:text="${menu.dishName}"></td>
-                                    <td
-                                        th:text="${#numbers.formatDecimal(menu.currentPrice, 0, 'POINT', 0, 'NONE')} + ' ₫'">
+                                    <td class="text-right"
+                                        th:text="${#numbers.formatDecimal(menu.currentPrice, 0, 'POINT', 0, 'NONE')} + ' đ'">
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-1">

@@ -107,6 +107,7 @@ public class EquipmentService {
         importOrder.setTotalAmount(dto.getQuantity() * UtilConvert.convertStringMoneyToDouble(dto.getUnitPrice()));
         importOrder.setProduct(null);
         importOrder.setEmployee(user);
+        importOrder.setIsDeleted(false);
         importOrderRepository.save(importOrder);
 
         return savedEquipment;

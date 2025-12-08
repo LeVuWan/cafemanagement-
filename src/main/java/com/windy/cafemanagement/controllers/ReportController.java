@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.dao.DataAccessException;
 import jakarta.persistence.EntityNotFoundException;
 
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.windy.cafemanagement.Responses.EmployeeInfoRes;
 import com.windy.cafemanagement.Responses.GenaralReportRes;
 import com.windy.cafemanagement.Responses.ImportByDateReportRes;
@@ -52,8 +54,28 @@ public class ReportController {
     }
 
     @GetMapping("")
-    public String getReportPage() {
-        return "admin/report/general-report";
+    public String getReportPage(Model model) {
+        try {
+            List<GenaralReportRes> report = reportService.generalReportServiceForBudget();
+
+            double totalIncome = report.stream()
+                    .mapToDouble(r -> r.getIncome() != null ? r.getIncome() : 0)
+                    .sum();
+
+            double totalExpense = report.stream()
+                    .mapToDouble(r -> r.getExpense() != null ? r.getExpense() : 0)
+                    .sum();
+
+            model.addAttribute("reportData", report);
+            model.addAttribute("totalIncome", totalIncome);
+            model.addAttribute("totalExpense", totalExpense);
+
+            return "admin/report/general-report";
+        } catch (Exception e) {
+            logger.error("Error loading report page: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Lỗi khi tải trang báo cáo: " + e.getMessage());
+            return "error";
+        }
     }
 
     /**
@@ -105,6 +127,7 @@ public class ReportController {
             @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         try {
+            System.out.println("Generating import-export report from " + from + " to " + to);
             List<ImportExportRes> report = reportService.importExportReportService(from, to);
             return ResponseEntity.ok(Map.of(
                     "status", "success",
@@ -182,7 +205,7 @@ public class ReportController {
             @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         try {
-            List<ImportByDateReportRes> report = reportService.getImportOderByDateService(from, to);
+            List<ImportByDateReportRes> report = reportService.getExportOderByDateService(from, to);
             return ResponseEntity.ok(Map.of(
                     "status", "success",
                     "data", report,

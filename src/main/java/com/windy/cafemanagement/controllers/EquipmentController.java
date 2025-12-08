@@ -154,6 +154,7 @@ public class EquipmentController {
             model.addAttribute("errorMessage", "Đã xảy ra lỗi");
             return "admin/errors/500-error";
         }
+
     }
 
     /**

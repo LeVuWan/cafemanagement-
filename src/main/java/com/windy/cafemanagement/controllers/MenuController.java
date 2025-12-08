@@ -81,6 +81,7 @@ public class MenuController {
     @GetMapping("create")
     public String getCreateMenuForm(Model model) {
         try {
+            model.addAttribute("units", productService.getAllUnitService());
             model.addAttribute("products", productService.getAllProduct());
             return "admin/menu/create-menu";
         } catch (Exception ex) {
@@ -133,6 +134,7 @@ public class MenuController {
             List<MenuDetail> menuDetails = menuService.getListMenuDetailByMenu(id);
             List<Product> products = productService.getAllProduct();
 
+            model.addAttribute("units", productService.getAllUnitService());
             model.addAttribute("menu", menu);
             model.addAttribute("menuDetails", menuDetails);
             model.addAttribute("products", products);

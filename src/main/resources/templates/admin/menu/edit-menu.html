@@ -22,12 +22,14 @@
                         <div class="form-group col-md-6">
                             <label>Tên món:</label>
                             <input type="text" class="form-control" id="name" name="name" th:value="${menu.dishName}">
+                            <span class="form-message text-danger "></span>
                         </div>
 
                         <div class="form-group col-md-6">
                             <label>Giá tiền:</label>
-                            <input type="number" class="form-control" id="money" name="price"
-                                th:value="${menu.currentPrice}">
+                            <input type="text" class="form-control" id="money" name="price"
+                                th:value="${#numbers.formatInteger(menu.currentPrice, 0)}">
+                            <span class="form-message text-danger "></span>
                         </div>
                     </div>
                     <label>Thành phần: </label>
@@ -58,9 +60,9 @@
                         data-target="#addProductModal">Thêm
                         thành phần</button>
 
-                    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    <div class="modal fade " id="addProductModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                         aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-xl">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">Danh sách hàng hóa</h5>
@@ -75,7 +77,6 @@
                                                 <th scope="col">Tên thành phần</th>
                                                 <th scope="col">Đơn vị tính</th>
                                                 <th scope="col">Hàm lượng</th>
-                                                <th scope="col" style="display: none;">ID Sản phẩm</th>
                                                 <th scope="col" style="display: none;">ID Unit</th>
                                                 <th scope="col">Chọn</th>
                                             </tr>
@@ -83,7 +84,14 @@
                                         <tbody>
                                             <tr th:each="product : ${products}">
                                                 <td class="productName" th:text="${product.productName}"></td>
-                                                <td class="unitName" th:text="${product.unit.unitName}"></td>
+                                                <td>
+                                                    <select class="form-control unitSelect">
+                                                        <option value="">Chọn đơn vị</option>
+                                                        <option th:each="u : ${units}" th:value="${u.unitId}"
+                                                            th:text="${u.unitName}">
+                                                        </option>
+                                                    </select>
+                                                </td>
                                                 <td><input type="number" class="form-control quantity"></td>
                                                 <td class="productId" th:text="${product.productId}"
                                                     style="display: none;"></td>
@@ -105,26 +113,12 @@
                     </div>
                     <br>
                     <div class="d-flex bd-highlight mt-2">
-                        <button class="btn btn-primary mr-2" id="editButton">Lưu</button>
                         <a th:href="@{/admin/menu}" class="btn btn-secondary">Trở lên</a>
+                        <button class="btn btn-success ml-2" id="editButton">Lưu</button>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="position-fixed bottom-0 right-0 p-3" style="z-index: 999; right: 0; top: 0;">
-            <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true"
-                data-delay="2000">
-                <div class="toast-header">
-                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="toast-body">
-                </div>
-            </div>
-        </div>
-
     </section>
 </body>
 

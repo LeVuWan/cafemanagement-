@@ -1,24 +1,69 @@
+function validateName() {
+    const name = $('#name').val().trim();
+    const $errorSpan = $('#name').next('.form-message');
+
+    if (!name) {
+        $errorSpan.text('Trường này không được trống!');
+        return false;
+    } else {
+        $errorSpan.text('');
+        return true;
+    }
+}
+
+function validatePrice() {
+    const price = $('#money').val().trim();
+    const $errorSpan = $('#money').next('.form-message');
+
+    if (!price) {
+        $errorSpan.text('Trường này không được trống!');
+        return false;
+    }
+
+    const parsedPrice = parseFloat(price.replace(/[.,]/g, ''));
+
+    if (isNaN(parsedPrice)) {
+        $errorSpan.text('Giá không hợp lệ!');
+        return false;
+    }
+
+    if (parsedPrice <= 0) {
+        $errorSpan.text('Vui lòng nhập giá hợp lệ!');
+        return false;
+    }
+
+    $errorSpan.text('');
+    return true;
+}
+
+// Blur event - Show errors
+$('#name').on('blur', function () {
+    validateName();
+});
+
+$('#money').on('blur', function () {
+    validatePrice();
+});
+
+// Input event - Clear errors when user starts typing
+$('#name').on('input', function () {
+    const $errorSpan = $(this).next('.form-message');
+    $errorSpan.text('');
+});
+
 $('#editButton').click(async function () {
+    const isNameValid = validateName();
+    const isPriceValid = validatePrice();
+
+    if (!isNameValid || !isPriceValid) {
+        return;
+    }
+
     const menuId = $('#id').val().trim();
     const name = $('#name').val().trim();
     let price = $('#money').val().trim();
 
-    if (!name) {
-        showToast("Vui lòng nhập tên menu!", "warning");
-        return;
-    }
-
     price = parseFloat(price.replace(/[.,]/g, ''));
-
-    if (isNaN(price)) {
-        showToast("Giá không được để trống!", "warning");
-        return;
-    }
-
-    if (price <= 0) {
-        showToast("Vui lòng nhập giá hợp lệ!", "warning");
-        return;
-    }
 
     const menu = {
         menuId: menuId,

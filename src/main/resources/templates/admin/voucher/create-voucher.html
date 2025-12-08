@@ -19,7 +19,8 @@
                         id="createVoucherForm">
                         <div class="form-group">
                             <label>Tên khuyến mãi</label>
-                            <input type="text" class="form-control" th:field="*{voucherName}" id="voucherName">
+                            <input type="text" class="form-control" th:field="*{voucherName}" id="voucherName"
+                                maxlength="55">
                             <span th:if="${#fields.hasErrors('voucherName')}" th:errors="*{voucherName}"
                                 class="text-danger small"></span>
                             <span class="form-message"></span>

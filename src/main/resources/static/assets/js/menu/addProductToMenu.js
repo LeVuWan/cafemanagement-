@@ -7,19 +7,25 @@ $('#comfirmAddProduct').click(function () {
         isChooseProduct = $(this).find('.isChooseProduct').is(':checked');
         let quantity = $(this).find('.quantity').val();
         let productName = $(this).find('.productName').text().trim();
-        let unitName = $(this).find('.unitName').text().trim();
+        let selectedUnitId = $(this).find('.unitSelect').val();
+        let selectedUnitName = $(this).find('.unitSelect option:selected').text();
         let productId = $(this).find('.productId').text().trim();
-        let unitId = $(this).find('.unitId').text().trim();
 
         if (isChooseProduct) {
+            if (!selectedUnitId || selectedUnitId.trim() === "") {
+                showToast(`Vui lòng chọn đơn vị tính cho ${productName}`, "warning");
+                hasEmptyQuantity = true;
+                return false;
+            }
+
             if (quantity > 0) {
                 listProduct.push({
                     productId: productId,
                     productName: productName,
                     quantity: quantity,
-                    unitId: unitId,
-                    unitName: unitName,
-                })
+                    unitId: selectedUnitId,
+                    unitName: selectedUnitName,
+                });
             } else {
                 showToast(`Vui lòng nhập số lượng của ${productName}`, "warning");
                 hasEmptyQuantity = true;

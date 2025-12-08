@@ -117,6 +117,7 @@ const reportAll = async (from, to) => {
 };
 
 const reportInputOutput = async (from, to) => {
+
     const btn = $('#send-report');
     const table = $('table');
 
@@ -195,8 +196,6 @@ const reportInput = async (from, to) => {
         });
 
         const data = response.data || [];
-
-        console.log("Check data:", data);
 
         table.empty();
 

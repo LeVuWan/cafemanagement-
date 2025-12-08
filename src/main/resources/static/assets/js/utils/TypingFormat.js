@@ -48,4 +48,26 @@ $(document).ready(function () {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 
+    $(document).on('input', '.positiveDecimal', function () {
+        console.log("Run here");
+
+        let value = this.value;
+
+        // Xóa ký tự không phải số hoặc dấu chấm
+        value = value.replace(/[^0-9.]/g, '');
+
+        // Chỉ cho phép 1 dấu chấm
+        const parts = value.split('.');
+        if (parts.length > 2) {
+            value = parts[0] + '.' + parts.slice(1).join('');
+        }
+
+        // Không cho phép bắt đầu bằng '.'
+        if (value.startsWith('.')) {
+            value = '0' + value; // .5 -> 0.5
+        }
+
+        this.value = value;
+    });
+
 });

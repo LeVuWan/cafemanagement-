@@ -52,7 +52,7 @@ public class ReportService {
                         throw new NullPointerException("from or to not found");
                 }
 
-                List<Object[]> reportData = invoiceRepository.getDailyIncomeExpense(from, to);
+                List<Object[]> reportData = invoiceRepository.getDailyIncomeExpenseByDate(from, to);
 
                 return reportData.stream()
                                 .map(record -> new GenaralReportRes(
@@ -70,6 +70,7 @@ public class ReportService {
          * @throws NullPointerException
          */
         public List<GenaralReportRes> generalReportServiceForBudget() {
+
                 List<Object[]> reportData = invoiceRepository.getDailyIncomeExpense();
 
                 return reportData.stream()
@@ -92,6 +93,7 @@ public class ReportService {
                         throw new NullPointerException("from or to not found");
                 }
                 List<Object[]> reportData = productRepository.getImportExportTotalsByDateRange(from, to);
+                System.out.println("Check size reportData: " + reportData.size());
                 return reportData.stream()
                                 .map(record -> new ImportExportRes(record[0].toString(),
                                                 record[1] != null ? ((Number) record[1]).doubleValue() : 0.0,
@@ -110,7 +112,7 @@ public class ReportService {
                 if (startDate == null || endDate == null) {
                         throw new NullPointerException("startDate or endDate not found");
                 }
-                List<Object[]> reportData = productRepository.getTotalExportAmountGroupedByDate(startDate, endDate);
+                List<Object[]> reportData = productRepository.getTotalImportAmountGroupedByDate(startDate, endDate);
 
                 return reportData.stream()
                                 .map(record -> new ImportByDateReportRes(
@@ -130,7 +132,7 @@ public class ReportService {
                 if (startDate == null || endDate == null) {
                         throw new NullPointerException("startDate or endDate not found");
                 }
-                List<Object[]> reportData = productRepository.getTotalImportAmountGroupedByDate(startDate, endDate);
+                List<Object[]> reportData = productRepository.getTotalExportAmountGroupedByDate(startDate, endDate);
 
                 return reportData.stream()
                                 .map(record -> new ImportByDateReportRes(

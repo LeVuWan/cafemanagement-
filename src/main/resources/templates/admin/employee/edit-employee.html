@@ -73,7 +73,7 @@
 
                         <!-- Tên đăng nhập -->
                         <div class="form-group">
-                            <label for="username">Tên đăng nhập:</label>
+                            <label for="username">*Tên đăng nhập:</label>
                             <input type="text" class="form-control" id="username" th:field="*{username}" required>
                             <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
                                 class="text-danger small"></span>
@@ -82,7 +82,7 @@
 
                         <!-- Mật khẩu -->
                         <div class="form-group">
-                            <label for="password">Mật khẩu:</label>
+                            <label for="password">*Mật khẩu:</label>
                             <input type="password" class="form-control" id="password" th:field="*{password}" required>
                             <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
                                 class="text-danger small"></span>

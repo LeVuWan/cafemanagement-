@@ -32,7 +32,7 @@
                                     <th>Tên khuyến mãi</th>
                                     <th>Ngày bắt đầu</th>
                                     <th>Ngày kết thúc</th>
-                                    <th>% giảm giá</th>
+                                    <th class="text-right">% giảm giá</th>
                                     <th class="text-center" style="width: 150px;">Action</th>
                                 </tr>
                             </thead>
@@ -41,7 +41,8 @@
                                     <td th:text="${voucher.voucherName}"></td>
                                     <td th:text="${voucher.startDate}"></td>
                                     <td th:text="${voucher.endDate}"></td>
-                                    <td th:text="${voucher.discountValue}"></td>
+                                    <td class="text-right"
+                                        th:text="${#numbers.formatInteger(voucher.discountValue, 0)}"></td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-1">
                                             <a th:href="@{/admin/voucher/edit/{id}(id=${voucher.voucherId})}"

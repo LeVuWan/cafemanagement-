@@ -8,19 +8,20 @@
 
 <body>
     <section layout:fragment="content">
-        <div class="container bg-white p-4 rounded shadow-sm">
+        <div class="container bg-white p-4 rounded shadow-sm mb-3">
 
             <div class="filter-section">
                 <h3>Chọn mục</h3>
 
                 <div class="mb-3">
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="category" id="cat-tat-ca" value="general">
-                        <label class="form-check-label" for="cat-tat-ca">Tất cả</label>
+                        <input class="form-check-input" type="radio" name="category" id="cat-tat-ca" value="general"
+                            checked>
+                        <label class="form-check-label" for="cat-tat-ca">Danh thu</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="category" id="input-output"
-                            value="input-output" checked>
+                            value="input-output">
                         <label class="form-check-label" for="cat-nhap-xuat">Nhập-xuất</label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -77,25 +78,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>23/12/2014</td>
-                        <td>500.000</td>
-                        <td>1.000.000</td>
+                    <tr th:each="report : ${reportData}">
+                        <td th:text="${#temporals.format(report.date, 'dd/MM/yyyy')}">Ngày</td>
+                        <td th:text="${#numbers.formatDecimal(report.income, 0, 'DEFAULT', 0, 'DEFAULT')}">Thu</td>
+                        <td th:text="${#numbers.formatDecimal(report.expense, 0, 'DEFAULT', 0, 'DEFAULT')}">Chi</td>
                     </tr>
-                    <tr>
-                        <td>24/12/2014</td>
-                        <td>1.000.000</td>
-                        <td>200.000</td>
-                    </tr>
-                    <tr>
-                        <td>25/12/2014</td>
-                        <td>1.500.000</td>
-                        <td>400.000</td>
-                    </tr>
-                    <tr class="font-weight-bold bg-light">
+
+                    <tr class="font-weight-bold bg-light" th:if="${!reportData.isEmpty()}">
                         <td>Tổng</td>
-                        <td>3.000.000</td>
-                        <td>1.600.000</td>
+                        <td th:text="${#numbers.formatDecimal(totalIncome, 0, 'DEFAULT', 0, 'DEFAULT')}">0</td>
+                        <td th:text="${#numbers.formatDecimal(totalExpense, 0, 'DEFAULT', 0, 'DEFAULT')}">0</td>
                     </tr>
                 </tbody>
             </table>

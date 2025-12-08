@@ -115,7 +115,7 @@ public class ProductService {
         }
 
         ImportOrder importOrder = new ImportOrder();
-        importOrder.setProduct(savedProduct);
+        importOrder.setProduct(product);
         importOrder.setEquipment(null);
         importOrder.setImportDate(dto.getPurchaseDate());
         importOrder.setQuantity(dto.getQuantity());
@@ -123,8 +123,7 @@ public class ProductService {
         importOrder.setEmployee(user);
         importOrder.setIsDeleted(false);
         importOrderRepository.save(importOrder);
-
-        return savedProduct;
+        return product;
     }
 
     /**

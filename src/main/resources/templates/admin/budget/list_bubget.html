@@ -37,17 +37,17 @@
                             <thead>
                                 <tr>
                                     <th>Ngày</th>
-                                    <th>Thu</th>
-                                    <th>Chi</th>
+                                    <th class="text-right">Thu</th>
+                                    <th class="text-right">Chi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr th:each="report : ${reports}">
-                                    <td th:text="${report.date}"></td>
-                                    <td
+                                    <td th:text="${#temporals.format(report.date, 'dd-MM-yyyy')}"></td>
+                                    <td class="text-right"
                                         th:text="${#numbers.formatDecimal(report.income, 0, 'POINT', 0, 'NONE')} + ' ₫'">
                                     </td>
-                                    <td
+                                    <td class="text-right"
                                         th:text="${#numbers.formatDecimal(report.expense, 0, 'POINT', 0, 'NONE')} + ' ₫'">
                                     </td>
                                 </tr>

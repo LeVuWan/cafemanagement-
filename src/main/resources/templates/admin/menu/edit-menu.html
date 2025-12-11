@@ -21,14 +21,21 @@
                             readonly style="display: none;">
                         <div class="form-group col-md-6">
                             <label>Tên món:</label>
-                            <input type="text" class="form-control" id="name" name="name" th:value="${menu.dishName}">
+                            <input type="text" class="form-control" id="name" name="name" th:value="${menu.dishName}"
+                                sec:authorize="hasRole('ROLE_MANAGER')">
+                            <h5 sec:authorize="hasRole('ROLE_EMPLOYY_SERVICE')" th:text="${menu.dishName}"></h5>
                             <span class="form-message text-danger "></span>
                         </div>
 
                         <div class="form-group col-md-6">
                             <label>Giá tiền:</label>
-                            <input type="text" class="form-control" id="money" name="price"
-                                th:value="${#numbers.formatInteger(menu.currentPrice, 0)}">
+
+                            <input type="text" class="form-control" id="name" name="name"
+                                th:value="${#numbers.formatInteger(menu.currentPrice, 0)}"
+                                sec:authorize="hasRole('ROLE_MANAGER')">
+
+                            <h5 sec:authorize="hasRole('ROLE_EMPLOYY_SERVICE')"
+                                th:text="${#numbers.formatInteger(menu.currentPrice, 0)}"></h5>
                             <span class="form-message text-danger "></span>
                         </div>
                     </div>
@@ -36,28 +43,29 @@
                     <table class="table table-bordered table-sm align-middle">
                         <thead>
                             <tr>
-                                <th scope="col" class="text-center">Tên thành phần</th>
-                                <th scope="col" class="text-center">Khối lượng</th>
-                                <th scope="col" class="text-center">Đơn vị tính</th>
-                                <th scope="col" class="text-center">Xóa</th>
+                                <th class="text-center">Tên thành phần</th>
+                                <th class="text-center">Khối lượng</th>
+                                <th class="text-center">Đơn vị tính</th>
+                                <th class="text-center" sec:authorize="hasRole('ROLE_MANAGER')">Xóa</th>
                             </tr>
                         </thead>
+
                         <tbody id="ingredientTable">
                             <tr th:each="menuDetail : ${menuDetails}">
                                 <td th:text="${menuDetail.product.productName}" class="text-center"></td>
                                 <td th:text="${menuDetail.quantity}" class="text-center"></td>
                                 <td th:text="${menuDetail.unit.unitName}" class="text-center"></td>
-                                <td th:text="${menuDetail.product.productId}" style="display:none;"></td>
-                                <td th:text="${menuDetail.unit.unitId}" style="display:none;"></td>
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                        onclick="deleteRow(this)">Xóa</button>
+                                <td class="text-center" sec:authorize="hasRole('ROLE_MANAGER')">
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this)">
+                                        Xóa
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                        data-target="#addProductModal">Thêm
+
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addProductModal"
+                        sec:authorize="hasRole('ROLE_MANAGER')">Thêm
                         thành phần</button>
 
                     <div class="modal fade " id="addProductModal" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -114,7 +122,8 @@
                     <br>
                     <div class="d-flex bd-highlight mt-2">
                         <a th:href="@{/admin/menu}" class="btn btn-secondary">Trở lên</a>
-                        <button class="btn btn-success ml-2" id="editButton">Lưu</button>
+                        <button class="btn btn-success ml-2" id="editButton"
+                            sec:authorize="hasRole('ROLE_MANAGER')">Lưu</button>
                     </div>
                 </div>
             </div>

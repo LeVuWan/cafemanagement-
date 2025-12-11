@@ -43,19 +43,19 @@
                                     <th>Tên hàng hóa</th>
                                     <th>Ngày nhập</th>
                                     <th>Ngày xuất</th>
-                                    <th>Số lượng</th>
+                                    <th class="text-right">Số lượng</th>
                                     <th>Đơn vị</th>
-                                    <th>Tổng tiền</th>
+                                    <th class="text-right">Tổng tiền</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr th:each="history : ${histories}">
                                     <td th:text="${history.nameProduct}"></td>
-                                    <td th:text="${history.importDate}"></td>
-                                    <td th:text="${history.exportDate}"></td>
-                                    <td th:text="${history.quantity}"></td>
+                                    <td th:text="${#temporals.format(history.importDate, 'dd-MM-yyyy')}"></td>
+                                    <td th:text="${#temporals.format(history.exportDate, 'dd-MM-yyyy')}"></td>
+                                    <td class="text-right" th:text="${history.quantity}"></td>
                                     <td th:text="${history.unit}"></td>
-                                    <td
+                                    <td class="text-right"
                                         th:text="${#numbers.formatDecimal(history.toltalPrice, 0, 'POINT', 0, 'NONE')} + ' ₫'">
                                     </td>
                                 </tr>

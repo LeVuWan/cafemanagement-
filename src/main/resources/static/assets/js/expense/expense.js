@@ -61,8 +61,8 @@ const fetchExpenses = async () => {
             <thead class="thead-light">
                 <tr>
                     <th>Ngày</th>
-                    <th>Khoản chi</th>
-                    <th>Số tiền</th>
+                    <th >Khoản chi</th>
+                    <th class="text-right">Số tiền</th>
                 </tr>
             </thead>
         `;
@@ -72,9 +72,9 @@ const fetchExpenses = async () => {
     data.forEach((item) => {
         tbody += `
                 <tr>
-                    <td>${item.amount}</td>
-                    <td>${item.expenseName}</td>
                     <td>${item.expenseDate}</td>
+                    <td>${item.expenseName}</td>
+                    <td class="text-right">${item.amount}</td>
                 </tr>
             `;
     });

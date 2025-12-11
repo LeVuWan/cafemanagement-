@@ -20,16 +20,16 @@ const fetchBudgetData = async () => {
 
         const data = Array.isArray(response.data) ? response.data : response;
 
-        table.find('tbody').empty(); 
+        table.find('tbody').empty();
 
         let tbody = '';
 
         data.forEach(r => {
             tbody += `
                 <tr>
-                    <td>${r.date || ''}</td>
-                    <td>${(r.income || 0).toLocaleString('vi-VN')}</td>
-                    <td>${(r.expense || 0).toLocaleString('vi-VN')}</td>
+                    <td>${formatDate(r.date)} </td>
+                    <td class="text-right">${(r.income || 0).toLocaleString('vi-VN')} đ</td>
+                    <td class="text-right">${(r.expense || 0).toLocaleString('vi-VN')} đ</td>
                 </tr>
             `;
         });

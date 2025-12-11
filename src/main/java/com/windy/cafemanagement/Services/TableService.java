@@ -349,7 +349,7 @@ public class TableService {
         for (TableEntity table : tables) {
             if (table.getStatus() == TableStatus.AVAILABLE) {
                 tableToMerge.getTablesFrom().add(new TableInforRes(table.getTableId(), table.getTableName()));
-            } else if (table.getStatus() == TableStatus.OCCUPIED || table.getStatus() == TableStatus.RESERVED) {
+            } else if (table.getStatus() == TableStatus.OCCUPIED) {
                 tableToMerge.getTablesTo().add(new TableInforRes(table.getTableId(), table.getTableName()));
             }
         }

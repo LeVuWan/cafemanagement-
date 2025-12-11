@@ -50,6 +50,15 @@ $('#btn-confirm-order').on('click', async () => {
     }
 });
 
+$('#orderTableModal').on('hide.bs.modal', function () {
+    const form = $('#orderTableForm');
+
+    form.trigger('reset');
+
+    form.find('.form-message').text('');
+
+    form.find('.form-control').removeClass('invalid');
+});
 
 const showToast = (message, type = 'success') => {
     const toastEl = document.getElementById('liveToast');
@@ -62,7 +71,10 @@ const showToast = (message, type = 'success') => {
 
     toastBody.textContent = message;
 
-    const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
     toast.show();
 }
 
+$('#orderTableModal').on('show.bs.modal', function () {
+    resetManagementButtons();
+});

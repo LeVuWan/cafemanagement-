@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.windy.cafemanagement.Services.EquipmentService;
 import com.windy.cafemanagement.dto.EquipmentDto;
+import com.windy.cafemanagement.models.Equipment;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -139,7 +140,17 @@ public class EquipmentController {
     @GetMapping("edit/{id}")
     public String getFormEditEquipment(@PathVariable("id") Long equipmentId, Model model) {
         try {
-            model.addAttribute("equipment", equipmentService.getEquipmentById(equipmentId));
+            Equipment equipment = equipmentService.getEquipmentById(equipmentId);
+
+            EquipmentDto equipmentDto = new EquipmentDto();
+            equipmentDto.setEquipmentId(equipmentId);
+            equipmentDto.setEquipmentName(equipment.getEquipmentName());
+            equipmentDto.setQuantity(equipment.getQuantity());
+            equipmentDto.setPurchaseDate(equipment.getPurchaseDate());
+            equipmentDto.setUnitPrice(String.valueOf(equipment.getUnitPrice().intValue()));
+
+            model.addAttribute("equipment", equipmentDto);
+            model.addAttribute("equipmentUnitPrice", (Integer) equipment.getUnitPrice().intValue());
             return "admin/equipment/edit-equipment";
         } catch (EntityNotFoundException e) {
             logger.warn("Entity not found in getFormEditEquipment id={}: {}", equipmentId, e.getMessage());

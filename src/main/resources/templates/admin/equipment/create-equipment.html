@@ -18,7 +18,7 @@
                         th:object="${equipment}" id="createEquipmentForm">
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label for="startDate">Tên thiết bị *</label>
+                                <label for="startDate">*Tên thiết bị </label>
                                 <input type="text" class="form-control" name="equipmentName" id="equipmentName"
                                     th:field="*{equipmentName}" maxlength="55">
                                 <span th:if="${#fields.hasErrors('equipmentName')}" th:errors="*{equipmentName}"
@@ -27,7 +27,7 @@
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="endDate">Số lượng *</label>
+                                <label for="endDate">*Số lượng </label>
                                 <input type="text" class="form-control integer" name="quantity " th:field="*{quantity}"
                                     id="quantity" maxlength="4">
                                 <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"
@@ -37,7 +37,7 @@
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label for="startDate">Ngày mua *</label>
+                                <label for="startDate">*Ngày mua </label>
                                 <input type="date" class="form-control" th:field="*{purchaseDate}" name="purchaseDate"
                                     id="purchaseDate">
                                 <span th:if="${#fields.hasErrors('purchaseDate')}" th:errors="*{purchaseDate}"
@@ -46,7 +46,7 @@
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label>Đơn giá *</label>
+                                <label>*Đơn giá </label>
                                 <input type="text" step="0.01" class="form-control" id="money" th:field="*{unitPrice}">
                                 <span th:if="${#fields.hasErrors('unitPrice')}" th:errors="*{unitPrice}"
                                     class="text-danger small"></span>

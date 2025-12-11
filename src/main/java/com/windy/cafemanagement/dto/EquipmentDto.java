@@ -1,6 +1,9 @@
 package com.windy.cafemanagement.dto;
 
 import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -25,6 +28,7 @@ public class EquipmentDto {
     @NotNull(message = "Số lượng không được để trống")
     private Integer quantity;
     @NotNull(message = "Ngày mua không được trống")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate purchaseDate;
     @NotNull(message = "Đơn giá không được trống")
     private String unitPrice;

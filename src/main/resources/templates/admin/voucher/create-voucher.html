@@ -18,7 +18,7 @@
                     <form action="/admin/voucher/create" method="post" class="needs-validation" th:object="${voucher}"
                         id="createVoucherForm">
                         <div class="form-group">
-                            <label>Tên khuyến mãi</label>
+                            <label>*Tên khuyến mãi</label>
                             <input type="text" class="form-control" th:field="*{voucherName}" id="voucherName"
                                 maxlength="55">
                             <span th:if="${#fields.hasErrors('voucherName')}" th:errors="*{voucherName}"
@@ -27,7 +27,7 @@
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label for="startDate">Ngày bắt đầu</label>
+                                <label for="startDate">*Ngày bắt đầu</label>
                                 <input type="date" class="form-control" th:field="*{startDate}" id="startDate">
                                 <span th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"
                                     class="text-danger small"></span>
@@ -36,7 +36,7 @@
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="endDate">Ngày kết thúc</label>
+                                <label for="endDate">*Ngày kết thúc</label>
                                 <input type="date" class="form-control" id="endDate" th:field="*{endDate}">
                                 <span th:if=" ${#fields.hasErrors('endDate')}" th:errors="*{endDate}"
                                     class="text-danger small"></span>
@@ -44,7 +44,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="formGroupExampleInput2">% giảm giá</label>
+                            <label for="formGroupExampleInput2">*% giảm giá</label>
                             <input type="text" class="form-control" th:field="*{discountValue}" id="discountValue">
                             <span th:if="${#fields.hasErrors('discountValue')}" th:errors="*{discountValue}"
                                 class="text-danger small"></span>

@@ -6,6 +6,15 @@ const formatCurrency = (amount) => {
     }) + ' ₫';
 };
 
+// Helper function to format date
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+};
+
 $('#send-report').click(async () => {
     const category = $('input[name="category"]:checked').val();
     const from = $('#date-from').val();
@@ -20,29 +29,36 @@ $('#send-report').click(async () => {
 const chooseReport = async (category, from, to) => {
     switch (category) {
         case "general":
+            showHideDateDiv("show");
             if (checkDateRange(from, to) === false) return;
             await reportAll(from, to);
             break;
         case "input-output":
+            showHideDateDiv("show");
             if (checkDateRange(from, to) === false) return;
             await reportInputOutput(from, to);
             break;
         case "input":
+            showHideDateDiv("show");
             if (checkDateRange(from, to) === false) return;
             await reportInput(from, to);
             break;
         case "export":
+            showHideDateDiv("show");
             if (checkDateRange(from, to) === false) return;
             await reportExport(from, to);
             break;
         case "sell":
+            showHideDateDiv("show");
             if (checkDateRange(from, to) === false) return;
             await reportSell(from, to);
             break;
         case "employee-info":
+            showHideDateDiv("hide");
             await reportEmployeeInformation(from, to);
             break;
         case "expense":
+            showHideDateDiv("hide");
             if (checkDateRange(from, to) === false) return;
             await expenseReport(from, to);
             break;
@@ -88,9 +104,9 @@ const reportAll = async (from, to) => {
             totalExpenseAll += r.expense;
             tbody += `
                 <tr>
-                    <td>${r.date}</td>
-                    <td>${formatCurrency(r.income)}</td>
-                    <td>${formatCurrency(r.expense)}</td>
+                    <td>${formatDate(r.date)}</td>
+                    <td class="text-right">${formatCurrency(r.income)}</td>
+                    <td class="text-right">${formatCurrency(r.expense)}</td>
                 </tr>
             `;
         });
@@ -98,8 +114,8 @@ const reportAll = async (from, to) => {
         tbody += `
             <tr class="fw-bold text-end">
                 <td>Tổng cộng</td>
-                <td>${formatCurrency(totalIncomeAll)}</td>
-                <td>${formatCurrency(totalExpenseAll)}</td>
+                <td class="text-right">${formatCurrency(totalIncomeAll)}</td>
+                <td class="text-right">${formatCurrency(totalExpenseAll)}</td>
             </tr>
         `;
         tbody += '</tbody>';
@@ -155,9 +171,9 @@ const reportInputOutput = async (from, to) => {
 
             tbody += `
                 <tr>
-                    <td>${r.date}</td>
-                    <td>${formatCurrency(r.importAmount)}</td>
-                    <td>${formatCurrency(r.exportAmount)}</td>
+                    <td>${formatDate(r.date)}</td>
+                    <td class="text-right">${formatCurrency(r.importAmount)}</td>
+                    <td class="text-right">${formatCurrency(r.exportAmount)}</td>
                 </tr>
             `;
         });
@@ -165,8 +181,8 @@ const reportInputOutput = async (from, to) => {
         tbody += `
             <tr class="fw-bold text-end">
                 <td>Tổng cộng</td>
-                <td>${formatCurrency(totalImportAmount)}</td>
-                <td>${formatCurrency(totalExportAmount)}</td>
+                <td class="text-right">${formatCurrency(totalImportAmount)}</td>
+                <td class="text-right">${formatCurrency(totalExportAmount)}</td>
             </tr>
         `;
         tbody += '</tbody>';
@@ -217,8 +233,8 @@ const reportInput = async (from, to) => {
 
             tbody += `
                 <tr>
-                    <td>${r.importDate}</td>
-                    <td>${formatCurrency(amount)}</td>
+                    <td>${formatDate(r.importDate)}</td>
+                    <td class="text-right">${formatCurrency(amount)}</td>
                 </tr>
             `;
         });
@@ -226,7 +242,7 @@ const reportInput = async (from, to) => {
         tbody += `
             <tr class="fw-bold text-end">
                 <td>Tổng cộng</td>
-                <td>${formatCurrency(totalImport)}</td>
+                <td class="text-right">${formatCurrency(totalImport)}</td>
             </tr>
         `;
 
@@ -279,8 +295,8 @@ const reportExport = async (from, to) => {
 
             tbody += `
                 <tr>
-                    <td>${r.importDate}</td>
-                    <td>${formatCurrency(amount)}</td>
+                    <td>${formatDate(r.importDate)}</td>
+                    <td class="text-right">${formatCurrency(amount)}</td>
                 </tr>
             `;
         });
@@ -288,7 +304,7 @@ const reportExport = async (from, to) => {
         tbody += `
             <tr class="fw-bold text-end">
                 <td>Tổng cộng</td>
-                <td>${formatCurrency(totalExport)}</td>
+                <td class="text-right">${formatCurrency(totalExport)}</td>
             </tr>
         `;
 
@@ -340,8 +356,8 @@ const reportSell = async (from, to) => {
         data.forEach(item => {
             tbody += `
                 <tr>
-                    <td>${item.importDate}</td>
-                    <td>${formatCurrency(item.totalAmount)}</td>
+                    <td>${formatDate(item.importDate)}</td>
+                    <td class="text-right">${formatCurrency(item.totalAmount)}</td>
                 </tr>
             `;
         });
@@ -351,7 +367,7 @@ const reportSell = async (from, to) => {
         tbody += `
             <tr class="font-weight-bold bg-light">
                 <td>Tổng</td>
-                <td>${formatCurrency(totalIncome)}</td>
+                <td class="text-right">${formatCurrency(totalIncome)}</td>
             </tr>
         `;
         tbody += '</tbody>';
@@ -408,7 +424,7 @@ const reportEmployeeInformation = async () => {
                     <td>${emp.fullname}</td>
                     <td>${emp.phoneNumber}</td>
                     <td>${emp.address}</td>
-                    <td>${formatCurrency(emp.salary)}</td>
+                    <td class="text-right">${formatCurrency(emp.salary)}</td>
                     <td>${emp.permissionName || 'Không có'}</td>
                 </tr>
             `;
@@ -458,8 +474,8 @@ const expenseReport = async (from, to) => {
         data.forEach(item => {
             tbody += `
                 <tr>
-                    <td>${item.importDate}</td>
-                    <td>${formatCurrency(item.totalAmount)}</td>
+                    <td>${formatDate(item.importDate)}</td>
+                    <td class="text-right">${formatCurrency(item.totalAmount)}</td>
                 </tr>
             `;
         });
@@ -469,7 +485,7 @@ const expenseReport = async (from, to) => {
         tbody += `
             <tr class="font-weight-bold bg-light">
                 <td>Tổng</td>
-                <td>${formatCurrency(totalIncome)}</td>
+                <td class="text-right">${formatCurrency(totalIncome)}</td>
             </tr>
         `;
         tbody += '</tbody>';
@@ -496,3 +512,22 @@ const checkDateRange = (from, to) => {
         return false;
     }
 }
+
+
+const showHideDateDiv = (action) => {
+    if (action === "show") {
+        $("#date").show();
+    } else if (action === "hide") {
+        $("#date").hide();
+    }
+}
+
+$(document).ready(function () {
+    $("input[name='category']").change(function () {
+        if ($(this).val() === "employee-info") {
+            showHideDateDiv("hide");
+        } else {
+            showHideDateDiv("show");
+        }
+    });
+});

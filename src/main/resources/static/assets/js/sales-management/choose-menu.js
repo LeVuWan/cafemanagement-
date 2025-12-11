@@ -23,7 +23,7 @@ $('#btn-choose-menu').click(async () => {
                 <tr>
                     <td class="menuName">${item.dishName}</td>
                     <td>
-                     <input id="${item.menuId}" type="text" class="form-control quantity-input integer" data-id="${item.menuId}" pattern="\d*" maxlength="3"> 
+                     <input id="${item.menuId}" type="text" class="form-control quantity-input integer text-right" data-id="${item.menuId}" pattern="\d*" maxlength="3" > 
                     </td>
                     <td class="text-center">
                         <input type="checkbox" class="form-check-input menu-checkbox" data-id="${item.menuId}">

@@ -224,9 +224,9 @@ $("#printBillBtn").click(async () => {
     doc.autoTable({
         head: [[
             "Ten mon",
-            { content: "So luong", halign: "right" },
-            { content: "Don gia", halign: "right" },
-            { content: "Thanh tien", halign: "right" }
+            { content: "So luong", halign: "right", cellPadding: { left: 1, right: 4 } },
+            { content: "Don gia", halign: "right", cellPadding: { left: 1, right: 4 } },
+            { content: "Thanh tien", halign: "right", cellPadding: { left: 1, right: 4 }}
         ]],
         body: rows.map(row => [
             row[0],
@@ -237,9 +237,9 @@ $("#printBillBtn").click(async () => {
         startY: 25,
         theme: "grid",
         columnStyles: {
-            1: { halign: "left" },
-            2: { halign: "right", cellPadding: { left: 6, right: 4 } },
-            3: { halign: "right", cellPadding: { left: 6, right: 4 } }
+            1: { halign: "right", cellPadding: { left: 1, right: 4 } },
+            2: { halign: "right", cellPadding: { left: 1, right: 4 } },
+            3: { halign: "right", cellPadding: { left: 1, right: 4 } }
         },
         headStyles: {
             halign: "center"

@@ -20,8 +20,7 @@ import com.windy.cafemanagement.Services.PermissionService;
 import com.windy.cafemanagement.Services.UploadService;
 import com.windy.cafemanagement.dto.CreateEmployeeDto;
 import com.windy.cafemanagement.dto.EditEmployeeDto;
-import com.windy.cafemanagement.models.CustomUserDetails;
-import com.windy.cafemanagement.models.Employee;
+
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;

@@ -9,7 +9,6 @@
 <body>
     <section layout:fragment="content">
         <div class="container-fluid">
-            <h1 class="h3 mb-2 text-gray-800">Quản lý kho hàng</h1>
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Nhập hàng hóa có tồn tại</h6>
@@ -29,12 +28,12 @@
                         <input type="hidden" th:field="*{productId}" />
 
                         <div class="form-group col-md-6">
-                            <label>Hàng hóa</label>
+                            <label>*Hàng hóa</label>
                             <input type="text" class="form-control" th:value="${product.productName}" readonly>
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label>Ngày xuất</label>
+                            <label>*Ngày xuất</label>
                             <input type="date" class="form-control" th:field="*{exportDate}" id="purchaseDate">
                             <span th:if="${#fields.hasErrors('exportDate')}" th:errors="*{exportDate}"
                                 class="text-danger small"></span>
@@ -42,7 +41,7 @@
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label>Số lượng</label>
+                            <label>*Số lượng</label>
                             <input type="text" class="form-control" th:field="*{quantity}" id="quantity" pattern="\d*"
                                 maxlength="5">
                             <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"

@@ -17,7 +17,7 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center flex-wrap p-0 mb-2 flex-rev">
-                        <div class=" mb-2 mb-md-0 text-center text-md-left p-0">
+                        <div class=" mb-2 mb-md-0 text-center text-md-left p-0" sec:authorize="hasRole('ROLE_MANAGER')">
                             <a th:href="@{/admin/menu/create}" class="btn btn-primary btn-sm">
                                 <i class="fas fa-plus mr-1"></i>
                                 Thêm mới
@@ -59,11 +59,15 @@
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-1">
                                             <a th:href="@{/admin/menu/edit/{id}(id=${menu.menuId})}"
-                                                class="btn btn-success btn-sm mr-2">Cập nhật</a>
+                                                class="btn btn-success btn-sm mr-2">
+                                                <span sec:authorize="hasRole('ROLE_MANAGER')">Cập nhật</span>
+                                                <span sec:authorize="hasRole('ROLE_EMPLOYY_SERVICE')">Xem chi tiết</span>
+                                            </a>
 
                                             <!-- Nút mở modal -->
                                             <button class="btn btn-danger btn-sm" data-toggle="modal"
-                                                th:data-target="'#modalDelete_' + ${menu.menuId}">Xóa</button>
+                                                th:data-target="'#modalDelete_' + ${menu.menuId}"
+                                                sec:authorize="hasRole('ROLE_MANAGER')">Xóa</button>
 
                                             <!-- Modal xác nhận xóa -->
                                             <div class="modal fade" th:id="'modalDelete_' + ${menu.menuId}"

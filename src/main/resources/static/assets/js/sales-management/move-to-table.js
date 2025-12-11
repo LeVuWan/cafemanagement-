@@ -17,6 +17,7 @@ $('#btn-move-table').click(async () => {
         const selectTable = $('#listTable');
 
         selectTable.empty();
+        selectTable.append('<option value="">-- Chọn bàn --</option>');
 
         tables.forEach(tableItem => {
             if (tableItem.tableId !== table.id) {
@@ -44,7 +45,8 @@ $('#comfirmMoveTabe').click(async () => {
     btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Đang xử lý...');
 
     try {
-        if (!selectedTableId) {
+        if (!selectedTableId || selectedTableId === '') {
+            console.log("Run here");
             throw new Error('Vui lòng chọn một bàn để chuyển!');
         }
 

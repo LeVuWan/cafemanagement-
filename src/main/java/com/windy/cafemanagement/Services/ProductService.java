@@ -235,7 +235,7 @@ public class ProductService {
                         () -> new EntityNotFoundException("Không tìm thấy hàng hóa với id: " + dto.getProductId()));
 
         product.setProductName(dto.getProductName());
-        product.setUnitPrice(UtilConvert.convertStringMoneyToDouble(dto.getUnitPrice()));
+        product.setUnitPrice(UtilConvert.convertStringMoneyToDouble(dto.getUnitPrice() + ""));
         product.setUnit(unitRepository.findById(dto.getUnitId())
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đơn vị tính!")));
 

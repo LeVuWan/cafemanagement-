@@ -39,8 +39,8 @@
                             <tbody>
                                 <tr th:each="voucher : ${vouchers}">
                                     <td th:text="${voucher.voucherName}"></td>
-                                    <td th:text="${voucher.startDate}"></td>
-                                    <td th:text="${voucher.endDate}"></td>
+                                    <td th:text="${#temporals.format(voucher.startDate, 'dd-MM-yyyy')}"></td>
+                                    <td th:text="${#temporals.format(voucher.endDate, 'dd-MM-yyyy')}"></td>
                                     <td class="text-right"
                                         th:text="${#numbers.formatInteger(voucher.discountValue, 0)}"></td>
                                     <td class="text-center">

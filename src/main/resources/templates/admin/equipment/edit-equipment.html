@@ -11,7 +11,7 @@
         <div class="container-fluid">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Thêm mới thiết bị</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Chỉnh sửa thiết bị</h6>
                 </div>
                 <div class="card-body">
                     <form th:action="@{/admin/equipment/edit}" method="post" class="needs-validation"
@@ -48,7 +48,7 @@
 
                             <div class="form-group col-md-6">
                                 <label>*Đơn giá</label>
-                                <input type="text" step="0.01" class="form-control" id="money" th:field="*{unitPrice}">
+                                <input type="text" step="0.01" class="form-control" id="money" th:field="*{unitPrice}" th:value=${equipmentUnitPrice}>
                                 <span th:if="${#fields.hasErrors('unitPrice')}" th:errors="*{unitPrice}"
                                     class="text-danger small"></span>
                                 <span class="form-message"></span>

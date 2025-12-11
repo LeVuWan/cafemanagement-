@@ -230,7 +230,7 @@ public class ProductController {
             EditProductDto dto = new EditProductDto();
             dto.setProductId(product.getProductId());
             dto.setProductName(product.getProductName());
-            dto.setUnitPrice(product.getUnitPrice() + "");
+            dto.setUnitPrice(product.getUnitPrice().intValue() + "");
             dto.setUnitId(product.getUnit().getUnitId());
 
             model.addAttribute("product", dto);
